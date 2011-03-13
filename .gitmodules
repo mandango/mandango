@@ -1,0 +1,6 @@
+[submodule "vendor/mondator"]
+	path = vendor/mondator
+	url = git://github.com/mandango/mondator.git
+[submodule "vendor/symfony-class-loader/Symfony/Component/ClassLoader"]
+	path = vendor/symfony-class-loader/Symfony/Component/ClassLoader
+	url = git://github.com/symfony/ClassLoader.git
