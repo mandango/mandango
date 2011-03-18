@@ -226,5 +226,6 @@ $mondator->setExtensions(array(
         'metadata_output' => __DIR__.'/Model/Mapping',
         'default_output'  => __DIR__.'/Model',
     )),
+    new Mandango\Extension\DocumentArrayAccess(),
 ));
 $mondator->process();
