@@ -20,15 +20,16 @@ $configClasses = array(
     'Model\Article' => array(
         'collection' => 'articles',
         'fields' => array(
-            'title'        => 'string',
-            'content'      => 'string',
-            'note'         => 'string',
-            'line'         => 'string',
-            'text'         => 'string',
-            'is_active'    => 'boolean',
-            'date'         => 'date',
-            'author_id'    => 'reference_one',
-            'category_ids' => 'reference_many',
+            'title'          => 'string',
+            'content'        => 'string',
+            'note'           => 'string',
+            'line'           => 'string',
+            'text'           => 'string',
+            'is_active'      => 'boolean',
+            'date'           => 'date',
+            'author_id'      => 'reference_one',
+            'category_ids'   => 'reference_many',
+            'information_id' => 'reference_one',
         ),
         'embeddeds_one' => array(
             'source' => array('class' => 'Model\Source'),
@@ -37,10 +38,14 @@ $configClasses = array(
             'comments' => array('class' => 'Model\Comment'),
         ),
         'references_one' => array(
-            'author' => array('class' => 'Model\Author', 'field' => 'author_id'),
+            'author'      => array('class' => 'Model\Author', 'field' => 'author_id'),
+            'information' => array('class' => 'Model\ArticleInformation', 'field' => 'information_id'),
         ),
         'references_many' => array(
             'categories' => array('class' => 'Model\Category', 'field' => 'category_ids'),
+        ),
+        'relations_many_through' => array(
+            'votes_users' => array('class' => 'Model\User', 'through' => 'Model\ArticleVote', 'local' => 'article_id', 'foreign' => 'user_id'),
         ),
         'indexes' => array(
             array(
@@ -52,14 +57,38 @@ $configClasses = array(
             ),
         ),
     ),
+    'Model\ArticleInformation' => array(
+        'fields' => array(
+            'name' => 'string',
+        ),
+        'relations_one' => array(
+            'article' => array('class' => 'Model\Article', 'field' => 'information_id'),
+        ),
+    ),
+    'Model\ArticleVote' => array(
+        'fields' => array(
+            'article_id' => 'reference_one',
+            'user_id'    => 'reference_one',
+        ),
+        'references_one' => array(
+            'article' => array('class' => 'Model\Article', 'field' => 'article_id'),
+            'user'    => array('class' => 'Model\User', 'field' => 'user_id'),
+        ),
+    ),
     'Model\Author' => array(
         'fields' => array(
             'name' => 'string',
+        ),
+        'relations_many_one' => array(
+            'articles' => array('class' => 'Model\Article', 'field' => 'author_id'),
         ),
     ),
     'Model\Category' => array(
         'fields' => array(
             'name' => 'string',
+        ),
+        'relations_many_many' => array(
+            'articles' => array('class' => 'Model\Article', 'field' => 'category_ids'),
         ),
     ),
     'Model\Comment' => array(
@@ -136,6 +165,11 @@ $configClasses = array(
             array(
                 'keys' => array('author_id' => 1, 'line' => 1),
             ),
+        ),
+    ),
+    'Model\User' => array(
+        'fields' => array(
+            'username' => 'string',
         ),
     ),
     // reference to same class

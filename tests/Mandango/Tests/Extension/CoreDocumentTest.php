@@ -449,6 +449,116 @@ class CoreDocumentTest extends TestCase
         $this->assertSame($infos, $comment->getInfos());
     }
 
+    public function testRelationsOne()
+    {
+        $information = \Model\ArticleInformation::create()->setName('foo')->save();
+        $article = \Model\Article::create()->setInformation($information)->save();
+        $this->assertSame($article, $information->getArticle());
+
+        \Model\Article::repository()->getIdentityMap()->clear();
+        $this->assertEquals($article->getId(), $information->getArticle()->getId());
+    }
+
+    public function testRelationsManyOne()
+    {
+        $authors = array();
+        for ($i = 0; $i < 10; $i++) {
+            $authors[] = \Model\Author::create()->setName('Author'.$i)->save();
+        }
+        $articles = array();
+        for ($i = 0; $i < 10; $i++) {
+            $articles[] = \Model\Article::create()->setTitle('Article'.$i)->save();
+        }
+
+        $query = $authors[3]->getArticles();
+        $this->assertInstanceOf('Mandango\Query', $query);
+        $this->assertSame(array('author_id' => $authors[3]->getId()), $query->getCriteria());
+        $this->assertSame(0, $query->count());
+        $this->assertSame(0, $authors[5]->getArticles()->count());
+
+        $articles[2]->setAuthor($authors[3])->save();
+        $articles[3]->setAuthor($authors[3])->save();
+        $articles[5]->setAuthor($authors[6])->save();
+
+        $this->assertSame(array(
+            $articles[2]->getId()->__toString() => $articles[2],
+            $articles[3]->getId()->__toString() => $articles[3],
+        ), $authors[3]->getArticles()->all());
+        $this->assertSame(array(
+            $articles[5]->getId()->__toString() => $articles[5],
+        ), $authors[6]->getArticles()->all());
+        $this->assertSame(0, $authors[5]->getArticles()->count());
+    }
+
+    public function testRelationsManyMany()
+    {
+        $categories = array();
+        for ($i = 0; $i < 10; $i++) {
+            $categories[] = \Model\Category::create()->setName('Category'.$i)->save();
+        }
+        $articles = array();
+        for ($i = 0; $i < 10; $i++) {
+            $articles[] = \Model\Article::create()->setTitle('Article'.$i)->save();
+        }
+
+        $query = $categories[3]->getArticles();
+        $this->assertInstanceOf('Mandango\Query', $query);
+        $this->assertSame(array('category_ids' => $categories[3]->getId()), $query->getCriteria());
+        $this->assertSame(0, $query->count());
+        $this->assertSame(0, $categories[5]->getArticles()->count());
+
+        $articles[2]->getCategories()->add($categories[3]);
+        $articles[2]->getCategories()->add($categories[4]);
+        $articles[2]->save();
+        $articles[3]->getCategories()->add($categories[3]);
+        $articles[3]->save();
+        $articles[5]->getCategories()->add($categories[6]);
+        $articles[5]->save();
+
+        $this->assertSame(array(
+            $articles[2]->getId()->__toString() => $articles[2],
+            $articles[3]->getId()->__toString() => $articles[3],
+        ), $categories[3]->getArticles()->all());
+        $this->assertSame(array(
+            $articles[5]->getId()->__toString() => $articles[5],
+        ), $categories[6]->getArticles()->all());
+        $this->assertSame(0, $categories[5]->getArticles()->count());
+    }
+
+    public function testRelationsManyThrough()
+    {
+        $users = array();
+        for ($i = 1; $i <= 10; $i++) {
+            $users[$i] = $user = new \Model\User();
+            $user->setUsername('user'.$i);
+            $this->mandango->persist($user);
+        }
+        $articles = array();
+        $articlesVotes = array();
+        for ($i = 1; $i <= 10; $i++) {
+            $articles[$i] = $article = new \Model\Article();
+            $article->setTitle('article'.$i);
+            $this->mandango->persist($article);
+
+            for ($z = $i; $z <= 10; $z++) {
+                $articleVote = new \Model\ArticleVote();
+                $articleVote->setArticle($article);
+                $articleVote->setUser($users[$z]);
+                $this->mandango->persist($articleVote);
+
+                $articlesVotes[$i][] = $articleVote->getUser();
+            }
+        }
+        $this->mandango->flush();
+
+        $ids = array();
+        foreach ($articlesVotes[5] as $articleVote) {
+            $ids[] = $articleVote->getId();
+        }
+        $query = \Model\ArticleVote::query(array('_id' => array('$in' => $ids)));
+        $this->assertEquals($query->getCriteria(), $articles[5]->getVotesUsers()->getCriteria());
+    }
+
     public function testSetMethod()
     {
         $article = \Model\Article::create();

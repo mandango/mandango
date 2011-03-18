@@ -108,6 +108,12 @@ class Core extends Extension
         }
         $this->documentEmbeddedsOneProcess();
         $this->documentEmbeddedsManyProcess();
+        if (!$this->configClass['is_embedded']) {
+            $this->documentRelationsOneProcess();
+            $this->documentRelationsManyOneProcess();
+            $this->documentRelationsManyManyProcess();
+            $this->documentRelationsManyThroughProcess();
+        }
         $this->documentSetMethodProcess();
         $this->documentGetMethodProcess();
         $this->documentFromArrayMethodProcess();
@@ -1136,6 +1142,89 @@ EOF
      * Returns the "$name" embedded many.
      *
      * @return Mandango\Group\EmbeddedGroup The "$name" embedded many.
+     */
+EOF
+            );
+            $this->definitions['document_base']->addMethod($method);
+        }
+    }
+
+    protected function documentRelationsOneProcess()
+    {
+        foreach ($this->configClass['relations_one'] as $name => $relation) {
+            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+        return \\{$relation['class']}::query(array('{$relation['field']}' => \$this->getId()))->one();
+EOF
+            );
+            $method->setDocComment(<<<EOF
+    /**
+     * Returns the "$name" relation one.
+     *
+     * @return {$relation['class']} The "$name" relation one.
+     */
+EOF
+            );
+            $this->definitions['document_base']->addMethod($method);
+        }
+    }
+
+    protected function documentRelationsManyOneProcess()
+    {
+        foreach ($this->configClass['relations_many_one'] as $name => $relation) {
+            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+        return \\{$relation['class']}::query(array('{$relation['field']}' => \$this->getId()));
+EOF
+            );
+            $method->setDocComment(<<<EOF
+    /**
+     * Returns the "$name" relation many-one.
+     *
+     * @return {$relation['class']} The "$name" relation many-one.
+     */
+EOF
+            );
+            $this->definitions['document_base']->addMethod($method);
+        }
+    }
+
+    protected function documentRelationsManyManyProcess()
+    {
+        foreach ($this->configClass['relations_many_many'] as $name => $relation) {
+            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+        return \\{$relation['class']}::query(array('{$relation['field']}' => \$this->getId()));
+EOF
+            );
+            $method->setDocComment(<<<EOF
+    /**
+     * Returns the "$name" relation many-many.
+     *
+     * @return {$relation['class']} The "$name" relation many-many.
+     */
+EOF
+            );
+            $this->definitions['document_base']->addMethod($method);
+        }
+    }
+
+    protected function documentRelationsManyThroughProcess()
+    {
+        foreach ($this->configClass['relations_many_through'] as $name => $relation) {
+            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+        \$ids = array();
+        foreach (\\{$relation['through']}::collection()
+            ->find(array('{$relation['local']}' => \$this->getId()), array('{$relation['foreign']}' => 1))
+        as \$value) {
+            \$ids[] = \$value['{$relation['foreign']}'];
+        }
+
+        return \\{$relation['class']}::query(array('_id' => array('\$in' => \$ids)));
+EOF
+            );
+            $method->setDocComment(<<<EOF
+    /**
+     * Returns the "$name" relation many-through.
+     *
+     * @return {$relation['class']} The "$name" relation many-through.
      */
 EOF
             );
