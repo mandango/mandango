@@ -227,5 +227,6 @@ $mondator->setExtensions(array(
         'default_output'  => __DIR__.'/Model',
     )),
     new Mandango\Extension\DocumentArrayAccess(),
+    new Mandango\Extension\DocumentPropertyOverloading(),
 ));
 $mondator->process();
