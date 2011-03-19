@@ -58,7 +58,7 @@ class DateType extends Type
      */
     public function toMongoInString()
     {
-        return 'if (%from% instanceof \DateTime) { %from% = %from%->getTimestamp(); } elseif (is_string(%from%)) { %from% = strtotime(%from%); } %to% = new \MongoDate(%from%);';
+        return '%to% = %from%; if (%to% instanceof \DateTime) { %to% = %from%->getTimestamp(); } elseif (is_string(%to%)) { %to% = strtotime(%from%); } %to% = new \MongoDate(%to%);';
     }
 
     /**
@@ -66,6 +66,6 @@ class DateType extends Type
      */
     public function toPHPInString()
     {
-        return '$date = new \DateTime(); $date->setTimestamp(%from%->sec); %to% = $date;';
+        return '%to% = new \DateTime(); %to%->setTimestamp(%from%->sec);';
     }
 }
