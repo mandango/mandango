@@ -55,6 +55,27 @@ class Core extends Extension
     /**
      * {@inheritdoc}
      */
+    protected function doNewClassExtensionsProcess()
+    {
+        // default behaviors
+        foreach ($this->getOption('default_behaviors') as $behavior) {
+            if (!empty($configClass['is_embedded']) && !empty($behavior['not_with_embeddeds'])) {
+                continue;
+            }
+            $this->newClassExtensions[] = $this->createClassExtensionFromArray($behavior);
+        }
+
+        // class behaviors
+        if (isset($this->configClass['behaviors'])) {
+            foreach ($this->configClass['behaviors'] as $behavior) {
+                $this->newClassExtensions[] = $this->createClassExtensionFromArray($behavior);
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doConfigClassProcess()
     {
         $this->initIsEmbeddedProcess();
