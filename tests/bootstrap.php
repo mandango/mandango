@@ -10,7 +10,6 @@ $loader->registerNamespaces(array(
     'Mandango'          => __DIR__.'/../src',
     'Mandango\Tests'    => __DIR__,
     'Mandango\Mondator' => __DIR__.'/../vendor/mondator/src',
-    'Doctrine\Common'   => __DIR__.'/../vendor/doctrine-common/lib',
     'Model'             => __DIR__,
 ));
 $loader->register();

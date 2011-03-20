@@ -68,7 +68,7 @@ class Mandango
     /**
      * Returns the query cache.
      *
-     * @return Doctrine\Common\Cache The query cache.
+     * @return Mandango\Cache\CacheInterface The query cache.
      */
     public function getQueryCache()
     {
