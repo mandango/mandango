@@ -91,13 +91,13 @@ class Query implements \Countable, \IteratorAggregate
     /**
      * Returns the fields in cache.
      *
-     * @return array|false The fields in cache, or false if there is not.
+     * @return array|null The fields in cache, or null if there is not.
      */
     public function getFieldsCache()
     {
-        $cache = $this->repository->getMandango()->getQueryCache()->fetch($this->hash);
+        $cache = $this->repository->getMandango()->getQueryCache()->get($this->hash);
 
-        return ($cache && isset($cache['fields'])) ? $cache['fields'] : false;
+        return ($cache && isset($cache['fields'])) ? $cache['fields'] : null;
     }
 
     /**

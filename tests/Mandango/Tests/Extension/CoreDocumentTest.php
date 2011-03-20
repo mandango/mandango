@@ -89,7 +89,7 @@ class CoreDocumentTest extends TestCase
         $query = \Model\Article::query();
         $article = $query->one();
 
-        $this->assertFalse($query->getFieldsCache());
+        $this->assertNull($query->getFieldsCache());
         $article->getTitle();
         $this->assertSame(array('title' => 1), $query->getFieldsCache());
         $article->getContent();
@@ -397,7 +397,7 @@ class CoreDocumentTest extends TestCase
         $article = $query->one();
 
         $source = $article->getSource();
-        $this->assertFalse($query->getFieldsCache());
+        $this->assertNull($query->getFieldsCache());
         $source->getName();
         $this->assertSame(array('source.name' => 1), $query->getFieldsCache());
         $source->getText();
@@ -790,9 +790,9 @@ class CoreDocumentTest extends TestCase
         $query = \Model\Article::query();
         $article = $query->one();
 
-        $this->assertFalse($query->getFieldsCache());
+        $this->assertNull($query->getFieldsCache());
         $comments = $article->getComments();
-        $this->assertFalse($query->getFieldsCache());
+        $this->assertNull($query->getFieldsCache());
         $savedComments = $comments->saved();
         $this->assertSame(array('comments' => 1), $query->getFieldsCache());
         $savedInfos = $savedComments[0]->getInfos()->saved();

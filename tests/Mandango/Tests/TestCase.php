@@ -21,7 +21,7 @@
 
 namespace Mandango\Tests;
 
-use Doctrine\Common\Cache\ArrayCache;
+use Mandango\Cache\ArrayCache;
 use Mandango\Container;
 use Mandango\Connection;
 use Mandango\Mandango;
@@ -90,7 +90,6 @@ class TestCase extends \PHPUnit_Framework_TestCase
         Container::clear();
         Archive::clear();
         TypeContainer::reset();
-        $this->queryCache->deleteAll();
     }
 
     protected function createArticles($nb, $idAsKey = true)

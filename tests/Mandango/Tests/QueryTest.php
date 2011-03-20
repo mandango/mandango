@@ -47,13 +47,13 @@ class QueryTest extends TestCase
 
     public function testFieldsCache()
     {
-        $this->assertFalse($this->query->getFieldsCache());
+        $this->assertNull($this->query->getFieldsCache());
 
-        $this->queryCache->save($this->query->getHash(), array('fields' => $fields = array('title' => 1, 'content' => 1)));
+        $this->queryCache->set($this->query->getHash(), array('fields' => $fields = array('title' => 1, 'content' => 1)));
         $this->assertSame($fields, $this->query->getFieldsCache());
 
-        $this->queryCache->delete($this->query->getHash());
-        $this->assertFalse($this->query->getFieldsCache());
+        $this->queryCache->remove($this->query->getHash());
+        $this->assertNull($this->query->getFieldsCache());
     }
 
     public function testCriteria()

@@ -21,7 +21,7 @@
 
 namespace Mandango;
 
-use Doctrine\Common\Cache\Cache;
+use Mandango\Cache\CacheInterface;
 
 /**
  * Mandango.
@@ -43,11 +43,11 @@ class Mandango
     /**
      * Constructor.
      *
-     * @param Mandango\Metadata     $metadata       The metadata.
-     * @param Doctrine\Common\Cache $queryCache     The query cache.
-     * @param mixed                 $loggerCallable The logger callable (optional, null by default).
+     * @param Mandango\Metadata             $metadata       The metadata.
+     * @param Mandango\Cache\CacheInterface $queryCache     The query cache.
+     * @param mixed                         $loggerCallable The logger callable (optional, null by default).
      */
-    public function __construct(Metadata $metadata, Cache $queryCache, $loggerCallable = null)
+    public function __construct(Metadata $metadata, CacheInterface $queryCache, $loggerCallable = null)
     {
         $this->metadata = $metadata;
         $this->queryCache = $queryCache;

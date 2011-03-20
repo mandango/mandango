@@ -105,7 +105,7 @@ abstract class Document extends AbstractDocument
     {
         return $this->id;
     }
-    
+
     /**
      * INTERNAL. Returns and remove the id.
      *
@@ -214,9 +214,9 @@ abstract class Document extends AbstractDocument
         $queryCache = static::mandango()->getQueryCache();
 
         foreach ($this->getQueryHashes() as $hash) {
-            $cache = $queryCache->contains($hash) ? $queryCache->fetch($hash) : array();
+            $cache = $queryCache->has($hash) ? $queryCache->get($hash) : array();
             $cache['fields'][$field] = 1;
-            $queryCache->save($hash, $cache);
+            $queryCache->set($hash, $cache);
         }
     }
 }
