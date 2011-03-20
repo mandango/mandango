@@ -45,7 +45,7 @@ class FilesystemCache implements CacheInterface
      */
     public function has($key)
     {
-        return file_exists($this->dir.'/'.$key);
+        return file_exists($this->dir.'/'.$key.'.php');
     }
 
     /**
@@ -53,7 +53,7 @@ class FilesystemCache implements CacheInterface
      */
     public function get($key)
     {
-        $file = $this->dir.'/'.$key;
+        $file = $this->dir.'/'.$key.'.php';
 
         return file_exists($file) ? require($file) : null;
     }
@@ -67,7 +67,7 @@ class FilesystemCache implements CacheInterface
             throw new \RuntimeException(sprintf('Unable to create the "%s" directory.', $this->dir));
         }
 
-        $file = $this->dir.'/'.$key;
+        $file = $this->dir.'/'.$key.'.php';
         $valueExport = var_export($value, true);
         $content = <<<EOF
 <?php
@@ -85,7 +85,7 @@ EOF;
      */
     public function remove($key)
     {
-        $file = $this->dir.'/'.$key;
+        $file = $this->dir.'/'.$key.'.php';
         if (file_exists($file) && false === @unlink($file)) {
             throw new \RuntimeException(sprintf('Unable to remove the "%s" file.', $file));
         }
