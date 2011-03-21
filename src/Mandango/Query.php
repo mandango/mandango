@@ -415,6 +415,22 @@ class Query implements \Countable, \IteratorAggregate
         $identityMap =& $this->repository->getIdentityMap()->allByReference();
         $isFile = $this->repository->isFile();
 
+        $fields = array();
+        foreach (array_keys($this->fields) as $field) {
+            if (false === strpos($field, '.')) {
+                $fields[$field] = 1;
+                continue;
+            }
+            $f =& $fields;
+            foreach (explode('.', $field) as $name) {
+                if (!isset($f[$name])) {
+                    $f[$name] = array();
+                }
+                $f =& $f[$name];
+            }
+            $f = 1;
+        }
+
         $documents = array();
         foreach ($this->createCursor() as $id => $data) {
             if (isset($identityMap[$id])) {
@@ -427,6 +443,7 @@ class Query implements \Countable, \IteratorAggregate
                     $data['file'] = $file;
                 }
                 $data['_query_hash'] = $this->hash;
+                $data['_fields'] = $fields;
 
                 $document = new $documentClass();
                 $document->setDocumentData($data);

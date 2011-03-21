@@ -584,6 +584,8 @@ EOF;
             $fieldsCode[] = <<<EOF
         if (isset(\$data['$name'])) {
             $typeCode
+        } elseif (isset(\$data['_fields']['$name'])) {
+            \$this->data['fields']['$name'] = null;
         }
 EOF;
 
@@ -614,6 +616,9 @@ EOF;
         if (isset(\$data['$name'])) {
             \$embedded = new \\{$embedded['class']}();
 $rap
+            if (isset(\$data['_fields']['$name'])) {
+                \$data['$name']['_fields'] = \$data['_fields']['$name'];
+            }
             \$embedded->setDocumentData(\$data['$name']);
             \$this->data['embeddeds_one']['$name'] = \$embedded;
         }
@@ -668,7 +673,8 @@ EOF
     /**
      * Set the document data (hydrate).
      *
-     * @param array \$data The document data.
+     * @param array \$data  The document data.
+     * @param bool  \$clean Whether clean the document.
      *
      * @return {$this->class} The document (fluent interface).
      */

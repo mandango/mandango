@@ -964,6 +964,38 @@ class CoreDocumentTest extends TestCase
         $this->assertFalse($book->isFieldModified('is_here'));
     }
 
+    public function testSetDocumentDataNullValues()
+    {
+        $articleRaw = array(
+            'title'   => 'foo',
+            'content' => 'bar',
+            'line'    => 'ups',
+            'source' => array(
+                'name' => 'foobar',
+                'note' => 'fooups',
+            ),
+        );
+        \Model\Article::collection()->insert($articleRaw);
+
+        $article = new \Model\Article();
+        $article->setDocumentData(array(
+            '_id' => $articleRaw['_id'],
+            'source' => array(),
+            '_fields' => array(
+                'title'   => 1,
+                'content' => 1,
+                'source' => array(
+                    'name' => 1,
+                ),
+            ),
+        ));
+        $this->assertNull($article->getTitle());
+        $this->assertNull($article->getContent());
+        $this->assertSame('ups', $article->getLine());
+        $this->assertNull($article->getSource()->getName());
+        $this->assertSame('fooups', $article->getSource()->getNote());
+    }
+
     public function testSetDocumentDataEmbeddedsOne()
     {
         $infoData = array('name' => 234);

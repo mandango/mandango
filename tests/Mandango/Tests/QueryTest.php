@@ -317,6 +317,29 @@ class QueryTest extends TestCase
             $this->assertSame(array($this->query->getHash(), $query->getHash()), $article2->getQueryHashes());
         }
     }
+    
+    public function testAllNullFields()
+    {
+        $articleRaw = array(
+            'content' => 'bar',
+            'source' => array(
+                'note' => 'fooups',
+                'info' => array(
+                    ''
+                ),
+            ),
+        );
+        \Model\Article::collection()->insert($articleRaw);
+        
+        $article = \Model\Article::query()->fields(array('title' => 1, 'source.name' => 1))->one();
+        
+        $articleRaw['title'] = 'foo';
+        $articleRaw['source']['name'] = 'foobar';
+        \Model\Article::collection()->save($articleRaw);
+        
+        $this->assertNull($article->getTitle());
+        $this->assertNull($article->getSource()->getName());
+    }
 
     public function testAllReferencesOne()
     {
