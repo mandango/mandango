@@ -29,7 +29,7 @@ use Mandango\Document\Document;
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-abstract class Group
+abstract class Group implements \IteratorAggregate
 {
     protected $saved;
 
@@ -127,6 +127,14 @@ abstract class Group
         }
 
         return $this->saved;
+    }
+
+    /**
+     * Implements the \IteratorAggregate interface.
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->saved());
     }
 
     /**

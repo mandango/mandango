@@ -94,6 +94,15 @@ class GroupTest extends TestCase
         $this->assertFalse($group->isSavedInitialized());
     }
 
+    public function testSavedIteratorAggregate()
+    {
+        $forSaved = array('foo', 'bar');
+
+        $group = new Group('Model\Comment');
+        $group->forSaved = $forSaved;
+        $this->assertSame($forSaved, iterator_to_array($group));
+    }
+
     public function testCount()
     {
         $group = new Group('Model\Comment');
