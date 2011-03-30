@@ -80,6 +80,9 @@ class Core extends Extension
     {
         $this->initIsEmbeddedProcess();
 
+        $this->initInheritableProcess();
+        $this->initInheritanceProcess();
+
         $this->initMandangoProcess();
         if (!$this->configClass['is_embedded']) {
             $this->initConnectionNameProcess();
@@ -142,8 +145,8 @@ class Core extends Extension
         $this->documentEventsMethodsProcess();
         $this->documentQueryForSaveMethodProcess();
 
-        // repository
         if (!$this->configClass['is_embedded']) {
+            // repository
             $this->repositoryDocumentClassPropertyProcess();
             $this->repositoryIsFilePropertyProcess();
             $this->repositoryConnectionNamePropertyProcess();
@@ -152,6 +155,10 @@ class Core extends Extension
             $this->repositorySaveMethodProcess();
             $this->repositoryDeleteMethodProcess();
             $this->repositoryEnsureIndexesMethodProcess();
+
+            // query
+            $this->queryAllMethodProcess();
+            $this->queryCreateCursorMethodProcess();
         }
     }
 
@@ -160,6 +167,7 @@ class Core extends Extension
      */
     protected function doPreGlobalProcess()
     {
+        $this->globalInheritableAndInheritanceProcess();
         $this->globalHasReferencesProcess();
         $this->globalIndexesProcess();
     }
@@ -175,6 +183,24 @@ class Core extends Extension
     /*
      * configClass
      */
+    protected function initInheritableProcess()
+    {
+        if (!isset($this->configClass['inheritable'])) {
+            $this->configClass['inheritable'] = false;
+        } elseif ($this->configClass['is_embedded']) {
+            throw new \RuntimeException(sprintf('Using unheritance in a embedded document "%s".', $this->class));
+        }
+    }
+
+    protected function initInheritanceProcess()
+    {
+        if (!isset($this->configClass['inheritance'])) {
+            $this->configClass['inheritance'] = false;
+        } elseif ($this->configClass['is_embedded']) {
+            throw new \RuntimeException(sprintf('Using unheritance in a embedded document "%s".', $this->class));
+        }
+    }
+
     protected function initIsEmbeddedProcess()
     {
         if (isset($this->configClass['is_embedded'])) {
@@ -425,10 +451,14 @@ class Core extends Extension
             $classes['document_base']   = $documentNamespace.'\\Base\\'.$documentClassName;
             $classes['repository']      = $documentNamespace.'\\'.$documentClassName.'Repository';
             $classes['repository_base'] = $documentNamespace.'\\Base\\'.$documentClassName.'Repository';
+            $classes['query']           = $documentNamespace.'\\'.$documentClassName.'Query';
+            $classes['query_base']      = $documentNamespace.'\\Base\\'.$documentClassName.'Query';
         } else {
             $classes['document_base']   = 'Base'.$classes['document'];
             $classes['repository']      = $classes['document'].'Repository';
             $classes['repository_base'] = 'Base'.$classes['document'].'Repository';
+            $classes['query']           = $classes['document'].'Query';
+            $classes['query_base']      = 'Base'.$classes['document'].'Query';
         }
 
         // document
@@ -450,7 +480,7 @@ class Core extends Extension
 EOF
         );
 
-        // document_base
+        // document base
         $output = new Output($this->definitions['document']->getOutput()->getDir().'/Base', true);
 
         $this->definitions['document_base'] = $definition = new Definition($classes['document_base'], $output);
@@ -458,7 +488,11 @@ EOF
         if ($this->configClass['is_embedded']) {
             $definition->setParentClass('\Mandango\Document\EmbeddedDocument');
         } else {
-            $definition->setParentClass('\Mandango\Document\Document');
+            if ($this->configClass['inheritance']) {
+                $definition->setParentClass('\\'.$this->configClass['inheritance']['class']);
+            } else {
+                $definition->setParentClass('\Mandango\Document\Document');
+            }
         }
         $definition->setDocComment(<<<EOF
 /**
@@ -487,7 +521,7 @@ EOF
 EOF
             );
 
-            // repository_base
+            // repository base
             $output = new Output($this->definitions['repository']->getOutput()->getDir().'/Base', true);
 
             $this->definitions['repository_base'] = $definition = new Definition($classes['repository_base'], $output);
@@ -496,6 +530,38 @@ EOF
             $definition->setDocComment(<<<EOF
 /**
  * Base class of repository of {$this->class} document.
+ */
+EOF
+            );
+
+            // query
+            $dir = $this->getOption('default_output');
+            if (isset($this->configClass['output'])) {
+                $dir = $this->configClass['output'];
+            }
+            if (!$dir) {
+                throw new \RuntimeException(sprintf('The query of the class "%s" does not have output.', $this->class));
+            }
+            $output = new Output($dir);
+
+            $this->definitions['query'] = $definition = new Definition($classes['query'], $output);
+            $definition->setParentClass('\\'.$classes['query_base']);
+            $definition->setDocComment(<<<EOF
+/**
+ * Query of {$this->class} document.
+ */
+EOF
+            );
+
+            // query base
+            $output = new Output($this->definitions['query']->getOutput()->getDir().'/Base', true);
+
+            $this->definitions['query_base'] = $definition = new Definition($classes['query_base'], $output);
+            $definition->setIsAbstract(true);
+            $definition->setParentClass('\\Mandango\\Query');
+            $definition->setDocComment(<<<EOF
+/**
+ * Base class of query of {$this->class} document.
  */
 EOF
             );
@@ -652,7 +718,19 @@ EOF;
         }
         $embeddedsManyCode = implode("\n", $embeddedsManyCode);
 
-        $method = new Method('public', 'setDocumentData', '$data, $clean = false', <<<EOF
+        // single inheritance
+        if ($this->configClass['inheritance'] && 'single' == $this->configClass['inheritance']['type']) {
+            $code = <<<EOF
+        parent::setDocumentData(\$data, $forzeClean\$clean);
+
+$fieldsCode
+$embeddedsOneCode
+$embeddedsManyCode
+
+        return \$this;
+EOF;
+        } else {
+            $code = <<<EOF
         if ($forzeClean\$clean) {
             \$this->data = array();
             \$this->fieldsModified = array();
@@ -667,8 +745,10 @@ $embeddedsOneCode
 $embeddedsManyCode
 
         return \$this;
-EOF
-        );
+EOF;
+        }
+
+        $method = new Method('public', 'setDocumentData', '$data, $clean = false', $code);
         $method->setDocComment(<<<EOF
     /**
      * Set the document data (hydrate).
@@ -1261,6 +1341,18 @@ EOF
 
     protected function documentSetMethodProcess()
     {
+        // inheritance
+        $inheritance = '';
+        if ($this->configClass['inheritance']) {
+            $inheritance = <<<EOF
+        try {
+            return parent::set(\$name, \$value);
+        } catch (\InvalidArgumentException \$e) {
+        }
+EOF;
+        }
+
+        // data
         $setCode = array();
         foreach (array_merge(
             array_keys($this->configClass['fields']),
@@ -1279,6 +1371,8 @@ EOF;
 
         // method
         $method = new Method('public', 'set', '$name, $value', <<<EOF
+$inheritance
+
 $setCode
 
         throw new \InvalidArgumentException(sprintf('The document data "%s" is not valid.', \$name));
@@ -1302,6 +1396,18 @@ EOF
 
     protected function documentGetMethodProcess()
     {
+        // inheritance
+        $inheritance = '';
+        if ($this->configClass['inheritance']) {
+            $inheritance = <<<EOF
+        try {
+            return parent::get(\$name);
+        } catch (\InvalidArgumentException \$e) {
+        }
+EOF;
+        }
+
+        // data
         $getCode = array();
         foreach (array_merge(
             array_keys($this->configClass['fields']),
@@ -1322,6 +1428,8 @@ EOF;
 
         // method
         $method = new Method('public', 'get', '$name', <<<EOF
+$inheritance
+
 $getCode
 
         throw new \InvalidArgumentException(sprintf('The document data "%s" is not valid.', \$name));
@@ -1344,6 +1452,14 @@ EOF
 
     protected function documentFromArrayMethodProcess()
     {
+        // inheritance
+        $inheritance = '';
+        if ($this->configClass['inheritance']) {
+            $inheritance = <<<EOF
+        parent::fromArray(\$array);
+EOF;
+        }
+
         // fields
         $fieldsCode = array();
         foreach ($this->configClass['fields'] as $name => $field) {
@@ -1388,6 +1504,8 @@ EOF;
         $embeddedsManyCode = "\n".implode("\n", $embeddedsManyCode)."\n";
 
         $method = new Method('public', 'fromArray', 'array $array', <<<EOF
+$inheritance
+
 $fieldsCode
 $embeddedsOneCode
 $embeddedsManyCode
@@ -1409,6 +1527,17 @@ EOF
 
     protected function documentToArrayMethodProcess()
     {
+        // inheritance
+        $inheritance = <<<EOF
+        \$array = array();
+EOF;
+        if ($this->configClass['inheritance']) {
+            $inheritance = <<<EOF
+        \$array = parent::toArray();
+EOF;
+        }
+
+        // fields
         $fieldsCode = array();
         foreach ($this->configClass['fields'] as $name => $field) {
             $fieldsCode[] = <<<EOF
@@ -1419,8 +1548,9 @@ EOF;
         }
         $fieldsCode = "\n".implode("\n", $fieldsCode)."\n";
 
+        // method
         $method = new Method('public', 'toArray', '', <<<EOF
-        \$array = array();
+$inheritance
 $fieldsCode
         return \$array;
 EOF
@@ -1660,11 +1790,22 @@ EOF;
         // document or embedded
         if (!$this->configClass['is_embedded']) {
             $arguments = '';
-            $codeHeader = <<<EOF
-        \$query = array();
+            // single inheritance
+            if ($this->configClass['inheritance'] && 'single' == $this->configClass['inheritance']['type']) {
+                $field = $this->configClass['inheritance']['field'];
+                $value = $this->configClass['inheritance']['value'];
+                $codeHeader = <<<EOF
         \$isNew = \$this->isNew();
+        \$query = \$isNew ? array_merge(array('$field' => '$value'), parent::queryForSave()) : array();
         \$reset = false;
 EOF;
+            } else {
+                $codeHeader = <<<EOF
+        \$isNew = \$this->isNew();
+        \$query = array();
+        \$reset = false;
+EOF;
+            }
         } else {
             $arguments = '$query, $isNew, $reset = false';
             $codeHeader = <<<EOF
@@ -1884,9 +2025,257 @@ EOF
         $this->definitions['repository_base']->addMethod($method);
     }
 
+    protected function queryAllMethodProcess()
+    {
+        $variables = <<<EOF
+        \$documentClass = \$this->repository->getDocumentClass();
+        \$identityMap =& \$this->repository->getIdentityMap()->allByReference();
+        \$isFile = \$this->repository->isFile();
+EOF;
+        $queryFields = <<<EOF
+EOF;
+        $createObjects = <<<EOF
+            if (isset(\$identityMap[\$id])) {
+                \$document = \$identityMap[\$id];
+                \$document->addQueryHash(\$this->hash);
+            } else {
+                if (\$isFile) {
+                    \$file = \$data;
+                    \$data = \$file->file;
+                    \$data['file'] = \$file;
+                }
+                \$data['_query_hash'] = \$this->hash;
+                \$data['_fields'] = \$fields;
+
+                \$document = new \$documentClass();
+                \$document->setDocumentData(\$data);
+
+                \$identityMap[\$id] = \$document;
+            }
+            \$documents[\$id] = \$document;
+EOF;
+
+        // single inheritance in inheritable
+        if ($this->configClass['inheritable'] && 'single' == $this->configClass['inheritable']['type']) {
+            $field = $this->configClass['inheritable']['field'];
+
+            $variables = <<<EOF
+        \$identityMaps = array();
+        \$isFile = \$this->repository->isFile();
+EOF;
+
+            $queryFields = <<<EOF
+        if (\$this->fields) {
+            \$this->fields['$field'] = 1;
+        }
+EOF;
+
+            $createObjectsValues = array();
+            foreach ($this->configClass['inheritable']['values'] as $value => $valueClass) {
+                $createObjectsValues[] = <<<EOF
+                if ('$value' == \$data['$field']) {
+                    if (!isset(\$identityMaps['$value'])) {
+                        \$identityMaps['$value'] = \\{$valueClass}::repository()->getIdentityMap()->allByReference();
+                    }
+                    \$documentClass = '$valueClass';
+                    \$identityMap = \$identityMaps['$value'];
+                }
+EOF;
+            }
+            $createObjectsValues = implode("\n", $createObjectsValues);
+            $createObjects = <<<EOF
+            \$documentClass = null;
+            \$identityMap = null;
+            if (isset(\$data['$field'])) {
+$createObjectsValues
+            }
+            if (null === \$documentClass) {
+                if (!isset(\$identityMaps['_root'])) {
+                    \$identityMaps['_root'] = \$this->repository->getIdentityMap()->allByReference();
+                }
+                \$documentClass = '{$this->class}';
+                \$identityMap = \$identityMaps['_root'];
+            }
+
+$createObjects
+EOF;
+        }
+
+        $method = new Method('public', 'all', '', <<<EOF
+$variables
+
+$queryFields
+
+        \$fields = array();
+        foreach (array_keys(\$this->fields) as \$field) {
+            if (false === strpos(\$field, '.')) {
+                \$fields[\$field] = 1;
+                continue;
+            }
+            \$f =& \$fields;
+            foreach (explode('.', \$field) as \$name) {
+                if (!isset(\$f[\$name])) {
+                    \$f[\$name] = array();
+                }
+                \$f =& \$f[\$name];
+            }
+            \$f = 1;
+        }
+
+        \$documents = array();
+        foreach (\$this->createCursor() as \$id => \$data) {
+$createObjects
+        }
+
+        if (\$this->references) {
+            \$mandango = \$this->repository->getMandango();
+            \$metadata = \$mandango->getMetadata()->getClassInfo(\$this->repository->getDocumentClass());
+            foreach (\$this->references as \$referenceName) {
+                // one
+                if (isset(\$metadata['references_one'][\$referenceName])) {
+                    \$reference = \$metadata['references_one'][\$referenceName];
+                    \$field = \$reference['field'];
+
+                    \$ids = array();
+                    foreach (\$documents as \$document) {
+                        if (\$id = \$document->get(\$field)) {
+                            \$ids[] = \$id;
+                        }
+                    }
+                    if (\$ids) {
+                        \$mandango->getRepository(\$reference['class'])->find(array_unique(\$ids));
+                    }
+
+                    continue;
+                }
+
+                // many
+                if (isset(\$metadata['references_many'][\$referenceName])) {
+                    \$reference = \$metadata['references_many'][\$referenceName];
+                    \$field = \$reference['field'];
+
+                    \$ids = array();
+                    foreach (\$documents as \$document) {
+                        if (\$id = \$document->get(\$field)) {
+                            foreach (\$id as \$i) {
+                                \$ids[] = \$i;
+                            }
+                        }
+                    }
+                    if (\$ids) {
+                        \$mandango->getRepository(\$reference['class'])->find(array_unique(\$ids));
+                    }
+
+                    continue;
+                }
+
+                // invalid
+                throw new \RuntimeException(sprintf('The reference "%s" does not exist in the class "%s".', \$referenceName, \$documentClass));
+            }
+        }
+
+        return \$documents;
+EOF
+        );
+        $method->setDocComment(<<<EOF
+    /**
+     * {@inheritdoc}
+     */
+EOF
+        );
+        $this->definitions['query_base']->addMethod($method);
+    }
+
+    protected function queryCreateCursorMethodProcess()
+    {
+        if (!$this->configClass['inheritance']) {
+            return;
+        }
+
+        $field = $this->configClass['inheritance']['field'];
+        $value = $this->configClass['inheritance']['value'];
+
+        $method = new Method('public', 'createCursor', '', <<<EOF
+        \$criteria = \$this->criteria;
+        \$this->criteria['$field'] = '$value';
+
+        \$cursor = parent::createCursor();
+
+        \$this->criteria = \$criteria;
+
+        return \$cursor;
+EOF
+        );
+        $method->setDocComment(<<<EOF
+    /**
+     * {@inheritdoc}
+     */
+EOF
+        );
+        $this->definitions['query_base']->addMethod($method);
+    }
+
     /*
      * preGlobal
      */
+    protected function globalInheritableAndInheritanceProcess()
+    {
+        // inheritable
+        foreach ($this->configClasses as $class => &$configClass) {
+            if ($configClass['inheritable']) {
+                if (!is_array($configClass['inheritable'])) {
+                    throw new \RuntimeException(sprintf('The inheritable configuration of the class "%s" is not an array.', $class));
+                }
+
+                if (!isset($configClass['inheritable']['type'])) {
+                    throw new \RuntimeException(sprintf('The inheritable configuration of the class "%s" does not have type.', $class));
+                }
+
+                if (!in_array($configClass['inheritable']['type'], array('single'))) {
+                    throw new \RuntimeException(sprintf('The inheritable type "%s" of the class "%s" is not valid.', $configClass['inheritable']['type'], $class));
+                }
+
+                if ('single' == $configClass['inheritable']['type']) {
+                    if (!isset($configClass['inheritable']['field'])) {
+                        $configClass['inheritable']['field'] = 'type';
+                    }
+                    $configClass['inheritable']['values'] = array();
+                }
+            }
+        }
+
+        // inheritance
+        foreach ($this->configClasses as $class => &$configClass) {
+            if ($configClass['inheritance']) {
+                if (!isset($configClass['inheritance']['class'])) {
+                    throw new \RuntimeException(sprintf('The inheritable configuration of the class "%s" does not have class.', $class));
+                }
+                $inheritanceClass = $configClass['inheritance']['class'];
+
+                if (!$this->configClasses[$inheritanceClass]['inheritable']) {
+                    throw new \RuntimeException(sprintf('The class "%s" is not inheritable.', $configClass['inheritance']['class']));
+                }
+                $inheritable = $this->configClasses[$inheritanceClass]['inheritable'];
+
+                $configClass['inheritance']['type'] = $inheritable['type'];
+
+                if ('single' == $inheritable['type']) {
+                    if (!isset($configClass['inheritance']['value'])) {
+                        throw new \RuntimeException(sprintf('The inheritable configuration in the class "%s" does not have value.', $class));
+                    }
+                    $value = $configClass['inheritance']['value'];
+                    if (isset($this->configClasses[$inheritanceClass]['inheritable']['values'][$value])) {
+                        throw new \RuntimeException(sprintf('The value "%s" is in the single inheritance of the class "%s" more than once.', $value, $inheritanceClass));
+                    }
+                    $this->configClasses[$inheritanceClass]['inheritable']['values'][$value] = $class;
+
+                    $configClass['collection'] = $this->configClasses[$inheritanceClass]['collection'];
+                    $configClass['inheritance']['field'] = $inheritable['field'];
+                }
+            }
+        }
+    }
+
     protected function globalHasReferencesProcess()
     {
         do {

@@ -175,7 +175,8 @@ abstract class Repository
      */
     public function query(array $criteria = array())
     {
-        $query = new Query($this);
+        $class = $this->documentClass.'Query';
+        $query = new $class($this);
         $query->criteria($criteria);
 
         return $query;

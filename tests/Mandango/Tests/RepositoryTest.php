@@ -121,11 +121,14 @@ class RepositoryTest extends TestCase
     public function testQuery()
     {
         $query = \Model\Article::repository()->query();
-        $this->assertInstanceOf('Mandango\Query', $query);
+        $this->assertInstanceOf('Model\ArticleQuery', $query);
+
+        $query = \Model\Author::repository()->query();
+        $this->assertInstanceOf('Model\AuthorQuery', $query);
 
         $criteria = array('is_active' => true);
         $query = \Model\Article::repository()->query($criteria);
-        $this->assertInstanceOf('Mandango\Query', $query);
+        $this->assertInstanceOf('Model\ArticleQuery', $query);
         $this->assertSame($criteria, $query->getCriteria());
     }
 

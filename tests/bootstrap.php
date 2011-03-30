@@ -247,6 +247,26 @@ $configClasses = array(
             'field' => 'string',
         ),
     ),
+    // single inheritance
+    'Model\FormElement' => array(
+        'inheritable' => array('type' => 'single'),
+        'fields' => array(
+            'label'   => 'string',
+            'default' => 'raw',
+        ),
+    ),
+    'Model\TextareaFormElement' => array(
+        'inheritance' => array('class' => 'Model\FormElement', 'value' => 'textarea'),
+        'fields' => array(
+            'default' => 'string',
+        ),
+    ),
+    'Model\RadioFormElement' => array(
+        'inheritance' => array('class' => 'Model\FormElement', 'value' => 'radio'),
+        'fields' => array(
+            'options' => 'serialized',
+        ),
+    ),
 );
 
 use Mandango\Mondator\Mondator;

@@ -28,7 +28,7 @@ use Mandango\Repository;
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-class Query implements \Countable, \IteratorAggregate
+abstract class Query implements \Countable, \IteratorAggregate
 {
     protected $repository;
     protected $hash;
@@ -409,7 +409,9 @@ class Query implements \Countable, \IteratorAggregate
      *
      * @return array An array with all the results.
      */
-    public function all()
+    abstract public function all();
+
+    public function allOld()
     {
         $documentClass = $this->repository->getDocumentClass();
         $identityMap =& $this->repository->getIdentityMap()->allByReference();

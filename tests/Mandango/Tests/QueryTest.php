@@ -33,12 +33,12 @@ class QueryTest extends TestCase
         parent::setUp();
 
         $this->identityMap = \Model\Article::repository()->getIdentityMap();
-        $this->query = new Query(\Model\Article::repository());
+        $this->query = new \Model\ArticleQuery(\Model\Article::repository());
     }
 
     public function testConstructor()
     {
-        $query = new Query($repository = \Model\Category::repository());
+        $query = new \Model\CategoryQuery($repository = \Model\Category::repository());
         $this->assertSame($repository, $query->getRepository());
         $hash = $query->getHash();
         $this->assertInternalType('string', $hash);
@@ -310,14 +310,14 @@ class QueryTest extends TestCase
             $this->assertSame(array($this->query->getHash()), $article->getQueryHashes());
         }
 
-        $query = new Query(\Model\Article::repository());
+        $query = new \Model\ArticleQuery(\Model\Article::repository());
         $articles2 = $query->all();
         foreach ($articles2 as $key => $article2) {
             $this->assertSame($article2, $articles[$key]);
             $this->assertSame(array($this->query->getHash(), $query->getHash()), $article2->getQueryHashes());
         }
     }
-    
+
     public function testAllNullFields()
     {
         $articleRaw = array(
@@ -330,13 +330,13 @@ class QueryTest extends TestCase
             ),
         );
         \Model\Article::collection()->insert($articleRaw);
-        
+
         $article = \Model\Article::query()->fields(array('title' => 1, 'source.name' => 1))->one();
-        
+
         $articleRaw['title'] = 'foo';
         $articleRaw['source']['name'] = 'foobar';
         \Model\Article::collection()->save($articleRaw);
-        
+
         $this->assertNull($article->getTitle());
         $this->assertNull($article->getSource()->getName());
     }
