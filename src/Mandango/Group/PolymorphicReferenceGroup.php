@@ -36,13 +36,15 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
      * @param string                             $discriminatorField The discriminator field.
      * @param Mandango\Document\AbstractDocument $parent             The parent document.
      * @param string                             $field              The reference field.
+     * @param array|false                        $discriminatorMap   The discriminator map if exists, otherwise false.
      */
-    public function __construct($discriminatorField, $parent, $field)
+    public function __construct($discriminatorField, $parent, $field, $discriminatorMap = false)
     {
         parent::__construct($discriminatorField);
 
         Archive::set($this, 'parent', $parent);
         Archive::set($this, 'field', $field);
+        Archive::set($this, 'discriminator_map', $discriminatorMap);
     }
 
     /**
@@ -66,6 +68,16 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
     }
 
     /**
+     * Returns the discriminator map.
+     *
+     * @return array|false The discriminator map.
+     */
+    public function getDiscriminatorMap()
+    {
+        return Archive::get($this, 'discriminator_map');
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function doInitializeSavedData()
@@ -79,10 +91,16 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
     protected function doInitializeSaved(array $data)
     {
         $discriminatorField = $this->getDiscriminatorField();
+        $discriminatorMap = $this->getDiscriminatorMap();
 
         $ids = array();
         foreach ($data as $datum) {
-            $ids[$datum[$discriminatorField]][] = $datum['id'];
+            if ($discriminatorMap) {
+                $documentClass = $discriminatorMap[$datum[$discriminatorField]];
+            } else {
+                $documentClass = $datum[$discriminatorField];
+            }
+            $ids[$documentClass][] = $datum['id'];
         }
 
         $documents = array();

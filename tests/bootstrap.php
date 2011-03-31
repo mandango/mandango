@@ -31,6 +31,8 @@ $configClasses = array(
             'information_id' => 'reference_one',
             'like_ref'       => 'raw',
             'related_ref'    => 'raw',
+            'friend_ref'     => 'raw',
+            'elements_ref'   => 'raw',
         ),
         'embeddeds_one' => array(
             'source' => array('class' => 'Model\Source'),
@@ -41,11 +43,21 @@ $configClasses = array(
         'references_one' => array(
             'author'      => array('class' => 'Model\Author', 'field' => 'author_id'),
             'information' => array('class' => 'Model\ArticleInformation', 'field' => 'information_id'),
-            'like'        => array('polymorphic' => true, 'field' => 'like_ref')
+            'like'        => array('polymorphic' => true, 'field' => 'like_ref'),
+            'friend'      => array('polymorphic' => true, 'field' => 'friend_ref', 'discriminator_field' => 'name', 'discriminator_map' => array(
+                'au' => 'Model\Author',
+                'ct' => 'Model\Category',
+                'us' => 'Model\User',
+            )),
         ),
         'references_many' => array(
             'categories' => array('class' => 'Model\Category', 'field' => 'category_ids'),
             'related'    => array('polymorphic' => true, 'field' => 'related_ref'),
+            'elements'   => array('polymorphic' => true, 'field' => 'elements_ref', 'discriminator_field' => 'type', 'discriminator_map' => array(
+                'element'  => 'Model\FormElement',
+                'textarea' => 'Model\TextareaFormElement',
+                'radio'    => 'Model\RadioFormElement',
+            )),
         ),
         'relations_many_through' => array(
             'votes_users' => array('class' => 'Model\User', 'through' => 'Model\ArticleVote', 'local' => 'article_id', 'foreign' => 'user_id'),

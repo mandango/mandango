@@ -31,5 +31,13 @@ class PolymorphicReferenceGroupTest extends TestCase
         $group = new PolymorphicReferenceGroup('_mandango_document_class', $article = new \Model\Article(), 'related_ref');
         $this->assertSame($article, $group->getParent());
         $this->assertSame('related_ref', $group->getField());
+        $this->assertFalse($group->getDiscriminatorMap());
+
+        $discriminatorMap = array(
+            'au' => 'Model\Author',
+            'ct' => 'Model\Category',
+        );
+        $group = new PolymorphicReferenceGroup('_mandango_document_class', $article = new \Model\Article(), 'related_ref', $discriminatorMap);
+        $this->assertSame($discriminatorMap, $group->getDiscriminatorMap());
     }
 }

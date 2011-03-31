@@ -945,6 +945,28 @@ EOF;
             // polymorphic
             } else {
                 $discriminatorField = $reference['discriminator_field'];
+                $discriminatorMap = $reference['discriminator_map'];
+
+                // discriminator map
+                if ($discriminatorMap) {
+                    $discriminatorMapValues = \Mandango\Mondator\Dumper::exportArray($discriminatorMap, 16);
+                    $setDiscriminatorValue = <<<EOF
+            if (false === \$discriminatorValue = array_search(get_class(\$value), $discriminatorMapValues)) {
+                throw new \InvalidArgumentException(sprintf('The class "%s" is not a possible reference in the reference "$name" of the class "{$this->class}".', get_class(\$value)));
+            }
+EOF;
+                    $getDiscriminatorValue = <<<EOF
+            \$discriminatorMapValues = $discriminatorMapValues;
+            \$discriminatorValue = \$discriminatorMapValues[\$ref['$discriminatorField']];
+EOF;
+                } else {
+                    $setDiscriminatorValue = <<<EOF
+            \$discriminatorValue = get_class(\$value);
+EOF;
+                    $getDiscriminatorValue = <<<EOF
+            \$discriminatorValue = \$ref['$discriminatorField'];
+EOF;
+                }
 
                 // set
                 $setCode = <<<EOF
@@ -952,10 +974,16 @@ EOF;
             throw new \InvalidArgumentException('The reference is not a Mandango document.');
         }
 
-        \$this->$fieldSetter((null === \$value || \$value->isNew()) ? null : array(
-            '$discriminatorField' => get_class(\$value),
-            'id' => \$value->getId(),
-        ));
+        if (null === \$value || \$value->isNew()) {
+            \$fieldValue = null;
+        } else {
+$setDiscriminatorValue
+            \$fieldValue = array(
+                '$discriminatorField' => \$discriminatorValue,
+                'id' => \$value->getId(),
+            );
+        }
+        \$this->$fieldSetter(\$fieldValue);
 
         \$this->data['references_one']['$name'] = \$value;
 
@@ -978,7 +1006,8 @@ EOF;
             if (!\$ref = \$this->$fieldGetter()) {
                 return null;
             }
-            if (!\$document = call_user_func(array(\$ref['$discriminatorField'], 'find'), \$ref['id'])) {
+$getDiscriminatorValue
+            if (!\$document = call_user_func(array(\$discriminatorValue, 'find'), \$ref['id'])) {
                 throw new \RuntimeException('The reference "$name" does not exist.');
             }
             \$this->data['references_one']['$name'] = \$document;
@@ -1029,10 +1058,17 @@ EOF;
             // polymorphic
             } else {
                 $discriminatorField = $reference['discriminator_field'];
+                $discriminatorMap = $reference['discriminator_map'];
+
+                if ($discriminatorMap) {
+                    $discriminatorMap = \Mandango\Mondator\Dumper::exportArray($discriminatorMap, 16);
+                } else {
+                    $discriminatorMap = 'false';
+                }
 
                 $getCode = <<<EOF
         if (!isset(\$this->data['references_many']['$name'])) {
-            \$this->data['references_many']['$name'] = new \Mandango\Group\PolymorphicReferenceGroup('$discriminatorField', \$this, '{$reference['field']}');
+            \$this->data['references_many']['$name'] = new \Mandango\Group\PolymorphicReferenceGroup('$discriminatorField', \$this, '{$reference['field']}', $discriminatorMap);
         }
 
         return \$this->data['references_many']['$name'];
@@ -1070,11 +1106,29 @@ EOF;
             // polymorphic
             } else {
                 $discriminatorField = $reference['discriminator_field'];
+                $discriminatorMap = $reference['discriminator_map'];
+
+                // discriminator map
+                if ($discriminatorMap) {
+                    $discriminatorMapValues = \Mandango\Mondator\Dumper::exportArray($discriminatorMap, 20);
+                    $discriminatorValue = <<<EOF
+                    if (false === \$discriminatorValue = array_search(get_class(\$document), $discriminatorMapValues)) {
+                        throw new \RuntimeException(sprintf('The class "%s" is not a possible reference in the reference "$name" of the class "{$this->class}".', get_class(\$value)));
+                    }
+EOF;
+                } else {
+                    $discriminatorValue = <<<EOF
+                    \$discriminatorValue = get_class(\$document);
+EOF;
+                }
+
                 $referencesCode[] = <<<EOF
         if (isset(\$this->data['references_one']['$name']) && !isset(\$this->data['fields']['{$reference['field']}'])) {
+            \$document = \$this->data['references_one']['$name'];
+$discriminatorValue
             \$this->$fieldSetter(array(
-                '$discriminatorField' => get_class(\$this->data['references_one']['$name']),
-                'id' => \$this->data['references_one']['$name']->getId(),
+                '$discriminatorField' => \$discriminatorValue,
+                'id' => \$document->getId(),
             ));
         }
 EOF;
@@ -1107,6 +1161,25 @@ EOF;
             // polymorphic
             } else {
                 $discriminatorField = $reference['discriminator_field'];
+                $discriminatorMap = $reference['discriminator_map'];
+
+                // discriminator map
+                if ($discriminatorMap) {
+                    $discriminatorMapValues = \Mandango\Mondator\Dumper::exportArray($discriminatorMap, 20);
+                    $discriminatorMapValues = <<<EOF
+                \$discriminatorMapValues = $discriminatorMapValues;
+EOF;
+                    $discriminatorValue = <<<EOF
+                    if (false === \$discriminatorValue = array_search(get_class(\$document), \$discriminatorMapValues)) {
+                        throw new \RuntimeException(sprintf('The class "%s" is not a possible reference in the reference "$name" of the class "{$this->class}".', get_class(\$value)));
+                    }
+EOF;
+                } else {
+                    $discriminatorMapValues = '';
+                    $discriminatorValue = <<<EOF
+                    \$discriminatorValue = get_class(\$document);
+EOF;
+                }
 
                 $referencesCode[] = <<<EOF
         if (isset(\$this->data['references_many']['$name'])) {
@@ -1114,16 +1187,19 @@ EOF;
             \$add = \$group->getAdd();
             \$remove = \$group->getRemove();
             if (\$add || \$remove) {
+$discriminatorMapValues
                 \$ids = \$this->$fieldGetter();
                 foreach (\$add as \$document) {
+$discriminatorValue
                     \$ids[] = array(
-                        '$discriminatorField' => get_class(\$document),
+                        '$discriminatorField' => \$discriminatorValue,
                         'id' => \$document->getId(),
                     );
                 }
                 foreach (\$remove as \$document) {
+$discriminatorValue
                     if (false !== \$key = array_search(\$search = array(
-                        '$discriminatorField' => get_class(\$document),
+                        '$discriminatorField' => \$discriminatorValue,
                         'id' => \$document->getId(),
                     ), \$ids)) {
                         unset(\$ids[\$key]);
@@ -2590,6 +2666,9 @@ EOF
         } elseif (!empty($association['polymorphic'])) {
             if (empty($association['discriminator_field'])) {
                 $association['discriminator_field'] = '_mandango_document_class';
+            }
+            if (empty($association['discriminator_map'])) {
+                $association['discriminator_map'] = false;
             }
         } else {
             throw new \RuntimeException(sprintf('The association "%s" of the class "%s" does not have class and it is not polymorphic.', $name, $this->class));

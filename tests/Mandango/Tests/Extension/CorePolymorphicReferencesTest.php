@@ -29,13 +29,42 @@ class CorePolymorphicReferencesTest extends TestCase
     {
         $article = \Model\Article::create();
 
-        $author = \Model\Author::create();
-        $category = \Model\Category::create();
+        $author = \Model\Author::create()->setName('foo')->save();
+        $category = \Model\Category::create()->setName('foo')->save();
 
-        $article->setLike($author);
+        $this->assertSame($article, $article->setLike($author));
         $this->assertSame($author, $article->getLike());
+        $this->assertSame(array(
+            '_mandango_document_class' => 'Model\Author',
+            'id' => $author->getId(),
+        ), $article->getLikeRef());
         $article->setLike($category);
+        $this->assertSame(array(
+            '_mandango_document_class' => 'Model\Category',
+            'id' => $category->getId(),
+        ), $article->getLikeRef());
         $this->assertSame($category, $article->getLike());
+    }
+
+    public function testDocumentReferencesOneSetterGetterDiscriminatorMap()
+    {
+        $article = \Model\Article::create();
+
+        $author = \Model\Author::create()->setName('foo')->save();
+        $category = \Model\Category::create()->setName('foo')->save();
+
+        $this->assertSame($article, $article->setFriend($author));
+        $this->assertSame($author, $article->getFriend());
+        $this->assertSame(array(
+            'name' => 'au',
+            'id' => $author->getId(),
+        ), $article->getFriendRef());
+        $article->setFriend($category);
+        $this->assertSame(array(
+            'name' => 'ct',
+            'id' => $category->getId(),
+        ), $article->getFriendRef());
+        $this->assertSame($category, $article->getFriend());
     }
 
     public function testDocumentReferencesOneGetterQuery()
@@ -49,6 +78,19 @@ class CorePolymorphicReferencesTest extends TestCase
             'id' => $author->getId(),
         ));
         $this->assertSame($author, $article->getLike());
+    }
+
+    public function testDocumentReferencesOneGetterQueryDiscriminatorMap()
+    {
+        $category = \Model\Category::create()->setName('foo')->save();
+
+        $article = \Model\Article::create();
+        $this->assertNull($article->getLike());
+        $article->setFriendRef(array(
+            'name' => 'ct',
+            'id' => $category->getId(),
+        ));
+        $this->assertSame($category, $article->getFriend());
     }
 
     /**
@@ -69,6 +111,18 @@ class CorePolymorphicReferencesTest extends TestCase
             '_mandango_document_class' => 'Model\Author',
             'id' => $author->getId(),
         ), $article->getLikeRef());
+    }
+
+    public function testDocumentUpdateReferenceFieldsReferencesOneDiscriminatorMap()
+    {
+        $author = \Model\Author::create();
+        $article = \Model\Article::create()->setFriend($author);
+        $author->setId(new \MongoId('123'));
+        $article->updateReferenceFields();
+        $this->assertSame(array(
+            'name' => 'au',
+            'id' => $author->getId(),
+        ), $article->getFriendRef());
     }
 
     public function testDocumentReferencesManyGetter()
@@ -130,6 +184,54 @@ class CorePolymorphicReferencesTest extends TestCase
         ), $article->getRelatedRef());
     }
 
+    public function testDocumentUpdateReferenceFieldsReferencesManyNewDiscriminatorMap()
+    {
+        $article = \Model\Article::create();
+        $elements = $article->getElements();
+        $element1 = \Model\FormElement::create()->setId(new \MongoId('1'));
+        $element2 = \Model\FormElement::create()->setId(new \MongoId('2'));
+        $textareaElement1 = \Model\TextareaFormElement::create()->setId(new \MongoId('3'));
+        $radioElement1 = \Model\RadioFormElement::create()->setId(new \MongoId('4'));
+        $elements->add(array($element1, $element2, $textareaElement1, $radioElement1));
+
+        $article->updateReferenceFields();
+        $this->assertSame(array(
+            array('type' => 'element', 'id' => $element1->getId()),
+            array('type' => 'element', 'id' => $element2->getId()),
+            array('type' => 'textarea', 'id' => $textareaElement1->getId()),
+            array('type' => 'radio', 'id' => $radioElement1->getId()),
+        ), $article->getElementsRef());
+    }
+
+    public function testDocumentUpdateReferenceFieldsReferencesManyNotNewDiscriminatorMap()
+    {
+        $article = \Model\Article::create()->setDocumentData(array(
+            '_id' => new \MongoId('123'),
+            'elements_ref' => $elementsRef = array(
+                array('type' => 'element', 'id' => new \MongoId('1')),
+                array('type' => 'element', 'id' => new \MongoId('2')),
+                array('type' => 'textarea', 'id' => new \MongoId('3')),
+                array('type' => 'textarea', 'id' => new \MongoId('4')),
+            ),
+        ));
+        $elements = $article->getElements();
+        $add = array();
+        $elements->add($add[] = \Model\RadioFormElement::create()->setId(new \MongoId('1')));
+        $elements->add($add[] = \Model\FormElement::create()->setId(new \MongoId('5')));
+        $elements->add($add[] = \Model\FormElement::create()->setId(new \MongoId('6')));
+        $elements->remove(\Model\FormElement::create()->setId($elementsRef[1]['id']));
+        $elements->remove(\Model\TextareaFormElement::create()->setId($elementsRef[3]['id']));
+
+        $article->updateReferenceFields();
+        $this->assertSame(array(
+            array('type' => 'element', 'id' => $elementsRef[0]['id']),
+            array('type' => 'textarea', 'id' => $elementsRef[2]['id']),
+            array('type' => 'radio', 'id' => $add[0]->getId()),
+            array('type' => 'element', 'id' => $add[1]->getId()),
+            array('type' => 'element', 'id' => $add[2]->getId()),
+        ), $article->getElementsRef());
+    }
+
     /*
      * Related to Mandango\Group\PolymorphicReferenceMany
      */
@@ -160,5 +262,34 @@ class CorePolymorphicReferencesTest extends TestCase
             $categories[1],
             $users[8],
         ), $article->getRelated()->saved());
+    }
+
+    public function testReferencesManyQueryDiscriminatorMap()
+    {
+        $elements = array();
+        for ($i = 0; $i < 9; $i++) {
+            $elements[] = \Model\FormElement::create()->setLabel('Element'.$i)->save();
+        }
+        $textareaElements = array();
+        for ($i = 0; $i < 9; $i++) {
+            $textareaElements[] = \Model\TextareaFormElement::create()->setLabel('Textarea'.$i)->save();
+        }
+        $radioElements = array();
+        for ($i = 0; $i < 9; $i++) {
+            $radioElements[] = \Model\RadioFormElement::create()->setLabel('Radio'.$i)->save();
+        }
+
+        $elementsRef = array();
+        $elementsRef[] = array('type' => 'element', 'id' => $elements[3]->getId());
+        $elementsRef[] = array('type' => 'element', 'id' => $elements[5]->getId());
+        $elementsRef[] = array('type' => 'textarea', 'id' => $textareaElements[1]->getId());
+        $elementsRef[] = array('type' => 'radio', 'id' => $radioElements[8]->getId());
+        $article = \Model\Article::create()->setElementsRef($elementsRef);
+        $this->assertSame(array(
+            $elements[3],
+            $elements[5],
+            $textareaElements[1],
+            $radioElements[8],
+        ), $article->getElements()->saved());
     }
 }
