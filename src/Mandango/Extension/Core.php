@@ -152,6 +152,9 @@ class Core extends Extension
             $this->repositoryConnectionNamePropertyProcess();
             $this->repositoryCollectionNamePropertyProcess();
 
+            $this->repositoryCountMethodProcess();
+            $this->repositoryRemoveMethodProcess();
+
             $this->repositorySaveMethodProcess();
             $this->repositoryDeleteMethodProcess();
             $this->repositoryEnsureIndexesMethodProcess();
@@ -1851,6 +1854,54 @@ EOF
     {
         $property = new Property('protected', 'collectionName', $this->configClass['collection']);
         $this->definitions['repository_base']->addProperty($property);
+    }
+
+    protected function repositoryCountMethodProcess()
+    {
+        if (!$this->configClass['inheritance'] || 'single' != $this->configClass['inheritance']['type']) {
+            return;
+        }
+
+        $field = $this->configClass['inheritance']['field'];
+        $value = $this->configClass['inheritance']['value'];
+
+        $method = new Method('public', 'count', 'array $query = array()', <<<EOF
+        \$query = array_merge(\$query, array('$field' => '$value'));
+
+        return parent::count(\$query);
+EOF
+        );
+        $method->setDocComment(<<<EOF
+    /**
+     * {@inheritdoc}
+     */
+EOF
+        );
+        $this->definitions['repository_base']->addMethod($method);
+    }
+
+    protected function repositoryRemoveMethodProcess()
+    {
+        if (!$this->configClass['inheritance'] || 'single' != $this->configClass['inheritance']['type']) {
+            return;
+        }
+
+        $field = $this->configClass['inheritance']['field'];
+        $value = $this->configClass['inheritance']['value'];
+
+        $method = new Method('public', 'remove', 'array $query = array()', <<<EOF
+        \$query = array_merge(\$query, array('$field' => '$value'));
+
+        return parent::remove(\$query);
+EOF
+        );
+        $method->setDocComment(<<<EOF
+    /**
+     * {@inheritdoc}
+     */
+EOF
+        );
+        $this->definitions['repository_base']->addMethod($method);
     }
 
     protected function repositorySaveMethodProcess()

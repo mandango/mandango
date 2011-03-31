@@ -134,13 +134,6 @@ class CoreSingleInheritanceTest extends TestCase
         ), $document->toArray());
     }
 
-    public function testRepositoryCollectionName()
-    {
-        $this->assertSame('model_form_element', \Model\FormElement::repository()->getCollectionName());
-        $this->assertSame('model_form_element', \Model\TextareaFormElement::repository()->getCollectionName());
-        $this->assertSame('model_form_element', \Model\RadioFormElement::repository()->getCollectionName());
-    }
-
     public function testDocumentQueryForSave()
     {
         $formElement = \Model\FormElement::create()->setLabel(123)->setDefault(234);
@@ -170,6 +163,62 @@ class CoreSingleInheritanceTest extends TestCase
             'default' => 678,
             'options' => serialize($options),
         ), $radioFormElement->queryForSave());
+    }
+
+    public function testRepositoryCollectionName()
+    {
+        $this->assertSame('model_form_element', \Model\FormElement::repository()->getCollectionName());
+        $this->assertSame('model_form_element', \Model\TextareaFormElement::repository()->getCollectionName());
+        $this->assertSame('model_form_element', \Model\RadioFormElement::repository()->getCollectionName());
+    }
+
+    public function testRepositoryCount()
+    {
+        $formElements = array();
+        for ($i = 0; $i < 5; $i++) {
+            $formElements[] = \Model\FormElement::create()->setLabel('Element'.$i)->save();
+        }
+
+        $textareaFormElements = array();
+        for ($i = 0; $i < 3; $i++) {
+            $textareaFormElements[] = \Model\TextareaFormElement::create()->setLabel('Textarea'.$i)->save();
+        }
+
+        $radioFormElements = array();
+        for ($i = 0; $i < 1; $i++) {
+            $radioFormElements[] = \Model\RadioFormElement::create()->setLabel('Radio'.$i)->save();
+        }
+
+        $this->assertSame(9, \Model\FormElement::repository()->count());
+        $this->assertSame(3, \Model\FormElement::repository()->count(array('label' => new \MongoRegex('/^Text/'))));
+        $this->assertSame(3, \Model\TextareaFormElement::repository()->count());
+        $this->assertSame(0, \Model\TextareaFormElement::repository()->count(array('label' => new \MongoRegex('/^R/'))));
+        $this->assertSame(1, \Model\RadioFormElement::repository()->count());
+    }
+
+    public function testRepositoryRemove($value='')
+    {
+        $formElements = array();
+        for ($i = 0; $i < 5; $i++) {
+            $formElements[] = \Model\FormElement::create()->setLabel('Element'.$i)->save();
+        }
+
+        $textareaFormElements = array();
+        for ($i = 0; $i < 3; $i++) {
+            $textareaFormElements[] = \Model\TextareaFormElement::create()->setLabel('Textarea'.$i)->save();
+        }
+
+        $radioFormElements = array();
+        for ($i = 0; $i < 1; $i++) {
+            $radioFormElements[] = \Model\RadioFormElement::create()->setLabel('Radio'.$i)->save();
+        }
+
+        \Model\FormElement::repository()->remove(array('label' => 'Textarea0'));
+        $this->assertSame(8, \Model\FormElement::collection()->count());
+        \Model\TextareaFormElement::repository()->remove(array('label' => new \MongoRegex('/^Element/')));
+        $this->assertSame(8, \Model\FormElement::collection()->count());
+        \Model\TextareaFormElement::repository()->remove();
+        $this->assertSame(6, \Model\TextareaFormElement::collection()->count());
     }
 
     public function testQueryAll()
