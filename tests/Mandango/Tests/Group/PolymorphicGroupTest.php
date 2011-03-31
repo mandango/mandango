@@ -19,33 +19,26 @@
  * along with Mandango. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Mandango\Group;
+namespace Mandango\Tests\Group;
 
-use Mandango\Archive;
-use Mandango\Document\Document;
+use Mandango\Tests\TestCase;
+use Mandango\Group\PolymorphicGroup as BasePolymorphicGroup;
 
-/**
- * Group.
- *
- * @author Pablo Díez <pablodip@gmail.com>
- */
-abstract class Group extends AbstractGroup
+class PolymorphicGroup extends BasePolymorphicGroup
 {
-    /**
-     * Constructor.
-     *
-     * @param string $documentClass The document class.
-     */
-    public function __construct($documentClass)
-    {
-        Archive::set($this, 'document_class', $documentClass);
-    }
+    public $forSaved = array();
 
-    /**
-     * Returns the document class.
-     */
-    public function getDocumentClass()
+    protected function doInitializeSavedData()
     {
-        return Archive::get($this, 'document_class');
+        return $this->forSaved;
+    }
+}
+
+class PolymorphicGroupTest extends TestCase
+{
+    public function testConstructor()
+    {
+        $group = new PolymorphicGroup('my_discriminator_field');
+        $this->assertSame('my_discriminator_field', $group->getDiscriminatorField());
     }
 }

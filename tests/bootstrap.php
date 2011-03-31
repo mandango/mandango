@@ -29,6 +29,8 @@ $configClasses = array(
             'author_id'      => 'reference_one',
             'category_ids'   => 'reference_many',
             'information_id' => 'reference_one',
+            'like_ref'       => 'raw',
+            'related_ref'    => 'raw',
         ),
         'embeddeds_one' => array(
             'source' => array('class' => 'Model\Source'),
@@ -39,9 +41,11 @@ $configClasses = array(
         'references_one' => array(
             'author'      => array('class' => 'Model\Author', 'field' => 'author_id'),
             'information' => array('class' => 'Model\ArticleInformation', 'field' => 'information_id'),
+            'like'        => array('polymorphic' => true, 'field' => 'like_ref')
         ),
         'references_many' => array(
             'categories' => array('class' => 'Model\Category', 'field' => 'category_ids'),
+            'related'    => array('polymorphic' => true, 'field' => 'related_ref'),
         ),
         'relations_many_through' => array(
             'votes_users' => array('class' => 'Model\User', 'through' => 'Model\ArticleVote', 'local' => 'article_id', 'foreign' => 'user_id'),

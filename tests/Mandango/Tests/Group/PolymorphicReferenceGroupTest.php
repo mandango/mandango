@@ -19,33 +19,17 @@
  * along with Mandango. If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Mandango\Group;
+namespace Mandango\Tests\Group;
 
-use Mandango\Archive;
-use Mandango\Document\Document;
+use Mandango\Tests\TestCase;
+use Mandango\Group\PolymorphicReferenceGroup;
 
-/**
- * Group.
- *
- * @author Pablo Díez <pablodip@gmail.com>
- */
-abstract class Group extends AbstractGroup
+class PolymorphicReferenceGroupTest extends TestCase
 {
-    /**
-     * Constructor.
-     *
-     * @param string $documentClass The document class.
-     */
-    public function __construct($documentClass)
+    public function testConstructor()
     {
-        Archive::set($this, 'document_class', $documentClass);
-    }
-
-    /**
-     * Returns the document class.
-     */
-    public function getDocumentClass()
-    {
-        return Archive::get($this, 'document_class');
+        $group = new PolymorphicReferenceGroup('_mandango_document_class', $article = new \Model\Article(), 'related_ref');
+        $this->assertSame($article, $group->getParent());
+        $this->assertSame('related_ref', $group->getField());
     }
 }

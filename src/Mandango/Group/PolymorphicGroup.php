@@ -22,30 +22,31 @@
 namespace Mandango\Group;
 
 use Mandango\Archive;
-use Mandango\Document\Document;
 
 /**
- * Group.
+ * PolymorphicGroup.
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-abstract class Group extends AbstractGroup
+abstract class PolymorphicGroup extends AbstractGroup
 {
     /**
      * Constructor.
      *
-     * @param string $documentClass The document class.
+     * @param string $discriminatorField The discriminator field.
      */
-    public function __construct($documentClass)
+    public function __construct($discriminatorField)
     {
-        Archive::set($this, 'document_class', $documentClass);
+        Archive::set($this, 'discriminator_field', $discriminatorField);
     }
 
     /**
-     * Returns the document class.
+     * Returns the discriminator field.
+     *
+     * @return string The discriminator field.
      */
-    public function getDocumentClass()
+    public function getDiscriminatorField()
     {
-        return Archive::get($this, 'document_class');
+        return Archive::get($this, 'discriminator_field');
     }
 }

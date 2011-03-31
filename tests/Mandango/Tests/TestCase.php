@@ -78,6 +78,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->db = $this->connection->getMongoDB();
 
         foreach ($this->db->listCollections() as $collection) {
+            $collection->deleteIndexes();
             $collection->drop();
         }
 

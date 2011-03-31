@@ -896,8 +896,10 @@ EOF
             $fieldSetter = 'set'.Inflector::camelize($reference['field']);
             $fieldGetter = 'get'.Inflector::camelize($reference['field']);
 
-            // setter
-            $method = new Method('public', 'set'.Inflector::camelize($name), '$value', <<<EOF
+            // normal
+            if (isset($reference['class'])) {
+                // set
+                $setCode = <<<EOF
         if (null !== \$value && !\$value instanceof \\{$reference['class']}) {
             throw new \InvalidArgumentException('The "$name" reference is not an instance of {$reference['class']}.');
         }
@@ -907,9 +909,8 @@ EOF
         \$this->data['references_one']['$name'] = \$value;
 
         return \$this;
-EOF
-            );
-            $method->setDocComment(<<<EOF
+EOF;
+                $setDocComment = <<<EOF
     /**
      * Set the "$name" reference.
      *
@@ -919,12 +920,9 @@ EOF
      *
      * @throws \InvalidArgumentException If the class is not an instance of {$reference['class']}.
      */
-EOF
-            );
-            $this->definitions['document_base']->addMethod($method);
-
-            // getter
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+EOF;
+                // get
+                $getCode = <<<EOF
         if (!isset(\$this->data['references_one']['$name'])) {
             if (!\$id = \$this->$fieldGetter()) {
                 return null;
@@ -936,16 +934,75 @@ EOF
         }
 
         return \$this->data['references_one']['$name'];
-EOF
-            );
-            $method->setDocComment(<<<EOF
+EOF;
+                $getDocComment = <<<EOF
     /**
      * Returns the "$name" reference.
      *
      * @return {$reference['class']}|null The reference or null if it does not exist.
      */
-EOF
-            );
+EOF;
+            // polymorphic
+            } else {
+                $discriminatorField = $reference['discriminator_field'];
+
+                // set
+                $setCode = <<<EOF
+        if (!\$value instanceof \Mandango\Document\Document) {
+            throw new \InvalidArgumentException('The reference is not a Mandango document.');
+        }
+
+        \$this->$fieldSetter((null === \$value || \$value->isNew()) ? null : array(
+            '$discriminatorField' => get_class(\$value),
+            'id' => \$value->getId(),
+        ));
+
+        \$this->data['references_one']['$name'] = \$value;
+
+        return \$this;
+EOF;
+                $setDocComment = <<<EOF
+    /**
+     * Set the "$name" polymorphic reference.
+     *
+     * @param Mandango\Document\Document|null \$value The reference, or null.
+     *
+     * @return {$this->class} The document (fluent interface).
+     *
+     * @throws \InvalidArgumentException If the class is not an instance of Mandango\Document\Document.
+     */
+EOF;
+                // get
+                $getCode = <<<EOF
+        if (!isset(\$this->data['references_one']['$name'])) {
+            if (!\$ref = \$this->$fieldGetter()) {
+                return null;
+            }
+            if (!\$document = call_user_func(array(\$ref['$discriminatorField'], 'find'), \$ref['id'])) {
+                throw new \RuntimeException('The reference "$name" does not exist.');
+            }
+            \$this->data['references_one']['$name'] = \$document;
+        }
+
+        return \$this->data['references_one']['$name'];
+EOF;
+                $getDocComment = <<<EOF
+    /**
+     * Returns the "$name" polymorphic reference.
+     *
+     * @return Mandango\Document\Document|null The reference or null if it does not exist.
+     */
+EOF;
+            }
+
+            // setter
+            $method = new Method('public', 'set'.Inflector::camelize($name), '$value', $setCode);
+            $method->setDocComment($setDocComment);
+            $this->definitions['document_base']->addMethod($method);
+
+            // getter
+            $method = new Method('public', 'get'.Inflector::camelize($name), '', $getCode);
+            $method->setDocComment($getDocComment);
             $this->definitions['document_base']->addMethod($method);
         }
     }
@@ -953,23 +1010,45 @@ EOF
     protected function documentReferencesManyProcess()
     {
         foreach ($this->configClass['references_many'] as $name => $reference) {
-            // getter
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+            // normal
+            if (isset($reference['class'])) {
+                $getCode = <<<EOF
         if (!isset(\$this->data['references_many']['$name'])) {
             \$this->data['references_many']['$name'] = new \Mandango\Group\ReferenceGroup('{$reference['class']}', \$this, '{$reference['field']}');
         }
 
         return \$this->data['references_many']['$name'];
-EOF
-            );
-            $method->setDocComment(<<<EOF
+EOF;
+                $getDocComment = <<<EOF
     /**
      * Returns the "$name" reference.
      *
      * @return Mandango\Group\ReferenceGroup The reference.
      */
-EOF
-            );
+EOF;
+            // polymorphic
+            } else {
+                $discriminatorField = $reference['discriminator_field'];
+
+                $getCode = <<<EOF
+        if (!isset(\$this->data['references_many']['$name'])) {
+            \$this->data['references_many']['$name'] = new \Mandango\Group\PolymorphicReferenceGroup('$discriminatorField', \$this, '{$reference['field']}');
+        }
+
+        return \$this->data['references_many']['$name'];
+EOF;
+                $getDocComment = <<<EOF
+    /**
+     * Returns the "$name" polymorphic reference.
+     *
+     * @return Mandango\Group\PolymorphicReferenceGroup The reference.
+     */
+EOF;
+            }
+
+            // getter
+            $method = new Method('public', 'get'.Inflector::camelize($name), '', $getCode);
+            $method->setDocComment($getDocComment);
             $this->definitions['document_base']->addMethod($method);
         }
     }
@@ -981,18 +1060,34 @@ EOF
         foreach ($this->configClass['references_one'] as $name => $reference) {
             $fieldSetter = 'set'.Inflector::camelize($reference['field']);
 
-            $referencesCode[] = <<<EOF
+            // normal
+            if (isset($reference['class'])) {
+                $referencesCode[] = <<<EOF
         if (isset(\$this->data['references_one']['$name']) && !isset(\$this->data['fields']['{$reference['field']}'])) {
             \$this->$fieldSetter(\$this->data['references_one']['$name']->getId());
         }
 EOF;
+            // polymorphic
+            } else {
+                $discriminatorField = $reference['discriminator_field'];
+                $referencesCode[] = <<<EOF
+        if (isset(\$this->data['references_one']['$name']) && !isset(\$this->data['fields']['{$reference['field']}'])) {
+            \$this->$fieldSetter(array(
+                '$discriminatorField' => get_class(\$this->data['references_one']['$name']),
+                'id' => \$this->data['references_one']['$name']->getId(),
+            ));
+        }
+EOF;
+            }
         }
         // references many
         foreach ($this->configClass['references_many'] as $name => $reference) {
             $fieldSetter = 'set'.Inflector::camelize($reference['field']);
             $fieldGetter = 'get'.Inflector::camelize($reference['field']);
 
-            $referencesCode[] = <<<EOF
+            // normal
+            if (isset($reference['class'])) {
+                $referencesCode[] = <<<EOF
         if (isset(\$this->data['references_many']['$name'])) {
             \$group = \$this->data['references_many']['$name'];
             \$add = \$group->getAdd();
@@ -1009,6 +1104,36 @@ EOF;
             }
         }
 EOF;
+            // polymorphic
+            } else {
+                $discriminatorField = $reference['discriminator_field'];
+
+                $referencesCode[] = <<<EOF
+        if (isset(\$this->data['references_many']['$name'])) {
+            \$group = \$this->data['references_many']['$name'];
+            \$add = \$group->getAdd();
+            \$remove = \$group->getRemove();
+            if (\$add || \$remove) {
+                \$ids = \$this->$fieldGetter();
+                foreach (\$add as \$document) {
+                    \$ids[] = array(
+                        '$discriminatorField' => get_class(\$document),
+                        'id' => \$document->getId(),
+                    );
+                }
+                foreach (\$remove as \$document) {
+                    if (false !== \$key = array_search(\$search = array(
+                        '$discriminatorField' => get_class(\$document),
+                        'id' => \$document->getId(),
+                    ), \$ids)) {
+                        unset(\$ids[\$key]);
+                    }
+                }
+                \$this->$fieldSetter(\$ids ? array_values(\$ids) : null);
+            }
+        }
+EOF;
+            }
         }
         $referencesCode = implode("\n", $referencesCode);
 
@@ -1061,6 +1186,10 @@ EOF
         // references one
         $referencesOneCode = array();
         foreach ($this->configClass['references_one'] as $name => $reference) {
+            if (!isset($reference['class'])) {
+                continue;
+            }
+
             $referencesOneCode[] = <<<EOF
         if (isset(\$this->data['references_one']['$name'])) {
             \$this->data['references_one']['$name']->save();
@@ -1072,6 +1201,10 @@ EOF;
         // references many
         $referencesManyCode = array();
         foreach ($this->configClass['references_many'] as $name => $reference) {
+            if (!isset($reference['class'])) {
+                continue;
+            }
+
             $referencesManyCode[] = <<<EOF
         if (isset(\$this->data['references_many']['$name'])) {
             \$group = \$this->data['references_many']['$name'];
@@ -2446,18 +2579,20 @@ EOF
 
     protected function parseAndCheckAssociationClass(&$association, $name)
     {
-        if (is_string($association)) {
-            $association = array('class' => $association);
-        }
-
         if (!is_array($association)) {
             throw new \RuntimeException(sprintf('The association "%s" of the class "%s" is not an array or string.', $name, $this->class));
         }
-        if (!isset($association['class'])) {
-            throw new \RuntimeException(sprintf('The association "%s" of the class "%s" does not have class.', $name, $this->class));
-        }
-        if (!is_string($association['class'])) {
-            throw new \RuntimeException(sprintf('The class of the association "%s" of the class "%s" is not an string.', $name, $this->class));
+
+        if (!empty($association['class'])) {
+            if (!is_string($association['class'])) {
+                throw new \RuntimeException(sprintf('The class of the association "%s" of the class "%s" is not an string.', $name, $this->class));
+            }
+        } elseif (!empty($association['polymorphic'])) {
+            if (empty($association['discriminator_field'])) {
+                $association['discriminator_field'] = '_mandango_document_class';
+            }
+        } else {
+            throw new \RuntimeException(sprintf('The association "%s" of the class "%s" does not have class and it is not polymorphic.', $name, $this->class));
         }
     }
 }
