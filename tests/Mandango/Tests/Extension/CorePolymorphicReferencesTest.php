@@ -125,6 +125,19 @@ class CorePolymorphicReferencesTest extends TestCase
         ), $article->getFriendRef());
     }
 
+    public function testDocumentQueryForSaveReferencesOne()
+    {
+        $author = \Model\Author::create()->setName('pablodip')->save();
+        $article = \Model\Article::create()->setLike($author);
+
+        $this->assertSame(array(
+            'like_ref' => array(
+                '_mandango_document_class' => 'Model\Author',
+                'id' => $author->getId(),
+            ),
+        ), $article->queryForSave());
+    }
+
     public function testDocumentReferencesManyGetter()
     {
         $article = \Model\Article::create();
@@ -291,5 +304,27 @@ class CorePolymorphicReferencesTest extends TestCase
             $textareaElements[1],
             $radioElements[8],
         ), $article->getElements()->saved());
+    }
+
+    public function testDocumentQueryForSaveReferencesMany()
+    {
+        $article = \Model\Article::create();
+        $related = $article->getRelated();
+        $author = \Model\Author::create()->setName('foo')->save();
+        $category = \Model\Category::create()->setName('bar')->save();
+        $related->add(array($author, $category));
+
+        $this->assertSame(array(
+            'related_ref' => array(
+                array(
+                    '_mandango_document_class' => 'Model\Author',
+                    'id' => $author->getId(),
+                ),
+                array(
+                    '_mandango_document_class' => 'Model\Category',
+                    'id' => $category->getId(),
+                ),
+            ),
+        ), $article->queryForSave());
     }
 }

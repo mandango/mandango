@@ -19,20 +19,13 @@ $configClasses = array(
     'Model\Article' => array(
         'collection' => 'articles',
         'fields' => array(
-            'title'          => 'string',
-            'content'        => 'string',
-            'note'           => 'string',
-            'line'           => 'string',
-            'text'           => 'string',
-            'is_active'      => 'boolean',
-            'date'           => 'date',
-            'author_id'      => 'reference_one',
-            'category_ids'   => 'reference_many',
-            'information_id' => 'reference_one',
-            'like_ref'       => 'raw',
-            'related_ref'    => 'raw',
-            'friend_ref'     => 'raw',
-            'elements_ref'   => 'raw',
+            'title'     => 'string',
+            'content'   => 'string',
+            'note'      => 'string',
+            'line'      => 'string',
+            'text'      => 'string',
+            'is_active' => 'boolean',
+            'date'      => 'date',
         ),
         'embeddeds_one' => array(
             'source' => array('class' => 'Model\Source'),
@@ -82,8 +75,6 @@ $configClasses = array(
     ),
     'Model\ArticleVote' => array(
         'fields' => array(
-            'article_id' => 'reference_one',
-            'user_id'    => 'reference_one',
         ),
         'references_one' => array(
             'article' => array('class' => 'Model\Article', 'field' => 'article_id'),
@@ -113,8 +104,6 @@ $configClasses = array(
             'text' => 'string',
             'note' => 'string',
             'line' => 'string',
-            'author_id'    => 'reference_one',
-            'category_ids' => 'reference_many',
         ),
         'references_one' => array(
             'author' => array('class' => 'Model\Author', 'field' => 'author_id'),
@@ -160,8 +149,6 @@ $configClasses = array(
             'text' => 'string',
             'note' => 'string',
             'line' => 'string',
-            'author_id'    => 'reference_one',
-            'category_ids' => 'reference_many',
         ),
         'references_one' => array(
             'author' => array('class' => 'Model\Author', 'field' => 'author_id'),
@@ -190,8 +177,7 @@ $configClasses = array(
     // reference to same class
     'Model\Message' => array(
         'fields' => array(
-            'author'      => 'string',
-            'reply_to_id' => 'reference_one',
+            'author' => 'string',
         ),
         'references_one' => array(
             'reply_to' => array('class' => 'Model\Message', 'field' => 'reply_to_id'),

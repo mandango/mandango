@@ -349,8 +349,13 @@ class Core extends Extension
             $this->parseAndCheckAssociationClass($reference, $name);
 
             if (!isset($reference['field'])) {
-                $reference['field'] = Inflector::fieldForClass($reference['class']);
+                throw new \RuntimeException(sprintf('The reference one "%s" of the class "%s" does not have field.', $name, $this->class));
             }
+            if (isset($this->configClass['fields'][$reference['field']])) {
+                throw new \RuntimeException(sprintf('The field "%s" of the reference one "%s" of the class "%s" already exists.', $reference['field'], $name, $this->class));
+            }
+            $type = isset($reference['class']) ? 'reference_one' : 'raw';
+            $this->configClass['fields'][$reference['field']] = array('type' => $type);
         }
 
         // many
@@ -358,8 +363,13 @@ class Core extends Extension
             $this->parseAndCheckAssociationClass($reference, $name);
 
             if (!isset($reference['field'])) {
-                $reference['field'] = Inflector::pluralFieldForClass($reference['class']);
+                throw new \RuntimeException(sprintf('The reference many "%s" of the class "%s" does not have field.', $name, $this->class));
             }
+            if (isset($this->configClass['fields'][$reference['field']])) {
+                throw new \RuntimeException(sprintf('The field "%s" of the reference many "%s" of the class "%s" already exists.', $reference['field'], $name, $this->class));
+            }
+            $type = isset($reference['class']) ? 'reference_many' : 'raw';
+            $this->configClass['fields'][$reference['field']] = array('type' => $type);
         }
     }
 
