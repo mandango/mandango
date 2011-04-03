@@ -106,16 +106,24 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @param array $criteria The criteria.
      *
      * @return Mandango\Query The query instance (fluent interface).
-     *
-     * @throws \InvalidArgumentException If the criteria is not an array or null.
      */
-    public function criteria($criteria)
+    public function criteria(array $criteria)
     {
-        if (null !== $criteria && !is_array($criteria)) {
-            throw new \InvalidArgumentException(sprintf('The criteria "%s" is not valid.', $criteria));
-        }
-
         $this->criteria = $criteria;
+
+        return $this;
+    }
+
+    /**
+     * Merges a criteria with the current one.
+     *
+     * @param array $criteria The criteria.
+     *
+     * @return Mandango\Query The query instance (fluent interface).
+     */
+    public function mergeCriteria(array $criteria)
+    {
+        $this->criteria = null === $this->criteria ? $criteria : array_merge($this->criteria, $criteria);
 
         return $this;
     }
@@ -136,15 +144,9 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @param array $fields The fields.
      *
      * @return Mandango\Query The query instance (fluent interface).
-     *
-     * @throws \InvalidArgumentException If the fields are not an array or null.
      */
     public function fields($fields)
     {
-        if (null !== $fields && !is_array($fields)) {
-            throw new \InvalidArgumentException(sprintf('The fields "%s" are not valid.', $fields));
-        }
-
         $this->fields = $fields;
 
         return $this;

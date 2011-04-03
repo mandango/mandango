@@ -70,13 +70,21 @@ class QueryTest extends TestCase
         $this->assertSame($criteria, $query->getCriteria());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @dataProvider      providerNotArrayOrNull
-     */
-    public function testCriteriaNotArrayOrNull($value)
+    public function testMergeCriteria()
     {
-        $this->query->criteria($value);
+        $query = $this->query;
+
+        $criteria1 = array('is_active' => true);
+        $this->assertSame($query, $query->mergeCriteria($criteria1));
+        $this->assertSame($criteria1, $query->getCriteria());
+
+        $criteria2 = array('author' => new \MongoId('123'));
+        $query->mergeCriteria($criteria2);
+        $this->assertSame(array('is_active' => true, 'author' => $criteria2['author']), $query->getCriteria());
+
+        $criteria3 = array('is_active' => false);
+        $query->mergeCriteria($criteria3);
+        $this->assertSame(array('is_active' => false, 'author' => $criteria2['author']), $query->getCriteria());
     }
 
     public function testFields()
@@ -91,15 +99,6 @@ class QueryTest extends TestCase
         $fields = array('_id' => 1);
         $query->fields($fields);
         $this->assertSame($fields, $query->getFields());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @dataProvider      providerNotArrayOrNull
-     */
-    public function testFieldsNotArrayOrNull($value)
-    {
-        $this->query->fields($value);
     }
 
     public function testReferences()
