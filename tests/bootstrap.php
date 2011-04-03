@@ -26,6 +26,7 @@ $configClasses = array(
             'text'      => 'string',
             'is_active' => 'boolean',
             'date'      => 'date',
+            'database'  => array('alias' => 'basatos', 'type' => 'string'),
         ),
         'embeddeds_one' => array(
             'source' => array('class' => 'Model\Source'),
@@ -149,6 +150,7 @@ $configClasses = array(
             'text' => 'string',
             'note' => 'string',
             'line' => 'string',
+            'from' => array('alias' => 'desde', 'type' => 'string'),
         ),
         'references_one' => array(
             'author' => array('class' => 'Model\Author', 'field' => 'author_id'),

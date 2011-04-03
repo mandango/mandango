@@ -78,7 +78,7 @@ class CoreDocumentTest extends TestCase
         $this->assertNull($article->getNote());
     }
 
-    public function testFieldGetterSaveFieldsCacheQuering()
+    public function testFieldGetterSaveFieldsQueryCache()
     {
         $articleRaw = array(
             'title'   => 'foo',

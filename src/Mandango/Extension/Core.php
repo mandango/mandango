@@ -329,17 +329,25 @@ class Core extends Extension
         }
         unset($field);
 
-        foreach ($this->configClass['fields'] as $name => $field) {
+        foreach ($this->configClass['fields'] as $name => &$field) {
             if (!is_array($field)) {
                 throw new \RuntimeException(sprintf('The field "%s" of the class "%s" is not a string or array.', $name, $this->class));
             }
+
             if (!isset($field['type'])) {
                 throw new \RuntimeException(sprintf('The field "%s" of the class "%s" does not have type.', $name, $this->class));
             }
             if (!TypeContainer::has($field['type'])) {
                 throw new \RuntimeException(sprintf('The type "%s" of the field "%s" of the class "%s" does not exists.', $field['type'], $name, $this->class));
             }
+
+            if (!isset($field['alias'])) {
+                $field['alias'] = $name;
+            } elseif (!is_string($field['alias'])) {
+                throw new \RuntimeException(sprintf('The alias of the field "%s" of the class "%s" is not an string.', $name, $this->class));
+            }
         }
+        unset($field);
     }
 
     protected function parseAndCheckReferencesProcess()
@@ -355,7 +363,7 @@ class Core extends Extension
                 throw new \RuntimeException(sprintf('The field "%s" of the reference one "%s" of the class "%s" already exists.', $reference['field'], $name, $this->class));
             }
             $type = isset($reference['class']) ? 'reference_one' : 'raw';
-            $this->configClass['fields'][$reference['field']] = array('type' => $type);
+            $this->configClass['fields'][$reference['field']] = array('type' => $type, 'alias' => $reference['field']);
         }
 
         // many
@@ -369,7 +377,7 @@ class Core extends Extension
                 throw new \RuntimeException(sprintf('The field "%s" of the reference many "%s" of the class "%s" already exists.', $reference['field'], $name, $this->class));
             }
             $type = isset($reference['class']) ? 'reference_many' : 'raw';
-            $this->configClass['fields'][$reference['field']] = array('type' => $type);
+            $this->configClass['fields'][$reference['field']] = array('type' => $type, 'alias' => $reference['field']);
         }
     }
 
@@ -655,15 +663,15 @@ EOF;
         $forzeClean = false;
         foreach ($this->configClass['fields'] as $name => $field) {
             $typeCode = strtr(TypeContainer::get($field['type'])->toPHPInString(), array(
-                '%from%' => "\$data['$name']",
+                '%from%' => "\$data['{$field['alias']}']",
                 '%to%'   => "\$this->data['fields']['$name']",
             ));
             $typeCode = str_replace("\n", "\n            ", $typeCode);
 
             $fieldsCode[] = <<<EOF
-        if (isset(\$data['$name'])) {
+        if (isset(\$data['{$field['alias']}'])) {
             $typeCode
-        } elseif (isset(\$data['_fields']['$name'])) {
+        } elseif (isset(\$data['_fields']['{$field['alias']}'])) {
             \$this->data['fields']['$name'] = null;
         }
 EOF;
@@ -835,14 +843,14 @@ EOF
                 '%to%' => "\$this->data['fields']['$name']",
             ));
             if (!$this->configClass['is_embedded']) {
-                $typeCode = str_replace('%from%', "\$data['$name']", $typeCode);
+                $typeCode = str_replace('%from%', "\$data['{$field['alias']}']", $typeCode);
                 $queryCode = <<<EOF
             if (\$this->isNew()) {
                 \$this->data['fields']['$name'] = null;
             } elseif (!isset(\$this->data['fields']) || !array_key_exists('$name', \$this->data['fields'])) {
-                \$this->addFieldCache('$name');
-                \$data = static::collection()->findOne(array('_id' => \$this->id), array('$name' => 1));
-                if (isset(\$data['$name'])) {
+                \$this->addFieldCache('{$field['alias']}');
+                \$data = static::collection()->findOne(array('_id' => \$this->id), array('{$field['alias']}' => 1));
+                if (isset(\$data['{$field['alias']}'])) {
                     $typeCode
                 } else {
                     \$this->data['fields']['$name'] = null;
@@ -859,7 +867,7 @@ EOF;
                 &&
                 !\$this->isEmbeddedOneChangedInParent()
             ) {
-                \$field = \$rap['path'].'.$name';
+                \$field = \$rap['path'].'.{$field['alias']}';
                 \$rap['root']->addFieldCache(\$field);
                 \$collection = call_user_func(array(get_class(\$rap['root']), 'collection'));
                 \$data = \$collection->findOne(array('_id' => \$rap['root']->getId()), array(\$field => 1));
@@ -1834,7 +1842,7 @@ EOF
                 ));
 
                 // insert
-                $insertTypeCode = str_replace('%to%', "\$query['$name']", $typeCode);
+                $insertTypeCode = str_replace('%to%', "\$query['{$field['alias']}']", $typeCode);
                 $fieldsInsertCode[] = <<<EOF
                 if (isset(\$this->data['fields']['$name'])) {
                     $insertTypeCode
@@ -1843,20 +1851,20 @@ EOF;
 
                 // update
                 if (!$this->configClass['is_embedded']) {
-                    $updateTypeCode = str_replace('%to%', "\$query['\$set']['$name']", $typeCode);
+                    $updateTypeCode = str_replace('%to%', "\$query['\$set']['{$field['alias']}']", $typeCode);
                     $fieldUpdateSetCode = <<<EOF
                             $updateTypeCode
 EOF;
                     $fieldUpdateUnsetCode = <<<EOF
-                            \$query['\$unset']['$name'] = 1;
+                            \$query['\$unset']['{$field['alias']}'] = 1;
 EOF;
                 } else {
-                    $updateTypeCode = str_replace('%to%', "\$query['\$set'][\$documentPath.'.$name']", $typeCode);
+                    $updateTypeCode = str_replace('%to%', "\$query['\$set'][\$documentPath.'.{$field['alias']}']", $typeCode);
                     $fieldUpdateSetCode = <<<EOF
                             $updateTypeCode
 EOF;
                     $fieldUpdateUnsetCode = <<<EOF
-                            \$query['\$unset'][\$documentPath.'.$name'] = 1;
+                            \$query['\$unset'][\$documentPath.'.{$field['alias']}'] = 1;
 EOF;
                 }
                 $fieldsUpdateCode[] = <<<EOF
