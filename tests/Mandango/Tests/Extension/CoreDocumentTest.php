@@ -179,13 +179,13 @@ class CoreDocumentTest extends TestCase
     {
         $article = \Model\Article::create()->setDocumentData(array(
             '_id' => new \MongoId('123'),
-            'category_ids' => $baseIds = array(new \MongoId('1'), new \MongoId('2'), new \MongoId('4'), new \MongoId('5')),
+            'categories' => $baseIds = array(new \MongoId('1'), new \MongoId('2'), new \MongoId('4'), new \MongoId('5')),
             'source' => array(
-                'category_ids' => $sourceBaseIds = array(new \MongoId('11'), new \MongoId('12'), new \MongoId('13')),
+                'categories' => $sourceBaseIds = array(new \MongoId('11'), new \MongoId('12'), new \MongoId('13')),
             ),
             'comments' => array(
                 array(
-                    'category_ids' => $commentBaseIds = array(new \MongoId('21'), new \MongoId('22'), new \MongoId('23')),
+                    'categories' => $commentBaseIds = array(new \MongoId('21'), new \MongoId('22'), new \MongoId('23')),
                 ),
             ),
         ));
@@ -261,7 +261,7 @@ class CoreDocumentTest extends TestCase
 
         $article = \Model\Article::create()->setDocumentData(array(
             '_id' => new \MongoId('123'),
-            'category_ids' => array($articleCategories[0]->getId(), $articleCategories[1]->getId()),
+            'categories' => array($articleCategories[0]->getId(), $articleCategories[1]->getId()),
         ));
         $categories = $article->getCategories();
         $categories->saved();
@@ -472,7 +472,7 @@ class CoreDocumentTest extends TestCase
 
         $query = $authors[3]->getArticles();
         $this->assertInstanceOf('Mandango\Query', $query);
-        $this->assertSame(array('author_id' => $authors[3]->getId()), $query->getCriteria());
+        $this->assertSame(array('author' => $authors[3]->getId()), $query->getCriteria());
         $this->assertSame(0, $query->count());
         $this->assertSame(0, $authors[5]->getArticles()->count());
 
@@ -503,7 +503,7 @@ class CoreDocumentTest extends TestCase
 
         $query = $categories[3]->getArticles();
         $this->assertInstanceOf('Mandango\Query', $query);
-        $this->assertSame(array('category_ids' => $categories[3]->getId()), $query->getCriteria());
+        $this->assertSame(array('categories' => $categories[3]->getId()), $query->getCriteria());
         $this->assertSame(0, $query->count());
         $this->assertSame(0, $categories[5]->getArticles()->count());
 

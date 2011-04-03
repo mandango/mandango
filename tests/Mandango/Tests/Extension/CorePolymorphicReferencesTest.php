@@ -131,7 +131,7 @@ class CorePolymorphicReferencesTest extends TestCase
         $article = \Model\Article::create()->setLike($author);
 
         $this->assertSame(array(
-            'like_ref' => array(
+            'like' => array(
                 '_mandango_document_class' => 'Model\Author',
                 'id' => $author->getId(),
             ),
@@ -172,7 +172,7 @@ class CorePolymorphicReferencesTest extends TestCase
     {
         $article = \Model\Article::create()->setDocumentData(array(
             '_id' => new \MongoId('123'),
-            'related_ref' => $relatedRef = array(
+            'related' => $relatedRef = array(
                 array('_mandango_document_class' => 'Model\Author', 'id' => new \MongoId('1')),
                 array('_mandango_document_class' => 'Model\Author', 'id' => new \MongoId('2')),
                 array('_mandango_document_class' => 'Model\Category', 'id' => new \MongoId('3')),
@@ -220,7 +220,7 @@ class CorePolymorphicReferencesTest extends TestCase
     {
         $article = \Model\Article::create()->setDocumentData(array(
             '_id' => new \MongoId('123'),
-            'elements_ref' => $elementsRef = array(
+            'elements' => $elementsRef = array(
                 array('type' => 'element', 'id' => new \MongoId('1')),
                 array('type' => 'element', 'id' => new \MongoId('2')),
                 array('type' => 'textarea', 'id' => new \MongoId('3')),
@@ -315,7 +315,7 @@ class CorePolymorphicReferencesTest extends TestCase
         $related->add(array($author, $category));
 
         $this->assertSame(array(
-            'related_ref' => array(
+            'related' => array(
                 array(
                     '_mandango_document_class' => 'Model\Author',
                     'id' => $author->getId(),

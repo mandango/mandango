@@ -357,13 +357,10 @@ class Core extends Extension
             $this->parseAndCheckAssociationClass($reference, $name);
 
             if (!isset($reference['field'])) {
-                throw new \RuntimeException(sprintf('The reference one "%s" of the class "%s" does not have field.', $name, $this->class));
-            }
-            if (isset($this->configClass['fields'][$reference['field']])) {
-                throw new \RuntimeException(sprintf('The field "%s" of the reference one "%s" of the class "%s" already exists.', $reference['field'], $name, $this->class));
+                $reference['field'] = $name.'_reference_field';
             }
             $type = isset($reference['class']) ? 'reference_one' : 'raw';
-            $this->configClass['fields'][$reference['field']] = array('type' => $type, 'alias' => $reference['field']);
+            $this->configClass['fields'][$reference['field']] = array('type' => $type, 'alias' => $name);
         }
 
         // many
@@ -371,13 +368,10 @@ class Core extends Extension
             $this->parseAndCheckAssociationClass($reference, $name);
 
             if (!isset($reference['field'])) {
-                throw new \RuntimeException(sprintf('The reference many "%s" of the class "%s" does not have field.', $name, $this->class));
-            }
-            if (isset($this->configClass['fields'][$reference['field']])) {
-                throw new \RuntimeException(sprintf('The field "%s" of the reference many "%s" of the class "%s" already exists.', $reference['field'], $name, $this->class));
+                $reference['field'] = $name.'_reference_field';
             }
             $type = isset($reference['class']) ? 'reference_many' : 'raw';
-            $this->configClass['fields'][$reference['field']] = array('type' => $type, 'alias' => $reference['field']);
+            $this->configClass['fields'][$reference['field']] = array('type' => $type, 'alias' => $name);
         }
     }
 
@@ -400,8 +394,8 @@ class Core extends Extension
         foreach ($this->configClass['relations_one'] as $name => &$relation) {
             $this->parseAndCheckAssociationClass($relation, $name);
 
-            if (!isset($relation['field'])) {
-                $relation['field'] = Inflector::fieldForClass($this->class);
+            if (!isset($relation['reference'])) {
+                throw new \RuntimeException(sprintf('The relation one "%s" of the class "%s" does not have reference.', $name, $this->class));
             }
         }
 
@@ -409,8 +403,8 @@ class Core extends Extension
         foreach ($this->configClass['relations_many_one'] as $name => &$relation) {
             $this->parseAndCheckAssociationClass($relation, $name);
 
-            if (!isset($relation['field'])) {
-                $relation['field'] = Inflector::fieldForClass($this->class);
+            if (!isset($relation['reference'])) {
+                throw new \RuntimeException(sprintf('The relation many one "%s" of the class "%s" does not have reference.', $name, $this->class));
             }
         }
 
@@ -418,8 +412,8 @@ class Core extends Extension
         foreach ($this->configClass['relations_many_many'] as $name => &$relation) {
             $this->parseAndCheckAssociationClass($relation, $name);
 
-            if (!isset($relation['field'])) {
-                $relation['field'] = Inflector::pluralFieldForClass($this->class);
+            if (!isset($relation['reference'])) {
+                throw new \RuntimeException(sprintf('The relation many many "%s" of the class "%s" does not have reference.', $name, $this->class));
             }
         }
 
@@ -1490,7 +1484,7 @@ EOF
     {
         foreach ($this->configClass['relations_one'] as $name => $relation) {
             $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
-        return \\{$relation['class']}::query(array('{$relation['field']}' => \$this->getId()))->one();
+        return \\{$relation['class']}::query(array('{$relation['reference']}' => \$this->getId()))->one();
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1509,7 +1503,7 @@ EOF
     {
         foreach ($this->configClass['relations_many_one'] as $name => $relation) {
             $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
-        return \\{$relation['class']}::query(array('{$relation['field']}' => \$this->getId()));
+        return \\{$relation['class']}::query(array('{$relation['reference']}' => \$this->getId()));
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1528,7 +1522,7 @@ EOF
     {
         foreach ($this->configClass['relations_many_many'] as $name => $relation) {
             $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
-        return \\{$relation['class']}::query(array('{$relation['field']}' => \$this->getId()));
+        return \\{$relation['class']}::query(array('{$relation['reference']}' => \$this->getId()));
 EOF
             );
             $method->setDocComment(<<<EOF

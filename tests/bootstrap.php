@@ -54,7 +54,7 @@ $configClasses = array(
             )),
         ),
         'relations_many_through' => array(
-            'votes_users' => array('class' => 'Model\User', 'through' => 'Model\ArticleVote', 'local' => 'article_id', 'foreign' => 'user_id'),
+            'votes_users' => array('class' => 'Model\User', 'through' => 'Model\ArticleVote', 'local' => 'article', 'foreign' => 'user'),
         ),
         'indexes' => array(
             array(
@@ -71,7 +71,7 @@ $configClasses = array(
             'name' => 'string',
         ),
         'relations_one' => array(
-            'article' => array('class' => 'Model\Article', 'field' => 'information_id'),
+            'article' => array('class' => 'Model\Article', 'reference' => 'information'),
         ),
     ),
     'Model\ArticleVote' => array(
@@ -87,7 +87,7 @@ $configClasses = array(
             'name' => 'string',
         ),
         'relations_many_one' => array(
-            'articles' => array('class' => 'Model\Article', 'field' => 'author_id'),
+            'articles' => array('class' => 'Model\Article', 'reference' => 'author'),
         ),
     ),
     'Model\Category' => array(
@@ -95,7 +95,7 @@ $configClasses = array(
             'name' => 'string',
         ),
         'relations_many_many' => array(
-            'articles' => array('class' => 'Model\Article', 'field' => 'category_ids'),
+            'articles' => array('class' => 'Model\Article', 'reference' => 'categories'),
         ),
     ),
     'Model\Comment' => array(

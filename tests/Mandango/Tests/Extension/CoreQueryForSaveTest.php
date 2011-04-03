@@ -74,7 +74,7 @@ class CoreQueryForSaveTest extends TestCase
         ;
 
         $this->assertSame(array(
-            'author_id' => $id,
+            'author' => $id,
         ), $article->queryForSave());
     }
 
@@ -82,13 +82,13 @@ class CoreQueryForSaveTest extends TestCase
     {
         $article = \Model\Article::create()->setDocumentData(array(
             '_id' => new \MongoId('123'),
-            'author_id' => new \MongoId('234'),
+            'author' => new \MongoId('234'),
         ));
         $article->setAuthor(\Model\Author::create()->setId($id = new \MongoId('345')));
 
         $this->assertSame(array(
             '$set' => array(
-                'author_id' => $id,
+                'author' => $id,
             ),
         ), $article->queryForSave());
     }
@@ -105,7 +105,7 @@ class CoreQueryForSaveTest extends TestCase
         $article->getCategories()->add($categories);
 
         $this->assertSame(array(
-            'category_ids' => $ids,
+            'categories' => $ids,
         ), $article->queryForSave());
     }
 
