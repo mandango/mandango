@@ -88,7 +88,7 @@ class AbstractGroupTest extends TestCase
         $this->assertFalse($group->isSavedInitialized());
     }
 
-    public function testSavedIteratorAggregate()
+    public function testSavedIteratorAggregateInterface()
     {
         $forSaved = array('foo', 'bar');
 
@@ -102,6 +102,13 @@ class AbstractGroupTest extends TestCase
         $group = new AbstractGroup('Model\Comment');
         $group->forSaved = array(array('foo' => 'bar'), array('bar' => 'foo'));
         $this->assertSame(2, $group->count());
+    }
+
+    public function testCountableInterface()
+    {
+        $group = new AbstractGroup('Model\Comment');
+        $group->forSaved = array(array('foo' => 'bar'), array('bar' => 'foo'));
+        $this->assertSame(2, count($group));
     }
 
     public function replace()

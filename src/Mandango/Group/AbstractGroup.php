@@ -29,7 +29,7 @@ use Mandango\Document\Document;
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-abstract class AbstractGroup implements \IteratorAggregate
+abstract class AbstractGroup implements \Countable, \IteratorAggregate
 {
     protected $saved;
 
