@@ -2648,9 +2648,14 @@ EOF
                 $info['connection'] = $configClass['connection'];
                 $info['collection'] = $configClass['collection'];
             }
+            // inheritable
+            $info['inheritable'] = $configClass['inheritable'];
+            // inheritance
+            $info['inheritance'] = $configClass['inheritance'];
             // fields
             $info['fields'] = $configClass['fields'];
             // references
+            $info['_has_references'] = $configClass['_has_references'];
             $info['references_one'] = $configClass['references_one'];
             $info['references_many'] = $configClass['references_many'];
             // embeddeds
@@ -2664,9 +2669,8 @@ EOF
                 $info['relations_many_through'] = $configClass['relations_many_through'];
             }
             // indexes
-            if (!$info['is_embedded']) {
-                $info['indexes'] = $configClass['indexes'];
-            }
+            $info['indexes'] = $configClass['indexes'];
+            $info['_indexes'] = $configClass['_indexes'];
 
             $info = \Mandango\Mondator\Dumper::exportArray($info, 12);
 
