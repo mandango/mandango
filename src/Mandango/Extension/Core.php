@@ -2518,32 +2518,48 @@ EOF
 
         // inheritance
         foreach ($this->configClasses as $class => &$configClass) {
-            if ($configClass['inheritance']) {
-                if (!isset($configClass['inheritance']['class'])) {
-                    throw new \RuntimeException(sprintf('The inheritable configuration of the class "%s" does not have class.', $class));
-                }
-                $inheritanceClass = $configClass['inheritance']['class'];
+            if (!$configClass['inheritance']) {
+                continue;
+            }
 
-                if (!$this->configClasses[$inheritanceClass]['inheritable']) {
-                    throw new \RuntimeException(sprintf('The class "%s" is not inheritable.', $configClass['inheritance']['class']));
-                }
+            if (!isset($configClass['inheritance']['class'])) {
+                throw new \RuntimeException(sprintf('The inheritable configuration of the class "%s" does not have class.', $class));
+            }
+            $inheritanceClass = $configClass['inheritance']['class'];
+
+            if ($this->configClasses[$inheritanceClass]['inheritable']) {
+                $inheritableClass = $inheritanceClass;
                 $inheritable = $this->configClasses[$inheritanceClass]['inheritable'];
-
-                $configClass['inheritance']['type'] = $inheritable['type'];
-
-                if ('single' == $inheritable['type']) {
-                    if (!isset($configClass['inheritance']['value'])) {
-                        throw new \RuntimeException(sprintf('The inheritable configuration in the class "%s" does not have value.', $class));
+            } elseif ($this->configClasses[$inheritanceClass]['inheritance']) {
+                $parentInheritance = $this->configClasses[$inheritanceClass]['inheritance'];
+                do {
+                    $continueSearchingInheritable = false;
+                    if ($this->configClasses[$parentInheritance['class']]['inheritable']) {
+                        $inheritableClass = $parentInheritance['class'];
+                        $inheritable = $this->configClasses[$parentInheritance['class']]['inheritable'];
+                    } else {
+                        $continueSearchingInheritance = true;
+                        $parentInheritance = $this->configClasses[$parentInheritance['class']]['inheritance'];
                     }
-                    $value = $configClass['inheritance']['value'];
-                    if (isset($this->configClasses[$inheritanceClass]['inheritable']['values'][$value])) {
-                        throw new \RuntimeException(sprintf('The value "%s" is in the single inheritance of the class "%s" more than once.', $value, $inheritanceClass));
-                    }
-                    $this->configClasses[$inheritanceClass]['inheritable']['values'][$value] = $class;
+                } while ($continueSearchingInheritable);
+            } else {
+                throw new \RuntimeException(sprintf('The class "%s" is not inheritable or has inheritance.', $configClass['inheritance']['class']));
+            }
 
-                    $configClass['collection'] = $this->configClasses[$inheritanceClass]['collection'];
-                    $configClass['inheritance']['field'] = $inheritable['field'];
+            $configClass['inheritance']['type'] = $inheritable['type'];
+
+            if ('single' == $inheritable['type']) {
+                if (!isset($configClass['inheritance']['value'])) {
+                    throw new \RuntimeException(sprintf('The inheritable configuration in the class "%s" does not have value.', $class));
                 }
+                $value = $configClass['inheritance']['value'];
+                if (isset($this->configClasses[$inheritableClass]['inheritable']['values'][$value])) {
+                    throw new \RuntimeException(sprintf('The value "%s" is in the single inheritance of the class "%s" more than once.', $value, $inheritanceClass));
+                }
+                $this->configClasses[$inheritableClass]['inheritable']['values'][$value] = $class;
+
+                $configClass['collection'] = $this->configClasses[$inheritableClass]['collection'];
+                $configClass['inheritance']['field'] = $inheritable['field'];
             }
         }
     }
