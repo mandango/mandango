@@ -327,4 +327,32 @@ class CorePolymorphicReferencesTest extends TestCase
             ),
         ), $article->queryForSave());
     }
+
+    public function testBasicQueryForSave()
+    {
+        $element = \Model\FormElement::create()->setLabel('foo');
+        $this->assertSame(array(
+            'label' => 'foo',
+        ), $element->queryForSave());
+        $element->save();
+        $element->setLabel('bar');
+        $this->assertSame(array(
+            '$set' => array(
+                'label' => 'bar',
+            ),
+        ), $element->queryForSave());
+
+        $textareaElement = \Model\TextareaFormElement::create()->setLabel('ups');
+        $this->assertSame(array(
+            'type' => 'textarea',
+            'label' => 'ups',
+        ), $textareaElement->queryForSave());
+        $textareaElement->save();
+        $textareaElement->setLabel('zam');
+        $this->assertSame(array(
+            '$set' => array(
+                'label' => 'zam',
+            ),
+        ), $textareaElement->queryForSave());
+    }
 }

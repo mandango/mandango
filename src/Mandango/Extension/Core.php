@@ -2020,7 +2020,7 @@ EOF;
                 $value = $this->configClass['inheritance']['value'];
                 $codeHeader = <<<EOF
         \$isNew = \$this->isNew();
-        \$query = \$isNew ? array_merge(array('$field' => '$value'), parent::queryForSave()) : array();
+        \$query = \$isNew ? array_merge(array('$field' => '$value'), parent::queryForSave()) : parent::queryForSave();
         \$reset = false;
 EOF;
             } else {
