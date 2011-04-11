@@ -258,6 +258,12 @@ $configClasses = array(
             'label'   => 'string',
             'default' => 'raw',
         ),
+        'references_one' => array(
+            'author' => array('class' => 'Model\Author'),
+        ),
+        'references_many' => array(
+            'categories' => array('class' => 'Model\Category'),
+        ),
     ),
     'Model\TextareaFormElement' => array(
         'inheritance' => array('class' => 'Model\FormElement', 'value' => 'textarea'),

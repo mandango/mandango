@@ -115,6 +115,45 @@ class DataLoaderTest extends TestCase
         $this->assertSame(4, \Model\Category::count());
     }
 
+    public function testLoadSingleInheritanceReferences()
+    {
+        $data = array(
+            'Model\Author' => array(
+                'pablodip' => array(
+                    'name' => 'pablodip',
+                ),
+                'barbelith' => array(
+                    'name' => 'barbelith',
+                ),
+            ),
+            'Model\Category' => array(
+                'mongodb' => array(
+                    'name' => 'MongoDB',
+                ),
+                'php' => array(
+                    'name' => 'PHP',
+                ),
+                'performance' => array(
+                    'name' => 'Performance'
+                ),
+            ),
+            'Model\RadioFormElement' => array(
+                'radio_1' => array(
+                    'author' => 'pablodip',
+                    'categories' => array('mongodb', 'php'),
+                ),
+            ),
+        );
+
+        $dataLoader = new DataLoader($this->mandango);
+        $dataLoader->load($data);
+
+        $this->assertSame(1, \Model\RadioFormElement::query()->count());
+        $radio = \Model\RadioFormElement::query()->one();
+        $this->assertSame(\Model\Author::query(array('name' => 'pablodip'))->one(), $radio->getAuthor());
+        $this->assertSame(2, count($radio->getCategories()));
+    }
+
     public function testLoadPrune()
     {
         foreach ($this->mandango->getConnections() as $connection) {

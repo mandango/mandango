@@ -92,8 +92,23 @@ class DataLoader
             $maps[$class] = $class::metadata();
         }
 
+        $referencesOne = array();
+        $referencesMany = array();
+        foreach ($maps as $class => $metadata) {
+            $referencesOne[$class] = $metadata['references_one'];
+            $referencesMany[$class] = $metadata['references_many'];
+
+            $map = $metadata;
+            while ($map['inheritance']) {
+                $inheritanceClass = $map['inheritance']['class'];
+                $map = $inheritanceClass::metadata();
+                $referencesOne[$class] = array_merge($map['references_one'], $referencesOne[$class]);
+                $referencesMany[$class] = array_merge($map['references_many'], $referencesMany[$class]);
+            }
+        }
+
         // process function
-        $process = function ($class, $key) use (&$process, $mandango, &$data, &$documents, &$maps) {
+        $process = function ($class, $key) use (&$process, $mandango, &$data, &$documents, &$maps, &$referencesOne, &$referencesMany) {
             static $processed = array();
 
             if (isset($processed[$class][$key])) {
@@ -108,7 +123,7 @@ class DataLoader
             $documents[$class][$key] = $document = new $class();
 
             // references_one
-            foreach ($maps[$class]['references_one'] as $name => $reference) {
+            foreach ($referencesOne[$class] as $name => $reference) {
                 if (!isset($datum[$name])) {
                     continue;
                 }
@@ -123,7 +138,7 @@ class DataLoader
             }
 
             // references_many
-            foreach ($maps[$class]['references_many'] as $name => $reference) {
+            foreach ($referencesMany[$class] as $name => $reference) {
                 if (!isset($datum[$name])) {
                     continue;
                 }
