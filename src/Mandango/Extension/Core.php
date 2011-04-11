@@ -1802,6 +1802,11 @@ EOF
 
             // methods
             $methodsCode = array();
+            if ($this->configClass['_parent_events'][$event]) {
+                $methodsCode[] = <<<EOF
+        parent::$eventMethodName();
+EOF;
+            }
             foreach ($methods as $methodName) {
                 $methodsCode[] = <<<EOF
         \$this->$methodName();
@@ -2149,22 +2154,22 @@ EOF;
 
         // events
         $preInsert = '';
-        if ($this->configClass['events']['preInsert']) {
+        if ($this->configClass['events']['preInsert'] || $this->configClass['_parent_events']['preInsert']) {
             $preInsert = "\$document->preInsertEvent();\n                ";
         }
 
         $postInsert = '';
-        if ($this->configClass['events']['postInsert']) {
+        if ($this->configClass['events']['postInsert'] || $this->configClass['_parent_events']['postInsert']) {
             $postInsert = "\n                    \$document->postInsertEvent();";
         }
 
         $preUpdate = '';
-        if ($this->configClass['events']['preUpdate']) {
+        if ($this->configClass['events']['preUpdate'] || $this->configClass['_parent_events']['postUpdate']) {
             $preUpdate = "\$document->preUpdateEvent();\n                ";
         }
 
         $postUpdate = '';
-        if ($this->configClass['events']['postUpdate']) {
+        if ($this->configClass['events']['postUpdate'] || $this->configClass['_parent_events']['postUpdate']) {
             $postUpdate = "\n                \$document->postUpdateEvent();";
         }
 
@@ -2231,12 +2236,12 @@ EOF
     {
         // events
         $preDelete = '';
-        if ($this->configClass['events']['preDelete']) {
+        if ($this->configClass['events']['preDelete'] || $this->configClass['_parent_events']['preDelete']) {
             $preDelete = "\$document->preDeleteEvent();\n                ";
         }
 
         $postDelete = '';
-        if ($this->configClass['events']['postDelete']) {
+        if ($this->configClass['events']['postDelete'] || $this->configClass['_parent_events']['postDelete']) {
             $postDelete = <<<EOF
 
 
@@ -2519,6 +2524,14 @@ EOF
         // inheritance
         foreach ($this->configClasses as $class => &$configClass) {
             if (!$configClass['inheritance']) {
+                $configClass['_parent_events'] = array(
+                    'preInsert'  => array(),
+                    'postInsert' => array(),
+                    'preUpdate'  => array(),
+                    'postUpdate' => array(),
+                    'preDelete'  => array(),
+                    'postDelete' => array(),
+                );
                 continue;
             }
 
@@ -2527,6 +2540,7 @@ EOF
             }
             $inheritanceClass = $configClass['inheritance']['class'];
 
+            // inheritable
             if ($this->configClasses[$inheritanceClass]['inheritable']) {
                 $inheritableClass = $inheritanceClass;
                 $inheritable = $this->configClasses[$inheritanceClass]['inheritable'];
@@ -2548,6 +2562,28 @@ EOF
 
             $configClass['inheritance']['type'] = $inheritable['type'];
 
+            // parent events
+            $parentEvents = array(
+                'preInsert'  => array(),
+                'postInsert' => array(),
+                'preUpdate'  => array(),
+                'postUpdate' => array(),
+                'preDelete'  => array(),
+                'postDelete' => array(),
+            );
+            $loopClass = $inheritableClass;
+            do {
+                $parentEvents = array_merge($parentEvents, $this->configClasses[$loopClass]['events']);
+                if ($this->configClasses[$loopClass]['inheritable']) {
+                    $continue = false;
+                } else {
+                    $continue = true;
+                    $loopClass = $this->configClass[$loopClass]['inheritance']['class'];
+                }
+            } while ($continue);
+            $configClass['_parent_events'] = $parentEvents;
+
+            // type
             if ('single' == $inheritable['type']) {
                 if (!isset($configClass['inheritance']['value'])) {
                     throw new \RuntimeException(sprintf('The inheritable configuration in the class "%s" does not have value.', $class));

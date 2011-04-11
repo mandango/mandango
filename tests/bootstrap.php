@@ -264,11 +264,27 @@ $configClasses = array(
         'references_many' => array(
             'categories' => array('class' => 'Model\Category'),
         ),
+        'events' => array(
+            'preInsert'  => array('elementPreInsert'),
+            'postInsert' => array('elementPostInsert'),
+            'preUpdate'  => array('elementPreUpdate'),
+            'postUpdate' => array('elementPostUpdate'),
+            'preDelete'  => array('elementPreDelete'),
+            'postDelete' => array('elementPostDelete'),
+        ),
     ),
     'Model\TextareaFormElement' => array(
         'inheritance' => array('class' => 'Model\FormElement', 'value' => 'textarea'),
         'fields' => array(
             'default' => 'string',
+        ),
+        'events' => array(
+            'preInsert'  => array('textareaPreInsert'),
+            'postInsert' => array('textareaPostInsert'),
+            'preUpdate'  => array('textareaPreUpdate'),
+            'postUpdate' => array('textareaPostUpdate'),
+            'preDelete'  => array('textareaPreDelete'),
+            'postDelete' => array('textareaPostDelete'),
         ),
     ),
     'Model\RadioFormElement' => array(

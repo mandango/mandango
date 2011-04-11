@@ -334,4 +334,21 @@ class CoreSingleInheritanceTest extends TestCase
         $this->assertSame(3, \Model\TextareaFormElement::query()->count());
         $this->assertSame(1, \Model\RadioFormElement::query()->count());
     }
+
+    public function testEvents()
+    {
+        $formElement = \Model\FormElement::create()->setLabel('Element')->save();
+        $this->assertSame(array(
+            'ElementPreInserting',
+            'ElementPostInserting',
+        ), $formElement->getEvents());
+
+        $textareaFormElement = \Model\TextareaFormElement::create()->setLabel('Textarea')->save();
+        $this->assertSame(array(
+            'ElementPreInserting',
+            'TextareaPreInserting',
+            'ElementPostInserting',
+            'TextareaPostInserting',
+        ), $textareaFormElement->getEvents());
+    }
 }
