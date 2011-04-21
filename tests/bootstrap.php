@@ -29,7 +29,8 @@ $configClasses = array(
             'database'  => array('alias' => 'basatos', 'type' => 'string'),
         ),
         'embeddeds_one' => array(
-            'source' => array('class' => 'Model\Source'),
+            'source'          => array('class' => 'Model\Source'),
+            'simple_embedded' => array('class' => 'Model\SimpleEmbedded'),
         ),
         'embeddeds_many' => array(
             'comments' => array('class' => 'Model\Comment'),
@@ -174,6 +175,12 @@ $configClasses = array(
     'Model\User' => array(
         'fields' => array(
             'username' => 'string',
+        ),
+    ),
+    'Model\SimpleEmbedded' => array(
+        'is_embedded' => true,
+        'fields' => array(
+            'name' => 'string',
         ),
     ),
     // reference to same class

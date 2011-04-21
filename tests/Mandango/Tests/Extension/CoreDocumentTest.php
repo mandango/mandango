@@ -244,6 +244,8 @@ class CoreDocumentTest extends TestCase
         $author2 = \Model\Author::create()->setName('bar');
         $source->setAuthor($author2);
         $article->setSource($source);
+        $simpleEmbedded = \Model\SimpleEmbedded::create()->setName('foo');
+        $article->setSimpleEmbedded($simpleEmbedded);
 
         $article->saveReferences();
         $this->assertFalse($author1->isModified());

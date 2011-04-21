@@ -1315,7 +1315,10 @@ EOF;
 
         // embeddeds one
         $embeddedsOneCode = array();
-        foreach ($this->configClass['embeddeds_one'] as $name => $reference) {
+        foreach ($this->configClass['embeddeds_one'] as $name => $embedded) {
+            if (!$this->configClasses[$embedded['class']]['_has_references']) {
+                continue;
+            }
             $embeddedsOneCode[] = <<<EOF
         if (isset(\$this->data['embeddeds_one']['$name'])) {
             \$this->data['embeddeds_one']['$name']->saveReferences();
