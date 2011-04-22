@@ -119,7 +119,7 @@ class Core extends Extension
 
         // document
         $this->documentConstructorMethodProcess();
-        $this->documentMandangoMethodProcess();
+        $this->documentGetMandangoMethodProcess();
 
         $this->documentSetDocumentDataMethodProcess();
         $this->documentFieldsProcess();
@@ -608,14 +608,14 @@ EOF
         }
     }
 
-    protected function documentMandangoMethodProcess()
+    protected function documentGetMandangoMethodProcess()
     {
         $mandango = '';
         if ($this->configClass['mandango']) {
             $mandango = "'".$this->configClass['mandango']."'";
         }
 
-        $method = new Method('public', 'mandango', '', <<<EOF
+        $method = new Method('public', 'getMandango', '', <<<EOF
         return \Mandango\Container::get($mandango);
 EOF
         );
@@ -842,7 +842,7 @@ EOF
                 \$this->data['fields']['$name'] = null;
             } elseif (!isset(\$this->data['fields']) || !array_key_exists('$name', \$this->data['fields'])) {
                 \$this->addFieldCache('{$field['alias']}');
-                \$data = static::collection()->findOne(array('_id' => \$this->id), array('{$field['alias']}' => 1));
+                \$data = static::getRepository()->getCollection()->findOne(array('_id' => \$this->id), array('{$field['alias']}' => 1));
                 if (isset(\$data['{$field['alias']}'])) {
                     $typeCode
                 } else {
@@ -862,7 +862,7 @@ EOF;
             ) {
                 \$field = \$rap['path'].'.{$field['alias']}';
                 \$rap['root']->addFieldCache(\$field);
-                \$collection = call_user_func(array(get_class(\$rap['root']), 'collection'));
+                \$collection = call_user_func(array(get_class(\$rap['root']), 'getRepository'))->getCollection();
                 \$data = \$collection->findOne(array('_id' => \$rap['root']->getId()), array(\$field => 1));
                 foreach (explode('.', \$field) as \$key) {
                     if (!isset(\$data[\$key])) {
@@ -938,7 +938,7 @@ EOF;
             if (!\$id = \$this->$fieldGetter()) {
                 return null;
             }
-            if (!\$document = \\{$reference['class']}::find(\$id)) {
+            if (!\$document = \\{$reference['class']}::getRepository()->find(\$id)) {
                 throw new \RuntimeException('The reference "$name" does not exist.');
             }
             \$this->data['references_one']['$name'] = \$document;
@@ -1018,7 +1018,7 @@ EOF;
                 return null;
             }
 $getDiscriminatorValue
-            if (!\$document = call_user_func(array(\$discriminatorValue, 'find'), \$ref['id'])) {
+            if (!\$document = call_user_func(array(\$discriminatorValue, 'getRepository'))->find(\$ref['id'])) {
                 throw new \RuntimeException('The reference "$name" does not exist.');
             }
             \$this->data['references_one']['$name'] = \$document;
@@ -1305,7 +1305,7 @@ EOF;
                 }
             }
             if (\$documents) {
-                \\{$reference['class']}::repository()->save(\$documents);
+                \\{$reference['class']}::getRepository()->save(\$documents);
             }
         }
 EOF;
@@ -1391,7 +1391,7 @@ EOF
             if (\$this->isNew()) {
                 \$this->data['embeddeds_one']['$name'] = null;
             } elseif (!isset(\$this->data['embeddeds_one']) || !array_key_exists('$name', \$this->data['embeddeds_one'])) {
-                \$exists = static::collection()->findOne(array('_id' => \$this->id, '$name' => array('\$exists' => 1)));
+                \$exists = static::getRepository()->getCollection()->findOne(array('_id' => \$this->id, '$name' => array('\$exists' => 1)));
                 if (\$exists) {
                     \$embedded = new \\{$embedded['class']}();
                     \$embedded->setRootAndPath(\$this, '$name');
@@ -1412,7 +1412,7 @@ EOF;
                 &&
                 false === strpos(\$rap['path'], '._add')
             ) {
-                \$collection = call_user_func(array(get_class(\$rap['root']), 'collection'));
+                \$collection = call_user_func(array(get_class(\$rap['root']), 'getRepository'))->getCollection();
                 \$field = \$rap['path'].'.$name';
                 \$result = \$collection->findOne(array('_id' => \$rap['root']->getId(), \$field => array('\$exists' => 1)));
                 if (\$result) {
@@ -1486,7 +1486,7 @@ EOF
     {
         foreach ($this->configClass['relations_one'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
-        return \\{$relation['class']}::query(array('{$relation['reference']}' => \$this->getId()))->one();
+        return \\{$relation['class']}::getRepository()->createQuery(array('{$relation['reference']}' => \$this->getId()))->one();
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1505,7 +1505,7 @@ EOF
     {
         foreach ($this->configClass['relations_many_one'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
-        return \\{$relation['class']}::query(array('{$relation['reference']}' => \$this->getId()));
+        return \\{$relation['class']}::getRepository()->createQuery(array('{$relation['reference']}' => \$this->getId()));
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1524,7 +1524,7 @@ EOF
     {
         foreach ($this->configClass['relations_many_many'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
-        return \\{$relation['class']}::query(array('{$relation['reference']}' => \$this->getId()));
+        return \\{$relation['class']}::getRepository()->createQuery(array('{$relation['reference']}' => \$this->getId()));
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1544,13 +1544,13 @@ EOF
         foreach ($this->configClass['relations_many_through'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         \$ids = array();
-        foreach (\\{$relation['through']}::collection()
+        foreach (\\{$relation['through']}::getRepository()->getCollection()
             ->find(array('{$relation['local']}' => \$this->getId()), array('{$relation['foreign']}' => 1))
         as \$value) {
             \$ids[] = \$value['{$relation['foreign']}'];
         }
 
-        return \\{$relation['class']}::query(array('_id' => array('\$in' => \$ids)));
+        return \\{$relation['class']}::getRepository()->createQuery(array('_id' => array('\$in' => \$ids)));
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -2182,7 +2182,7 @@ EOF;
         }
 
         \$identityMap =& \$this->identityMap->allByReference();
-        \$collection = \$this->collection();
+        \$collection = \$this->getCollection();
 
         \$inserts = array();
         \$updates = array();
@@ -2267,7 +2267,7 @@ EOF;
             unset(\$identityMap[\$id->__toString()]);
         }
 
-        \$this->collection()->remove(array('_id' => array('\$in' => \$ids)));$postDelete
+        \$this->getCollection()->remove(array('_id' => array('\$in' => \$ids)));$postDelete
 EOF
         );
         $method->setDocComment(<<<EOF
@@ -2289,7 +2289,7 @@ EOF
             $options = \Mandango\Mondator\Dumper::exportArray(array_merge(isset($index['options']) ? $index['options'] : array(), array('safe' => true)), 12);
 
             $indexesCode[] = <<<EOF
-        \$this->collection()->ensureIndex($keys, $options);
+        \$this->getCollection()->ensureIndex($keys, $options);
 EOF;
         }
         $indexesCode = implode("\n", $indexesCode);
@@ -2354,7 +2354,7 @@ EOF;
                 $createObjectsValues[] = <<<EOF
                 if ('$value' == \$data['$field']) {
                     if (!isset(\$identityMaps['$value'])) {
-                        \$identityMaps['$value'] = \\{$valueClass}::repository()->getIdentityMap()->allByReference();
+                        \$identityMaps['$value'] = \\{$valueClass}::getRepository()->getIdentityMap()->allByReference();
                     }
                     \$documentClass = '$valueClass';
                     \$identityMap = \$identityMaps['$value'];

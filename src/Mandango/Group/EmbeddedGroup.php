@@ -105,7 +105,8 @@ class EmbeddedGroup extends Group
 
         $rap['root']->addFieldCache($rap['path']);
 
-        $result = call_user_func(array(get_class($rap['root']), 'collection'))
+        $result = call_user_func(array(get_class($rap['root']), 'getRepository'))
+            ->getCollection()
             ->findOne(array('_id' => $rap['root']->getId()), array($rap['path']))
         ;
 

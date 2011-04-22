@@ -79,7 +79,7 @@ class DataLoader
         // purge
         if ($purge) {
             foreach ($this->mandango->getAllRepositories() as $repository) {
-                $repository->collection()->drop();
+                $repository->getCollection()->drop();
             }
         }
 
@@ -89,7 +89,7 @@ class DataLoader
 
         $maps = array();
         foreach ($data as $class => $datum) {
-            $maps[$class] = $class::metadata();
+            $maps[$class] = $class::getMetadata();
         }
 
         $referencesOne = array();
@@ -101,7 +101,7 @@ class DataLoader
             $map = $metadata;
             while ($map['inheritance']) {
                 $inheritanceClass = $map['inheritance']['class'];
-                $map = $inheritanceClass::metadata();
+                $map = $inheritanceClass::getMetadata();
                 $referencesOne[$class] = array_merge($map['references_one'], $referencesOne[$class]);
                 $referencesMany[$class] = array_merge($map['references_many'], $referencesMany[$class]);
             }

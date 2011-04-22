@@ -167,9 +167,9 @@ class CoreSingleInheritanceTest extends TestCase
 
     public function testRepositoryCollectionName()
     {
-        $this->assertSame('model_formelement', \Model\FormElement::repository()->getCollectionName());
-        $this->assertSame('model_formelement', \Model\TextareaFormElement::repository()->getCollectionName());
-        $this->assertSame('model_formelement', \Model\RadioFormElement::repository()->getCollectionName());
+        $this->assertSame('model_formelement', \Model\FormElement::getRepository()->getCollectionName());
+        $this->assertSame('model_formelement', \Model\TextareaFormElement::getRepository()->getCollectionName());
+        $this->assertSame('model_formelement', \Model\RadioFormElement::getRepository()->getCollectionName());
     }
 
     public function testRepositoryCount()
@@ -189,11 +189,11 @@ class CoreSingleInheritanceTest extends TestCase
             $radioFormElements[] = \Model\RadioFormElement::create()->setLabel('Radio'.$i)->save();
         }
 
-        $this->assertSame(9, \Model\FormElement::repository()->count());
-        $this->assertSame(3, \Model\FormElement::repository()->count(array('label' => new \MongoRegex('/^Text/'))));
-        $this->assertSame(3, \Model\TextareaFormElement::repository()->count());
-        $this->assertSame(0, \Model\TextareaFormElement::repository()->count(array('label' => new \MongoRegex('/^R/'))));
-        $this->assertSame(1, \Model\RadioFormElement::repository()->count());
+        $this->assertSame(9, \Model\FormElement::getRepository()->count());
+        $this->assertSame(3, \Model\FormElement::getRepository()->count(array('label' => new \MongoRegex('/^Text/'))));
+        $this->assertSame(3, \Model\TextareaFormElement::getRepository()->count());
+        $this->assertSame(0, \Model\TextareaFormElement::getRepository()->count(array('label' => new \MongoRegex('/^R/'))));
+        $this->assertSame(1, \Model\RadioFormElement::getRepository()->count());
     }
 
     public function testRepositoryRemove($value='')
@@ -213,12 +213,12 @@ class CoreSingleInheritanceTest extends TestCase
             $radioFormElements[] = \Model\RadioFormElement::create()->setLabel('Radio'.$i)->save();
         }
 
-        \Model\FormElement::repository()->remove(array('label' => 'Textarea0'));
-        $this->assertSame(8, \Model\FormElement::collection()->count());
-        \Model\TextareaFormElement::repository()->remove(array('label' => new \MongoRegex('/^Element/')));
-        $this->assertSame(8, \Model\FormElement::collection()->count());
-        \Model\TextareaFormElement::repository()->remove();
-        $this->assertSame(6, \Model\TextareaFormElement::collection()->count());
+        \Model\FormElement::getRepository()->remove(array('label' => 'Textarea0'));
+        $this->assertSame(8, \Model\FormElement::getRepository()->getCollection()->count());
+        \Model\TextareaFormElement::getRepository()->remove(array('label' => new \MongoRegex('/^Element/')));
+        $this->assertSame(8, \Model\FormElement::getRepository()->getCollection()->count());
+        \Model\TextareaFormElement::getRepository()->remove();
+        $this->assertSame(6, \Model\TextareaFormElement::getRepository()->getCollection()->count());
     }
 
     public function testQueryAll()
@@ -238,18 +238,18 @@ class CoreSingleInheritanceTest extends TestCase
             $radioFormElements[] = \Model\RadioFormElement::create()->setLabel('Radio'.$i)->save();
         }
 
-        \Model\FormElement::repository()->getIdentityMap()->clear();
-        \Model\TextareaFormElement::repository()->getIdentityMap()->clear();
-        \Model\RadioFormElement::repository()->getIdentityMap()->clear();
+        \Model\FormElement::getRepository()->getIdentityMap()->clear();
+        \Model\TextareaFormElement::getRepository()->getIdentityMap()->clear();
+        \Model\RadioFormElement::getRepository()->getIdentityMap()->clear();
 
         // different classes in root class
-        $document = \Model\FormElement::query(array('_id' => $formElements[0]->getId()))->one();
+        $document = \Model\FormElement::getRepository()->createQuery(array('_id' => $formElements[0]->getId()))->one();
         $this->assertInstanceof('Model\FormElement', $document);
         $this->assertEquals($formElements[0]->getId(), $document->getId());
-        $document = \Model\FormElement::query(array('_id' => $textareaFormElements[0]->getId()))->one();
+        $document = \Model\FormElement::getRepository()->createQuery(array('_id' => $textareaFormElements[0]->getId()))->one();
         $this->assertInstanceof('Model\TextareaFormElement', $document);
         $this->assertEquals($textareaFormElements[0]->getId(), $document->getId());
-        $document = \Model\FormElement::query(array('_id' => $radioFormElements[0]->getId()))->one();
+        $document = \Model\FormElement::getRepository()->createQuery(array('_id' => $radioFormElements[0]->getId()))->one();
         $this->assertInstanceof('Model\RadioFormElement', $document);
         $this->assertEquals($radioFormElements[0]->getId(), $document->getId());
 
@@ -262,7 +262,7 @@ class CoreSingleInheritanceTest extends TestCase
             $textareaFormElements[1]->getId(),
             $radioFormElements[1]->getId(),
         );
-        $documents = \Model\FormElement::query(array('_id' => array('$in' => $ids)))->all();
+        $documents = \Model\FormElement::getRepository()->createQuery(array('_id' => array('$in' => $ids)))->all();
         $this->assertSame(6, count($documents));
 
         $id = $formElements[0]->getId();
@@ -302,14 +302,14 @@ class CoreSingleInheritanceTest extends TestCase
         $this->assertEquals($id, $document->getId());
 
         // no root class
-        $document = \Model\TextareaFormElement::query(array('_id' => $id = $textareaFormElements[0]->getId()))->one();
+        $document = \Model\TextareaFormElement::getRepository()->createQuery(array('_id' => $id = $textareaFormElements[0]->getId()))->one();
         $this->assertInstanceOf('Model\TextareaFormElement', $document);
         $this->assertEquals($id, $document->getId());
-        $document = \Model\TextareaFormElement::query(array('_id' => $formElements[0]->getId()))->one();
+        $document = \Model\TextareaFormElement::getRepository()->createQuery(array('_id' => $formElements[0]->getId()))->one();
         $this->assertNull($document);
-        $document = \Model\TextareaFormElement::query(array('_id' => $radioFormElements[0]->getId()))->one();
+        $document = \Model\TextareaFormElement::getRepository()->createQuery(array('_id' => $radioFormElements[0]->getId()))->one();
         $this->assertNull($document);
-        $document = \Model\RadioFormElement::query(array('_id' => $formElements[0]->getId()))->one();
+        $document = \Model\RadioFormElement::getRepository()->createQuery(array('_id' => $formElements[0]->getId()))->one();
         $this->assertNull($document);
     }
 
@@ -330,9 +330,9 @@ class CoreSingleInheritanceTest extends TestCase
             $radioFormElements[] = \Model\RadioFormElement::create()->setLabel('Radio'.$i)->save();
         }
 
-        $this->assertSame(9, \Model\FormElement::query()->count());
-        $this->assertSame(3, \Model\TextareaFormElement::query()->count());
-        $this->assertSame(1, \Model\RadioFormElement::query()->count());
+        $this->assertSame(9, \Model\FormElement::getRepository()->createQuery()->count());
+        $this->assertSame(3, \Model\TextareaFormElement::getRepository()->createQuery()->count());
+        $this->assertSame(1, \Model\RadioFormElement::getRepository()->createQuery()->count());
     }
 
     public function testEvents()

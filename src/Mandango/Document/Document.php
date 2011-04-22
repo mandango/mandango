@@ -37,49 +37,9 @@ abstract class Document extends AbstractDocument
      *
      * @return Mandango\Repository The repository of the document.
      */
-    static public function repository()
+    static public function getRepository()
     {
-        return static::mandango()->getRepository(get_called_class());
-    }
-
-    /**
-     * Returns the collection.
-     *
-     * @return \MongoCollection The collection.
-     */
-    static public function collection()
-    {
-        return static::repository()->collection();
-    }
-
-    /**
-     * Access to repository ->query() method.
-     *
-     * @see Mandango\Repository::query()
-     */
-    static public function query(array $criteria = array())
-    {
-        return static::repository()->query($criteria);
-    }
-
-    /**
-     * Access to repository ->find() method.
-     *
-     * @see Mandango\Repository::find()
-     */
-    static public function find($id)
-    {
-        return static::repository()->find($id);
-    }
-
-    /**
-     * Access to repository ->count() method.
-     *
-     * @see Mandango\Repository::count()
-     */
-    static public function count(array $criteria = array())
-    {
-        return static::repository()->count($criteria);
+        return static::getMandango()->getRepository(get_called_class());
     }
 
     /**
@@ -140,7 +100,7 @@ abstract class Document extends AbstractDocument
             throw new \LogicException('The document is new.');
         }
 
-        $this->setDocumentData(static::collection()->findOne(array('_id' => $this->getId())), true);
+        $this->setDocumentData(static::getRepository()->getCollection()->findOne(array('_id' => $this->getId())), true);
 
         return $this;
     }
@@ -152,7 +112,7 @@ abstract class Document extends AbstractDocument
      */
     public function save()
     {
-        static::repository()->save($this);
+        static::getRepository()->save($this);
 
         return $this;
     }
@@ -162,7 +122,7 @@ abstract class Document extends AbstractDocument
      */
     public function delete()
     {
-        static::repository()->delete($this);
+        static::getRepository()->delete($this);
     }
 
     /**
@@ -211,7 +171,7 @@ abstract class Document extends AbstractDocument
      */
     public function addFieldCache($field)
     {
-        $queryCache = static::mandango()->getQueryCache();
+        $queryCache = static::getMandango()->getQueryCache();
 
         foreach ($this->getQueryHashes() as $hash) {
             $cache = $queryCache->has($hash) ? $queryCache->get($hash) : array();

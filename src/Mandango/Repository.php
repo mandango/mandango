@@ -151,7 +151,7 @@ abstract class Repository
      *
      * @return \MongoCollection The collection.
      */
-    public function collection()
+    public function getCollection()
     {
         if (!$this->collection) {
             // gridfs
@@ -173,7 +173,7 @@ abstract class Repository
      *
      * @return Mandango\Query The query.
      */
-    public function query(array $criteria = array())
+    public function createQuery(array $criteria = array())
     {
         $class = $this->documentClass.'Query';
         $query = new $class($this);
@@ -201,7 +201,7 @@ abstract class Repository
                 return $this->identityMap->get($ids);
             }
 
-            return $this->query(array('_id' => $ids))->one();
+            return $this->createQuery(array('_id' => $ids))->one();
         }
 
         // many
@@ -223,7 +223,7 @@ abstract class Repository
             return $documents;
         }
 
-        return $this->query(array('_id' => array('$in' => $ids)))->all();
+        return $this->createQuery(array('_id' => array('$in' => $ids)))->all();
     }
 
     /**
@@ -235,7 +235,7 @@ abstract class Repository
      */
     public function count(array $query = array())
     {
-        return $this->collection()->count($query);
+        return $this->getCollection()->count($query);
     }
 
     /**
@@ -247,6 +247,6 @@ abstract class Repository
      */
     public function remove(array $query = array())
     {
-        return $this->collection()->remove($query, array('safe' => true));
+        return $this->getCollection()->remove($query, array('safe' => true));
     }
 }

@@ -288,7 +288,7 @@ class Mandango
      *
      * The first argument is the documentClass of repository.
      *
-     * @see Mandango\Repository::find()
+     * @see Mandango\Repository::getRepository()->find()
      */
     public function find($documentClass, array $query = array(), array $options = array())
     {

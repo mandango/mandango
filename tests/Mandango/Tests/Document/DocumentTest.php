@@ -62,8 +62,8 @@ class DocumentTest extends TestCase
 
     public function testAddFieldCache()
     {
-        $query1 = \Model\Article::query();
-        $query2 = \Model\Article::query();
+        $query1 = \Model\Article::getRepository()->createQuery();
+        $query2 = \Model\Article::getRepository()->createQuery();
 
         $article = new \Model\Article();
         $article->addQueryHash($query1->getHash());

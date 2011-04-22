@@ -117,7 +117,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
                 'content' => 'Content'.$i,
             );
         }
-        \Model\Article::collection()->batchInsert($articles);
+        \Model\Article::getRepository()->getCollection()->batchInsert($articles);
 
         return $articles;
     }

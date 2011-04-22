@@ -52,7 +52,7 @@ class CoreDocumentTest extends TestCase
             'title'   => 'foo',
             'content' => 123,
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
         $article = new \Model\Article();
         $article->setId($articleRaw['_id']);
@@ -68,7 +68,7 @@ class CoreDocumentTest extends TestCase
             'title'   => 'foo',
             'content' => 123,
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
         $article = new \Model\Article();
         $article->setId($articleRaw['_id']);
@@ -84,9 +84,9 @@ class CoreDocumentTest extends TestCase
             'title'   => 'foo',
             'content' => 123,
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
-        $query = \Model\Article::query();
+        $query = \Model\Article::getRepository()->createQuery();
         $article = $query->one();
 
         $this->assertNull($query->getFieldsCache());
@@ -329,7 +329,7 @@ class CoreDocumentTest extends TestCase
                 ),
             ),
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
         $article = new \Model\Article();
         $article->setId($articleRaw['_id']);
@@ -360,7 +360,7 @@ class CoreDocumentTest extends TestCase
                 ),
             ),
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
         $article = new \Model\Article();
         $article->setId($articleRaw['_id']);
@@ -393,9 +393,9 @@ class CoreDocumentTest extends TestCase
                 ),
             ),
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
-        $query = \Model\Article::query();
+        $query = \Model\Article::getRepository()->createQuery();
         $article = $query->one();
 
         $source = $article->getSource();
@@ -457,7 +457,7 @@ class CoreDocumentTest extends TestCase
         $article = \Model\Article::create()->setInformation($information)->save();
         $this->assertSame($article, $information->getArticle());
 
-        \Model\Article::repository()->getIdentityMap()->clear();
+        \Model\Article::getRepository()->getIdentityMap()->clear();
         $this->assertEquals($article->getId(), $information->getArticle()->getId());
     }
 
@@ -557,7 +557,7 @@ class CoreDocumentTest extends TestCase
         foreach ($articlesVotes[5] as $articleVote) {
             $ids[] = $articleVote->getId();
         }
-        $query = \Model\ArticleVote::query(array('_id' => array('$in' => $ids)));
+        $query = \Model\ArticleVote::getRepository()->createQuery(array('_id' => array('$in' => $ids)));
         $this->assertEquals($query->getCriteria(), $articles[5]->getVotesUsers()->getCriteria());
     }
 
@@ -745,7 +745,7 @@ class CoreDocumentTest extends TestCase
                 ),
             ),
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
         $article = new \Model\Article();
         $article->setId($articleRaw['_id']);
@@ -787,9 +787,9 @@ class CoreDocumentTest extends TestCase
                 ),
             ),
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
-        $query = \Model\Article::query();
+        $query = \Model\Article::getRepository()->createQuery();
         $article = $query->one();
 
         $this->assertNull($query->getFieldsCache());
@@ -832,7 +832,7 @@ class CoreDocumentTest extends TestCase
                 ),
             ),
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
         $article = new \Model\Article();
         $article->setId($articleRaw['_id']);
@@ -846,8 +846,8 @@ class CoreDocumentTest extends TestCase
 
     public function testRepository()
     {
-        $this->assertSame($this->mandango->getRepository('Model\Article'), \Model\Article::repository());
-        $this->assertSame($this->mandango->getRepository('Model\Category'), \Model\Category::repository());
+        $this->assertSame($this->mandango->getRepository('Model\Article'), \Model\Article::getRepository());
+        $this->assertSame($this->mandango->getRepository('Model\Category'), \Model\Category::getRepository());
     }
 
     public function testRefresh()
@@ -857,7 +857,7 @@ class CoreDocumentTest extends TestCase
             'content'  => 'bar',
             'isActive' => 1,
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
         $article = \Model\Article::create()->setId($articleRaw['_id'])->setTitle('ups')->setNote('bump');
         $article->refresh();
@@ -874,14 +874,14 @@ class CoreDocumentTest extends TestCase
 
     public function testMandango()
     {
-        $this->assertSame($this->mandango, \Model\Article::mandango());
-        $this->assertSame($this->mandango, \Model\Source::mandango());
+        $this->assertSame($this->mandango, \Model\Article::getMandango());
+        $this->assertSame($this->mandango, \Model\Source::getMandango());
     }
 
     public function testMetadata()
     {
-        $this->assertSame($this->metadata->getClassInfo('Model\Article'), \Model\Article::metadata());
-        $this->assertSame($this->metadata->getClassInfo('Model\Source'), \Model\Source::metadata());
+        $this->assertSame($this->metadata->getClassInfo('Model\Article'), \Model\Article::getMetadata());
+        $this->assertSame($this->metadata->getClassInfo('Model\Source'), \Model\Source::getMetadata());
     }
 
     public function testRootAndPath()
@@ -977,7 +977,7 @@ class CoreDocumentTest extends TestCase
                 'note' => 'fooups',
             ),
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
         $article = new \Model\Article();
         $article->setDocumentData(array(

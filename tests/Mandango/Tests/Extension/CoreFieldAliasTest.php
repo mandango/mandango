@@ -38,7 +38,7 @@ class CoreFieldAliasTest extends TestCase
         $articleRaw = array(
             'basatos' => 123
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
         $article = new \Model\Article();
         $article->setId($articleRaw['_id']);
@@ -52,7 +52,7 @@ class CoreFieldAliasTest extends TestCase
                 'desde' => 123,
             ),
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
         $article = new \Model\Article();
         $article->setId($articleRaw['_id']);
@@ -64,9 +64,9 @@ class CoreFieldAliasTest extends TestCase
         $articleRaw = array(
             'basatos' => '123',
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
-        $query = \Model\Article::query();
+        $query = \Model\Article::getRepository()->createQuery();
         $article = $query->one();
 
         $this->assertNull($query->getFieldsCache());
@@ -81,9 +81,9 @@ class CoreFieldAliasTest extends TestCase
                 'desde' => '123',
             ),
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
-        $query = \Model\Article::query();
+        $query = \Model\Article::getRepository()->createQuery();
         $article = $query->one();
 
         $this->assertNull($query->getFieldsCache());

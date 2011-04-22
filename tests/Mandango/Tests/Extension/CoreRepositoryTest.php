@@ -28,14 +28,14 @@ class CoreRepositoryTest extends TestCase
     public function testSaveInsertingNotModified()
     {
         $article = \Model\Article::create();
-        \Model\Article::repository()->save($article);
+        \Model\Article::getRepository()->save($article);
         $this->assertTrue($article->isNew());
 
         $articles = array(
             \Model\Article::create(),
             \Model\Article::create()->setTitle('foo'),
         );
-        \Model\Article::repository()->save($articles);
+        \Model\Article::getRepository()->save($articles);
         $this->assertTrue($articles[0]->isNew());
         $this->assertFalse($articles[1]->isNew());
     }
@@ -43,13 +43,13 @@ class CoreRepositoryTest extends TestCase
     public function testSaveUpdatingNotModified($value='')
     {
         $article = \Model\Article::create()->setTitle('foo')->save();
-        \Model\Article::repository()->save($article);
+        \Model\Article::getRepository()->save($article);
 
         $articles = array(
             \Model\Article::create()->setTitle('a1')->save(),
             \Model\Article::create()->setTitle('a2')->save()->setTitle('a2u'),
         );
-        \Model\Article::repository()->save($articles);
+        \Model\Article::getRepository()->save($articles);
     }
 
     public function testSaveInsertSingleDocument()
@@ -59,17 +59,17 @@ class CoreRepositoryTest extends TestCase
             'content' => 12345,
         ));
 
-        \Model\Article::repository()->save($article);
-        $this->assertSame(1, \Model\Article::collection()->count());
+        \Model\Article::getRepository()->save($article);
+        $this->assertSame(1, \Model\Article::getRepository()->getCollection()->count());
 
         $this->assertFalse($article->isNew());
         $this->assertFalse($article->isModified());
-        $articleRaw = \Model\Article::collection()->findOne();
+        $articleRaw = \Model\Article::getRepository()->getCollection()->findOne();
         $this->assertSame(3, count($articleRaw));
         $this->assertEquals($article->getId(), $articleRaw['_id']);
         $this->assertSame('foo', $articleRaw['title']);
         $this->assertSame('12345', $articleRaw['content']);
-        $this->assertTrue(\Model\Article::repository()->getIdentityMap()->has($article->getId()));
+        $this->assertTrue(\Model\Article::getRepository()->getIdentityMap()->has($article->getId()));
     }
 
     public function testSaveInsertMultipleDocuments()
@@ -82,18 +82,18 @@ class CoreRepositoryTest extends TestCase
             ));
         }
 
-        \Model\Article::repository()->save($articles);
-        $this->assertSame(5, \Model\Article::collection()->count());
+        \Model\Article::getRepository()->save($articles);
+        $this->assertSame(5, \Model\Article::getRepository()->getCollection()->count());
 
         foreach ($articles as $i => $article) {
             $this->assertFalse($article->isNew());
             $this->assertFalse($article->isModified());
-            $articleRaw = \Model\Article::collection()->findOne(array('_id' => $article->getId()));
+            $articleRaw = \Model\Article::getRepository()->getCollection()->findOne(array('_id' => $article->getId()));
             $this->assertSame(3, count($articleRaw));
             $this->assertEquals($article->getId(), $articleRaw['_id']);
             $this->assertSame('foo'.$i, $articleRaw['title']);
             $this->assertSame(strval(12345 + $i), $articleRaw['content']);
-            $this->assertTrue(\Model\Article::repository()->getIdentityMap()->has($article->getId()));
+            $this->assertTrue(\Model\Article::getRepository()->getIdentityMap()->has($article->getId()));
         }
     }
 
@@ -106,13 +106,13 @@ class CoreRepositoryTest extends TestCase
                 'content' => 12345 + $i,
             ));
         }
-        \Model\Article::repository()->save($articles);
+        \Model\Article::getRepository()->save($articles);
 
         $articles[2]->setTitle('updated!');
-        \Model\Article::repository()->save($articles[2]);
+        \Model\Article::getRepository()->save($articles[2]);
 
         $this->assertFalse($articles[2]->isModified());
-        $this->assertSame(4, \Model\Article::collection()->find(array('title' => new \MongoRegex('/^foo/')))->count());
+        $this->assertSame(4, \Model\Article::getRepository()->getCollection()->find(array('title' => new \MongoRegex('/^foo/')))->count());
     }
 
     public function testSaveUpdateMultipleDocument()
@@ -121,15 +121,15 @@ class CoreRepositoryTest extends TestCase
         for ($i = 1; $i <= 5; $i++) {
             $articles[$i] = \Model\Article::create()->setTitle('foo'.$i);
         }
-        \Model\Article::repository()->save($articles);
+        \Model\Article::getRepository()->save($articles);
 
         $articles[2]->setTitle('updated!');
         $articles[4]->setTitle('updated!');
-        \Model\Article::repository()->save(array($articles[2], $articles[4]));
+        \Model\Article::getRepository()->save(array($articles[2], $articles[4]));
 
         $this->assertFalse($articles[4]->isModified());
         $this->assertFalse($articles[4]->isModified());
-        $this->assertSame(3, \Model\Article::collection()->find(array('title' => new \MongoRegex('/^foo/')))->count());
+        $this->assertSame(3, \Model\Article::getRepository()->getCollection()->find(array('title' => new \MongoRegex('/^foo/')))->count());
     }
 
     public function testSaveSaveReferences()
@@ -150,7 +150,7 @@ class CoreRepositoryTest extends TestCase
         $messages['barbelith'] = \Model\Message::create()->setAuthor('barbelith');
         $messages['pablodip'] = \Model\Message::create()->setAuthor('pablodip')->setReplyTo($messages['barbelith']);
 
-        \Model\Message::repository()->save($messages);
+        \Model\Message::getRepository()->save($messages);
 
         $this->assertFalse($messages['pablodip']->isNew());
         $this->assertFalse($messages['barbelith']->isNew());
@@ -163,7 +163,7 @@ class CoreRepositoryTest extends TestCase
             \Model\Events::create()->setName('foo')->setMyEventPrefix('2'),
             \Model\Events::create()->setName('bar')->setMyEventPrefix('1'),
         );
-        \Model\Events::repository()->save($documents);
+        \Model\Events::getRepository()->save($documents);
 
         $this->assertSame(array(
             '2PreInserting',
@@ -182,7 +182,7 @@ class CoreRepositoryTest extends TestCase
             \Model\Events::create()->setName('bar')->save()->clearEvents()->setName('foo')->setMyEventPrefix('1')->save()
         );
 
-        \Model\Events::repository()->save($documents);
+        \Model\Events::getRepository()->save($documents);
 
         $this->assertSame(array(
             '2PreUpdating',
@@ -200,19 +200,19 @@ class CoreRepositoryTest extends TestCase
         for ($i = 1; $i <= 5; $i++) {
             $articles[$i] = \Model\Article::create()->setTitle('foo');
         }
-        \Model\Article::repository()->save($articles);
+        \Model\Article::getRepository()->save($articles);
 
         $id = $articles[2]->getId();
-        \Model\Article::repository()->delete($articles[2]);
+        \Model\Article::getRepository()->delete($articles[2]);
 
         $this->assertTrue($articles[2]->isNew());
-        $this->assertNull(\Model\Article::collection()->findOne(array('_id' => $id)));
-        $this->assertSame(4, \Model\Article::collection()->count());
-        $this->assertFalse(\Model\Article::repository()->getIdentityMap()->has($id));
+        $this->assertNull(\Model\Article::getRepository()->getCollection()->findOne(array('_id' => $id)));
+        $this->assertSame(4, \Model\Article::getRepository()->getCollection()->count());
+        $this->assertFalse(\Model\Article::getRepository()->getIdentityMap()->has($id));
         foreach (array(1, 3, 4, 5) as $key) {
             $this->assertFalse($articles[$key]->isNew());
-            $this->assertNotNull(\Model\Article::collection()->findOne(array('_id' => $articles[$key]->getId())));
-            $this->assertTrue(\Model\Article::repository()->getIdentityMap()->has($articles[$key]->getId()));
+            $this->assertNotNull(\Model\Article::getRepository()->getCollection()->findOne(array('_id' => $articles[$key]->getId())));
+            $this->assertTrue(\Model\Article::getRepository()->getIdentityMap()->has($articles[$key]->getId()));
         }
     }
 
@@ -222,20 +222,20 @@ class CoreRepositoryTest extends TestCase
         for ($i = 1; $i <= 5; $i++) {
             $articles[$i] = \Model\Article::create()->setTitle('foo');
         }
-        \Model\Article::repository()->save($articles);
+        \Model\Article::getRepository()->save($articles);
 
         $ids = array($articles[2]->getId(), $articles[3]->getId());
-        \Model\Article::repository()->delete(array($articles[2], $articles[3]));
+        \Model\Article::getRepository()->delete(array($articles[2], $articles[3]));
 
         $this->assertTrue($articles[2]->isNew());
         $this->assertTrue($articles[3]->isNew());
-        $this->assertSame(0, \Model\Article::collection()->find(array('_id' => array('$in' => $ids)))->count());
-        $this->assertFalse(\Model\Article::repository()->getIdentityMap()->has($ids[0]));
-        $this->assertFalse(\Model\Article::repository()->getIdentityMap()->has($ids[1]));
+        $this->assertSame(0, \Model\Article::getRepository()->getCollection()->find(array('_id' => array('$in' => $ids)))->count());
+        $this->assertFalse(\Model\Article::getRepository()->getIdentityMap()->has($ids[0]));
+        $this->assertFalse(\Model\Article::getRepository()->getIdentityMap()->has($ids[1]));
         foreach (array(1, 4, 5) as $key) {
             $this->assertFalse($articles[$key]->isNew());
-            $this->assertNotNull(\Model\Article::collection()->findOne(array('_id' => $articles[$key]->getId())));
-            $this->assertTrue(\Model\Article::repository()->getIdentityMap()->has($articles[$key]->getId()));
+            $this->assertNotNull(\Model\Article::getRepository()->getCollection()->findOne(array('_id' => $articles[$key]->getId())));
+            $this->assertTrue(\Model\Article::getRepository()->getIdentityMap()->has($articles[$key]->getId()));
         }
     }
 
@@ -252,9 +252,9 @@ class CoreRepositoryTest extends TestCase
 
     public function testEnsureIndexesMethod()
     {
-        \Model\Article::repository()->ensureIndexes();
+        \Model\Article::getRepository()->ensureIndexes();
 
-        $indexInfo = \Model\Article::collection()->getIndexInfo();
+        $indexInfo = \Model\Article::getRepository()->getCollection()->getIndexInfo();
 
         // root
         $this->assertSame(array('slug' => 1), $indexInfo[1]['key']);
@@ -288,25 +288,25 @@ class CoreRepositoryTest extends TestCase
 
     public function testDocumentClass()
     {
-        $this->assertSame('Model\Article', \Model\Article::repository()->getDocumentClass());
-        $this->assertSame('Model\Category', \Model\Category::repository()->getDocumentClass());
+        $this->assertSame('Model\Article', \Model\Article::getRepository()->getDocumentClass());
+        $this->assertSame('Model\Category', \Model\Category::getRepository()->getDocumentClass());
     }
 
     public function testIsFile()
     {
-        $this->assertFalse(\Model\Article::repository()->isFile());
-        $this->assertTrue(\Model\Image::repository()->isFile());
+        $this->assertFalse(\Model\Article::getRepository()->isFile());
+        $this->assertTrue(\Model\Image::getRepository()->isFile());
     }
 
     public function testConnectionName()
     {
-        $this->assertNull(\Model\Article::repository()->getConnectionName());
-        $this->assertSame('global', \Model\ConnectionGlobal::repository()->getConnectionName());
+        $this->assertNull(\Model\Article::getRepository()->getConnectionName());
+        $this->assertSame('global', \Model\ConnectionGlobal::getRepository()->getConnectionName());
     }
 
     public function testCollectionName()
     {
-        $this->assertSame('articles', \Model\Article::repository()->getCollectionName());
-        $this->assertSame('model_category', \Model\Category::repository()->getCollectionName());
+        $this->assertSame('articles', \Model\Article::getRepository()->getCollectionName());
+        $this->assertSame('model_category', \Model\Category::getRepository()->getCollectionName());
     }
 }

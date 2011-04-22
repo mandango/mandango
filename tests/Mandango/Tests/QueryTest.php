@@ -32,13 +32,13 @@ class QueryTest extends TestCase
     {
         parent::setUp();
 
-        $this->identityMap = \Model\Article::repository()->getIdentityMap();
-        $this->query = new \Model\ArticleQuery(\Model\Article::repository());
+        $this->identityMap = \Model\Article::getRepository()->getIdentityMap();
+        $this->query = new \Model\ArticleQuery(\Model\Article::getRepository());
     }
 
     public function testConstructor()
     {
-        $query = new \Model\CategoryQuery($repository = \Model\Category::repository());
+        $query = new \Model\CategoryQuery($repository = \Model\Category::getRepository());
         $this->assertSame($repository, $query->getRepository());
         $hash = $query->getHash();
         $this->assertInternalType('string', $hash);
@@ -309,7 +309,7 @@ class QueryTest extends TestCase
             $this->assertSame(array($this->query->getHash()), $article->getQueryHashes());
         }
 
-        $query = new \Model\ArticleQuery(\Model\Article::repository());
+        $query = new \Model\ArticleQuery(\Model\Article::getRepository());
         $articles2 = $query->all();
         foreach ($articles2 as $key => $article2) {
             $this->assertSame($article2, $articles[$key]);
@@ -328,13 +328,13 @@ class QueryTest extends TestCase
                 ),
             ),
         );
-        \Model\Article::collection()->insert($articleRaw);
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
 
-        $article = \Model\Article::query()->fields(array('title' => 1, 'source.name' => 1))->one();
+        $article = \Model\Article::getRepository()->createQuery()->fields(array('title' => 1, 'source.name' => 1))->one();
 
         $articleRaw['title'] = 'foo';
         $articleRaw['source']['name'] = 'foobar';
-        \Model\Article::collection()->save($articleRaw);
+        \Model\Article::getRepository()->getCollection()->save($articleRaw);
 
         $this->assertNull($article->getTitle());
         $this->assertNull($article->getSource()->getName());
@@ -356,14 +356,14 @@ class QueryTest extends TestCase
         $articles[4]->setAuthor($authors[3])->save();
         $articles[6]->setAuthor($authors[6])->save();
 
-        $articleIdentityMap = \Model\Article::repository()->getIdentityMap();
-        $authorIdentityMap = \Model\Author::repository()->getIdentityMap();
+        $articleIdentityMap = \Model\Article::getRepository()->getIdentityMap();
+        $authorIdentityMap = \Model\Author::getRepository()->getIdentityMap();
 
         // without reference
         $articleIdentityMap->clear();
         $authorIdentityMap->clear();
 
-        \Model\Article::query()->all();
+        \Model\Article::getRepository()->createQuery()->all();
         foreach ($articles as $article) {
             $this->assertTrue($articleIdentityMap->has($article->getId()));
         }
@@ -375,7 +375,7 @@ class QueryTest extends TestCase
         $articleIdentityMap->clear();
         $authorIdentityMap->clear();
 
-        \Model\Article::query()->references(array('author'))->all();
+        \Model\Article::getRepository()->createQuery()->references(array('author'))->all();
         foreach ($articles as $article) {
             $this->assertTrue($articleIdentityMap->has($article->getId()));
         }
@@ -391,7 +391,7 @@ class QueryTest extends TestCase
         $articleIdentityMap->clear();
         $authorIdentityMap->clear();
 
-        \Model\Article::query(array(
+        \Model\Article::getRepository()->createQuery(array(
             '_id' => array('$nin' => array($articles[6]->getId()))
         ))->references(array('author'))->all();
         foreach ($articles as $i => $article) {
@@ -428,14 +428,14 @@ class QueryTest extends TestCase
         $articles[5]->getCategories()->add(array($categories[5]));
         $articles[5]->save();
 
-        $articleIdentityMap = \Model\Article::repository()->getIdentityMap();
-        $categoryIdentityMap = \Model\Category::repository()->getIdentityMap();
+        $articleIdentityMap = \Model\Article::getRepository()->getIdentityMap();
+        $categoryIdentityMap = \Model\Category::getRepository()->getIdentityMap();
 
         // without reference
         $articleIdentityMap->clear();
         $categoryIdentityMap->clear();
 
-        \Model\Article::query()->all();
+        \Model\Article::getRepository()->createQuery()->all();
         foreach ($articles as $article) {
             $this->assertTrue($articleIdentityMap->has($article->getId()));
         }
@@ -447,7 +447,7 @@ class QueryTest extends TestCase
         $articleIdentityMap->clear();
         $categoryIdentityMap->clear();
 
-        \Model\Article::query()->references(array('categories'))->all();
+        \Model\Article::getRepository()->createQuery()->references(array('categories'))->all();
         foreach ($articles as $article) {
             $this->assertTrue($articleIdentityMap->has($article->getId()));
         }
@@ -463,7 +463,7 @@ class QueryTest extends TestCase
         $articleIdentityMap->clear();
         $categoryIdentityMap->clear();
 
-        \Model\Article::query(array(
+        \Model\Article::getRepository()->createQuery(array(
             '_id' => array('$nin' => array($articles[5]->getId())),
         ))->references(array('categories'))->all();
         foreach ($articles as $i => $article) {
@@ -487,7 +487,7 @@ class QueryTest extends TestCase
      */
     public function testAllReferencesNotExist()
     {
-        \Model\Article::query()->references(array('no'))->all();
+        \Model\Article::getRepository()->createQuery()->references(array('no'))->all();
     }
 
     public function testIterator()

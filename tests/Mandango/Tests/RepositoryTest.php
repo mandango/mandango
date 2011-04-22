@@ -94,8 +94,8 @@ class RepositoryTest extends TestCase
         $mandango->setDefaultConnectionName('local');
         \Mandango\Container::set('default', $mandango);
 
-        $this->assertSame($connections['local'], \Model\Article::repository()->getConnection());
-        $this->assertSame($connections['global'], \Model\ConnectionGlobal::repository()->getConnection());
+        $this->assertSame($connections['local'], \Model\Article::getRepository()->getConnection());
+        $this->assertSame($connections['global'], \Model\ConnectionGlobal::getRepository()->getConnection());
     }
 
     public function testCollection()
@@ -106,28 +106,28 @@ class RepositoryTest extends TestCase
         $mandango->setDefaultConnectionName('default');
         \Mandango\Container::set('default', $mandango);
 
-        $collection = \Model\Article::repository()->collection();
+        $collection = \Model\Article::getRepository()->getCollection();
         $this->assertEquals($connection->getMongoDB()->selectCollection('articles'), $collection);
-        $this->assertSame($collection, \Model\Article::repository()->collection());
+        $this->assertSame($collection, \Model\Article::getRepository()->getCollection());
     }
 
     public function testCollectionGridFS()
     {
-        $collection = \Model\Image::repository()->collection();
+        $collection = \Model\Image::getRepository()->getCollection();
         $this->assertEquals($this->db->getGridFS('model_image'), $collection);
-        $this->assertSame($collection, \Model\Image::repository()->collection());
+        $this->assertSame($collection, \Model\Image::getRepository()->getCollection());
     }
 
     public function testQuery()
     {
-        $query = \Model\Article::repository()->query();
+        $query = \Model\Article::getRepository()->createQuery();
         $this->assertInstanceOf('Model\ArticleQuery', $query);
 
-        $query = \Model\Author::repository()->query();
+        $query = \Model\Author::getRepository()->createQuery();
         $this->assertInstanceOf('Model\AuthorQuery', $query);
 
         $criteria = array('is_active' => true);
-        $query = \Model\Article::repository()->query($criteria);
+        $query = \Model\Article::getRepository()->createQuery($criteria);
         $this->assertInstanceOf('Model\ArticleQuery', $query);
         $this->assertSame($criteria, $query->getCriteria());
     }
@@ -142,7 +142,7 @@ class RepositoryTest extends TestCase
             $articlesById[$article->getId()->__toString()] = $article;
         }
 
-        $repository = \Model\Article::repository();
+        $repository = \Model\Article::getRepository();
         $identityMap = $repository->getIdentityMap();
 
         $identityMap->clear();

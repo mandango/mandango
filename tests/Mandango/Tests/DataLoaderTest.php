@@ -87,32 +87,32 @@ class DataLoaderTest extends TestCase
         $dataLoader->load($data);
 
         // articles
-        $this->assertSame(2, \Model\Article::count());
+        $this->assertSame(2, \Model\Article::getRepository()->count());
 
-        $article = \Model\Article::query(array('title' => 'Article 1'))->one();
+        $article = \Model\Article::getRepository()->createQuery(array('title' => 'Article 1'))->one();
         $this->assertNotNull($article);
         $this->assertSame('Contuent', $article->getContent());
         $this->assertSame('Francisco', $article->getAuthor()->getName());
         $this->assertSame(2, $article->getCategories()->count());
 
-        $article = \Model\Article::query(array('title' => 'My Article 2'))->one();
+        $article = \Model\Article::getRepository()->createQuery(array('title' => 'My Article 2'))->one();
         $this->assertNotNull($article);
         $this->assertNull($article->getAuthorId());
 
         // authors
-        $this->assertSame(3, \Model\Author::count());
+        $this->assertSame(3, \Model\Author::getRepository()->count());
 
-        $author = \Model\Author::query(array('name' => 'PabloDip'))->one();
+        $author = \Model\Author::getRepository()->createQuery(array('name' => 'PabloDip'))->one();
         $this->assertNotNull($author);
 
-        $author = \Model\Author::query(array('name' => 'Francisco'))->one();
+        $author = \Model\Author::getRepository()->createQuery(array('name' => 'Francisco'))->one();
         $this->assertNotNull($author);
 
-        $author = \Model\Author::query(array('name' => 'Pedro'))->one();
+        $author = \Model\Author::getRepository()->createQuery(array('name' => 'Pedro'))->one();
         $this->assertNotNull($author);
 
         // categories
-        $this->assertSame(4, \Model\Category::count());
+        $this->assertSame(4, \Model\Category::getRepository()->count());
     }
 
     public function testLoadSingleInheritanceReferences()
@@ -148,9 +148,9 @@ class DataLoaderTest extends TestCase
         $dataLoader = new DataLoader($this->mandango);
         $dataLoader->load($data);
 
-        $this->assertSame(1, \Model\RadioFormElement::query()->count());
-        $radio = \Model\RadioFormElement::query()->one();
-        $this->assertSame(\Model\Author::query(array('name' => 'pablodip'))->one(), $radio->getAuthor());
+        $this->assertSame(1, \Model\RadioFormElement::getRepository()->createQuery()->count());
+        $radio = \Model\RadioFormElement::getRepository()->createQuery()->one();
+        $this->assertSame(\Model\Author::getRepository()->createQuery(array('name' => 'pablodip'))->one(), $radio->getAuthor());
         $this->assertSame(2, count($radio->getCategories()));
     }
 
@@ -171,16 +171,16 @@ class DataLoaderTest extends TestCase
         $dataLoader = new DataLoader($this->mandango);
 
         $dataLoader->load($data);
-        $this->assertSame(1, \Model\Author::repository()->count());
+        $this->assertSame(1, \Model\Author::getRepository()->count());
 
         $dataLoader->load($data);
-        $this->assertSame(2, \Model\Author::repository()->count());
+        $this->assertSame(2, \Model\Author::getRepository()->count());
 
         $dataLoader->load($data, false);
-        $this->assertSame(3, \Model\Author::repository()->count());
+        $this->assertSame(3, \Model\Author::getRepository()->count());
 
         $dataLoader->load($data, true);
-        $this->assertSame(1, \Model\Author::repository()->count());
+        $this->assertSame(1, \Model\Author::getRepository()->count());
     }
 
     /**

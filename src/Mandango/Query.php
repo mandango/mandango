@@ -548,7 +548,7 @@ abstract class Query implements \Countable, \IteratorAggregate
      */
     public function createCursor()
     {
-        $cursor = $this->repository->collection()->find($this->criteria, $this->fields);
+        $cursor = $this->repository->getCollection()->find($this->criteria, $this->fields);
 
         if (null !== $this->sort) {
             $cursor->sort($this->sort);
