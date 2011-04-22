@@ -34,9 +34,9 @@ class CoreQueryForSaveTest extends TestCase
         $article->setIsActive(1);
 
         $this->assertSame(array(
-            'title'     => 'foo',
-            'content'   => 'bar',
-            'is_active' => true,
+            'title'    => 'foo',
+            'content'  => 'bar',
+            'isActive' => true,
         ), $article->queryForSave());
     }
 
@@ -44,11 +44,11 @@ class CoreQueryForSaveTest extends TestCase
     {
         $article = new \Model\Article();
         $article->setDocumentData(array(
-            '_id'       => new \MongoId('123'),
-            'title'     => 'foo',
-            'content'   => 'bar',
-            'note'      => 'ups',
-            'is_active' => false,
+            '_id'      => new \MongoId('123'),
+            'title'    => 'foo',
+            'content'  => 'bar',
+            'note'     => 'ups',
+            'isActive' => false,
         ));
         $article->setTitle(234);
         $article->setContent('bar');
@@ -62,7 +62,7 @@ class CoreQueryForSaveTest extends TestCase
                 'line'  => 'mmm',
             ),
             '$unset' => array(
-                'is_active' => 1,
+                'isActive' => 1,
             ),
         ), $article->queryForSave());
     }

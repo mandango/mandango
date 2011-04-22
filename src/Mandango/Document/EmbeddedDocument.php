@@ -84,7 +84,7 @@ abstract class EmbeddedDocument extends AbstractDocument
 
         $parentDocument = $rap['root'];
         foreach ($exPath as $embedded) {
-            $parentDocument = $parentDocument->{'get'.\Mandango\Inflector::camelize($embedded)}();
+            $parentDocument = $parentDocument->{'get'.ucfirst($embedded)}();
             if ($parentDocument instanceof EmbeddedGroup) {
                 return false;
             }

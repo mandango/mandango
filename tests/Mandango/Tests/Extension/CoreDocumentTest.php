@@ -150,7 +150,7 @@ class CoreDocumentTest extends TestCase
         $categories = $article->getCategories();
         $this->assertInstanceOf('Mandango\Group\ReferenceGroup', $categories);
         $this->assertSame($article, $categories->getParent());
-        $this->assertSame('category_ids', $categories->getField());
+        $this->assertSame('categoryIds', $categories->getField());
         $this->assertSame($categories, $article->getCategories());
     }
 
@@ -625,9 +625,9 @@ class CoreDocumentTest extends TestCase
     {
         $article = new \Model\Article();
         $this->assertSame($article, $article->fromArray(array(
-            'title'     => 'foo',
-            'content'   => 'bar',
-            'is_active' => true,
+            'title'    => 'foo',
+            'content'  => 'bar',
+            'isActive' => true,
             'source' => array(
                 'name' => 'foobar',
                 'text' => 'barfoo',
@@ -693,9 +693,9 @@ class CoreDocumentTest extends TestCase
             ->setIsActive(false)
         ;
         $this->assertSame(array(
-            'title'     => 'foo',
-            'content'   => 'bar',
-            'is_active' => false,
+            'title'    => 'foo',
+            'content'  => 'bar',
+            'isActive' => false,
         ), $article->toArray());
     }
 
@@ -853,9 +853,9 @@ class CoreDocumentTest extends TestCase
     public function testRefresh()
     {
         $articleRaw = array(
-            'title'     => 'foo',
-            'content'   => 'bar',
-            'is_active' => 1,
+            'title'    => 'foo',
+            'content'  => 'bar',
+            'isActive' => 1,
         );
         \Model\Article::collection()->insert($articleRaw);
 
@@ -936,7 +936,7 @@ class CoreDocumentTest extends TestCase
             '_id'         => $id = new \MongoId('123'),
             '_query_hash' => $queryHash = md5(1),
             'title'       => 'foo',
-            'is_active'   => 1,
+            'isActive'    => 1,
         )));
 
         $this->assertSame($id, $article->getId());
@@ -963,7 +963,7 @@ class CoreDocumentTest extends TestCase
             '_id' => new \MongoId('123'),
         ));
         $this->assertFalse($book->isFieldModified('comment'));
-        $this->assertFalse($book->isFieldModified('is_here'));
+        $this->assertFalse($book->isFieldModified('isHere'));
     }
 
     public function testSetDocumentDataNullValues()
@@ -1074,10 +1074,10 @@ class CoreDocumentTest extends TestCase
     {
         $article = new \Model\Article();
         $article->setDocumentData(array(
-            '_id'       => new \MongoId('123'),
-            'title'     => 'bar',
-            'content'   => 'foo',
-            'is_active' => true,
+            '_id'      => new \MongoId('123'),
+            'title'    => 'bar',
+            'content'  => 'foo',
+            'isActive' => true,
         ));
         $this->assertFalse($article->isModified());
     }
@@ -1086,20 +1086,20 @@ class CoreDocumentTest extends TestCase
     {
         $article = new \Model\Article();
         $article->setDocumentData(array(
-            '_id'       => new \MongoId('123'),
-            'title'     => 'bar',
-            'content'   => 'foo',
-            'is_active' => true,
+            '_id'      => new \MongoId('123'),
+            'title'    => 'bar',
+            'content'  => 'foo',
+            'isActive' => true,
         ));
         $article->setContent('ups');
         $this->assertTrue($article->isModified());
 
         $article = new \Model\Article();
         $article->setDocumentData(array(
-            '_id'       => new \MongoId('123'),
-            'title'     => 'bar',
-            'content'   => 'foo',
-            'is_active' => true,
+            '_id'      => new \MongoId('123'),
+            'title'    => 'bar',
+            'content'  => 'foo',
+            'isActive' => true,
         ));
         $article->setLine('ups');
         $this->assertTrue($article->isModified());
@@ -1388,7 +1388,7 @@ class CoreDocumentTest extends TestCase
         $book = new \Model\Book();
         $this->assertFalse($book->isFieldModified('title'));
         $this->assertTrue($book->isFieldModified('comment'));
-        $this->assertTrue($book->isFieldModified('is_here'));
+        $this->assertTrue($book->isFieldModified('isHere'));
     }
 
     /*
@@ -1470,7 +1470,7 @@ class CoreDocumentTest extends TestCase
         $book = new \Model\Book();
         $this->assertSame(array(
             'comment' => null,
-            'is_here' => null,
+            'isHere'  => null,
         ), $book->getFieldsModified());
     }
 
@@ -1478,18 +1478,18 @@ class CoreDocumentTest extends TestCase
     {
         $article = new \Model\Article();
         $article->setDocumentData(array(
-            '_id'       => new \MongoId('123'),
-            'title'     => 'bar',
-            'content'   => 'foo',
-            'is_active' => true,
+            '_id'      => new \MongoId('123'),
+            'title'    => 'bar',
+            'content'  => 'foo',
+            'isActive' => true,
         ));
         $this->assertSame(array(), $article->getFieldsModified());
 
         $article->setTitle('ups');
         $article->setIsActive(false);
         $this->assertSame(array(
-            'title'     => 'bar',
-            'is_active' => true,
+            'title'    => 'bar',
+            'isActive' => true,
         ), $article->getFieldsModified());
     }
 

@@ -27,7 +27,6 @@ use Mandango\Mondator\Definition\Method;
 use Mandango\Mondator\Definition\Property;
 use Mandango\Mondator\Output;
 use Mandango\Type\Container as TypeContainer;
-use Mandango\Inflector;
 
 /**
  * Core extension.
@@ -232,7 +231,7 @@ class Core extends Extension
     protected function initCollectionNameProcess()
     {
         if (!isset($this->configClass['collection'])) {
-            $this->configClass['collection'] = str_replace('\\', '_', Inflector::underscore($this->class));
+            $this->configClass['collection'] = strtolower(str_replace('\\', '_', $this->class));
         }
     }
 
@@ -430,10 +429,10 @@ class Core extends Extension
             }
 
             if (!isset($relation['local'])) {
-                $relation['local'] = Inflector::fieldForClass($this->class);
+                throw new \RuntimeException(sprintf('The relation_many_through "%s" of the class "%s" does not have local.', $name, $this->class));
             }
             if (!isset($relation['foreign'])) {
-                $relation['foreign'] = Inflector::fieldForClass($relation['class']);
+                throw new \RuntimeException(sprintf('The relation_many_through "%s" of the class "%s" does not have foreign.', $name, $this->class));
             }
         }
     }
@@ -588,7 +587,7 @@ EOF
         $code = '';
         foreach ($this->configClass['fields'] as $name => $field) {
             if (isset($field['default'])) {
-                $setter = 'set'.Inflector::camelize($name);
+                $setter = 'set'.ucfirst($name);
                 $default = var_export($field['default'], true);
                 $code .= <<<EOF
         \$this->$setter($default);
@@ -788,8 +787,8 @@ EOF
             } else {
                 $isNotNewCode = "(\$rap = \$this->getRootAndPath()) && !\$rap['root']->isNew()";
             }
-            $getter = 'get'.Inflector::camelize($name);
-            $method = new Method('public', 'set'.Inflector::camelize($name), '$value', <<<EOF
+            $getter = 'get'.ucfirst($name);
+            $method = new Method('public', 'set'.ucfirst($name), '$value', <<<EOF
         if (!isset(\$this->data['fields']['$name'])) {
             if ($isNotNewCode) {
                 \$this->$getter();
@@ -881,7 +880,7 @@ EOF;
             }
 EOF;
             }
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+            $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         if (!isset(\$this->data['fields']['$name'])) {
 $queryCode
         }
@@ -905,8 +904,8 @@ EOF
     protected function documentReferencesOneProcess()
     {
         foreach ($this->configClass['references_one'] as $name => $reference) {
-            $fieldSetter = 'set'.Inflector::camelize($reference['field']);
-            $fieldGetter = 'get'.Inflector::camelize($reference['field']);
+            $fieldSetter = 'set'.ucfirst($reference['field']);
+            $fieldGetter = 'get'.ucfirst($reference['field']);
 
             // normal
             if (isset($reference['class'])) {
@@ -1037,12 +1036,12 @@ EOF;
             }
 
             // setter
-            $method = new Method('public', 'set'.Inflector::camelize($name), '$value', $setCode);
+            $method = new Method('public', 'set'.ucfirst($name), '$value', $setCode);
             $method->setDocComment($setDocComment);
             $this->definitions['document_base']->addMethod($method);
 
             // getter
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', $getCode);
+            $method = new Method('public', 'get'.ucfirst($name), '', $getCode);
             $method->setDocComment($getDocComment);
             $this->definitions['document_base']->addMethod($method);
         }
@@ -1095,7 +1094,7 @@ EOF;
             }
 
             // getter
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', $getCode);
+            $method = new Method('public', 'get'.ucfirst($name), '', $getCode);
             $method->setDocComment($getDocComment);
             $this->definitions['document_base']->addMethod($method);
         }
@@ -1106,7 +1105,7 @@ EOF;
         $referencesCode = array();
         // references one
         foreach ($this->configClass['references_one'] as $name => $reference) {
-            $fieldSetter = 'set'.Inflector::camelize($reference['field']);
+            $fieldSetter = 'set'.ucfirst($reference['field']);
 
             // normal
             if (isset($reference['class'])) {
@@ -1148,8 +1147,8 @@ EOF;
         }
         // references many
         foreach ($this->configClass['references_many'] as $name => $reference) {
-            $fieldSetter = 'set'.Inflector::camelize($reference['field']);
-            $fieldGetter = 'get'.Inflector::camelize($reference['field']);
+            $fieldSetter = 'set'.ucfirst($reference['field']);
+            $fieldGetter = 'get'.ucfirst($reference['field']);
 
             // normal
             if (isset($reference['class'])) {
@@ -1348,7 +1347,7 @@ EOF
             // setter
             $rootDocument = !$this->configClass['is_embedded'] ? '$this' : '$this->getRootDocument()';
 
-            $method = new Method('public', 'set'.Inflector::camelize($name), '$value', <<<EOF
+            $method = new Method('public', 'set'.ucfirst($name), '$value', <<<EOF
         if (null !== \$value && !\$value instanceof \\{$embedded['class']}) {
             throw new \InvalidArgumentException('The "$name" embedded one is not an instance of {$embedded['class']}');
         }
@@ -1427,7 +1426,7 @@ EOF;
             }
 EOF;
             }
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+            $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         if (!isset(\$this->data['embeddeds_one']['$name'])) {
 $queryCode
         }
@@ -1462,7 +1461,7 @@ EOF;
 EOF;
             }
 
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+            $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         if (!isset(\$this->data['embeddeds_many']['$name'])) {
             \$this->data['embeddeds_many']['$name'] = \$embedded = new \Mandango\Group\EmbeddedGroup('{$embedded['class']}');
 $rootAndPath
@@ -1486,7 +1485,7 @@ EOF
     protected function documentRelationsOneProcess()
     {
         foreach ($this->configClass['relations_one'] as $name => $relation) {
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+            $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         return \\{$relation['class']}::query(array('{$relation['reference']}' => \$this->getId()))->one();
 EOF
             );
@@ -1505,7 +1504,7 @@ EOF
     protected function documentRelationsManyOneProcess()
     {
         foreach ($this->configClass['relations_many_one'] as $name => $relation) {
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+            $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         return \\{$relation['class']}::query(array('{$relation['reference']}' => \$this->getId()));
 EOF
             );
@@ -1524,7 +1523,7 @@ EOF
     protected function documentRelationsManyManyProcess()
     {
         foreach ($this->configClass['relations_many_many'] as $name => $relation) {
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+            $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         return \\{$relation['class']}::query(array('{$relation['reference']}' => \$this->getId()));
 EOF
             );
@@ -1543,7 +1542,7 @@ EOF
     protected function documentRelationsManyThroughProcess()
     {
         foreach ($this->configClass['relations_many_through'] as $name => $relation) {
-            $method = new Method('public', 'get'.Inflector::camelize($name), '', <<<EOF
+            $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         \$ids = array();
         foreach (\\{$relation['through']}::collection()
             ->find(array('{$relation['local']}' => \$this->getId()), array('{$relation['foreign']}' => 1))
@@ -1586,7 +1585,7 @@ EOF;
             array_keys($this->configClass['references_one']),
             array_keys($this->configClass['embeddeds_one'])
         ) as $name) {
-            $setter = 'set'.Inflector::camelize($name);
+            $setter = 'set'.ucfirst($name);
 
             $setCode[] = <<<EOF
         if ('$name' == \$name) {
@@ -1643,7 +1642,7 @@ EOF;
             array_keys($this->configClass['embeddeds_one']),
             array_keys($this->configClass['embeddeds_many'])
         ) as $name) {
-            $getter = 'get'.Inflector::camelize($name);
+            $getter = 'get'.ucfirst($name);
 
             $getCode[] = <<<EOF
         if ('$name' === \$name) {
@@ -1690,7 +1689,7 @@ EOF;
         // fields
         $fieldsCode = array();
         foreach ($this->configClass['fields'] as $name => $field) {
-            $setter = 'set'.Inflector::camelize($name);
+            $setter = 'set'.ucfirst($name);
             $fieldsCode[] = <<<EOF
         if (isset(\$array['$name'])) {
             \$this->$setter(\$array['$name']);
@@ -1702,7 +1701,7 @@ EOF;
         // embeddeds one
         $embeddedsOneCode = array();
         foreach ($this->configClass['embeddeds_one'] as $name => $embedded) {
-            $setter = 'set'.Inflector::camelize($name);
+            $setter = 'set'.ucfirst($name);
             $embeddedsOneCode[] = <<<EOF
         if (isset(\$array['$name'])) {
             \$embedded = new \\{$embedded['class']}();
@@ -1716,7 +1715,7 @@ EOF;
         // embeddeds many
         $embeddedsManyCode = array();
         foreach ($this->configClass['embeddeds_many'] as $name => $embedded) {
-            $getter = 'get'.Inflector::camelize($name);
+            $getter = 'get'.ucfirst($name);
             $embeddedsManyCode[] = <<<EOF
         if (isset(\$array['$name'])) {
             \$embeddeds = array();

@@ -259,7 +259,7 @@ class CoreRepositoryTest extends TestCase
         // root
         $this->assertSame(array('slug' => 1), $indexInfo[1]['key']);
         $this->assertSame(true, $indexInfo[1]['unique']);
-        $this->assertSame(array('author_id' => 1, 'is_active' => 1), $indexInfo[2]['key']);
+        $this->assertSame(array('authorId' => 1, 'isActive' => 1), $indexInfo[2]['key']);
 
         // embeddeds one
         $this->assertSame(array('source.name' => 1), $indexInfo[3]['key']);

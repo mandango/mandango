@@ -167,9 +167,9 @@ class CoreSingleInheritanceTest extends TestCase
 
     public function testRepositoryCollectionName()
     {
-        $this->assertSame('model_form_element', \Model\FormElement::repository()->getCollectionName());
-        $this->assertSame('model_form_element', \Model\TextareaFormElement::repository()->getCollectionName());
-        $this->assertSame('model_form_element', \Model\RadioFormElement::repository()->getCollectionName());
+        $this->assertSame('model_formelement', \Model\FormElement::repository()->getCollectionName());
+        $this->assertSame('model_formelement', \Model\TextareaFormElement::repository()->getCollectionName());
+        $this->assertSame('model_formelement', \Model\RadioFormElement::repository()->getCollectionName());
     }
 
     public function testRepositoryCount()

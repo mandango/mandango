@@ -145,7 +145,7 @@ class CorePolymorphicReferencesTest extends TestCase
         $this->assertInstanceOf('Mandango\Group\PolymorphicReferenceGroup', $related);
         $this->assertSame('_mandango_document_class', $related->getDiscriminatorField());
         $this->assertSame($article, $related->getParent());
-        $this->assertSame('related_ref', $related->getField());
+        $this->assertSame('relatedRef', $related->getField());
         $this->assertSame($related, $article->getRelated());
     }
 

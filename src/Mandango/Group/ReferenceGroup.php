@@ -22,7 +22,6 @@
 namespace Mandango\Group;
 
 use Mandango\Archive;
-use Mandango\Inflector;
 
 /**
  * ReferenceGroup.
@@ -71,7 +70,7 @@ class ReferenceGroup extends Group
      */
     protected function doInitializeSavedData()
     {
-        return (array) $this->getParent()->{'get'.Inflector::camelize($this->getField())}();
+        return (array) $this->getParent()->{'get'.ucfirst($this->getField())}();
     }
 
     /**
