@@ -2587,6 +2587,11 @@ EOF
 
             // type
             if ('single' == $inheritable['type']) {
+                //single inheritance does not work with multiple inheritance
+                if (!$this->configClasses[$configClass['inheritance']['class']]['inheritable']) {
+                    throw new \RuntimeException(sprintf('The single inheritance does not work with multiple inheritance (%s).', $class));
+                }
+
                 if (!isset($configClass['inheritance']['value'])) {
                     throw new \RuntimeException(sprintf('The inheritable configuration in the class "%s" does not have value.', $class));
                 }

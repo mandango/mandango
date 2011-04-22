@@ -300,21 +300,6 @@ $configClasses = array(
             'options' => 'serialized',
         ),
     ),
-    'Model\OptionableFormElement' => array(
-        'inheritance' => array('class' => 'Model\FormElement', 'value' => 'optionable'),
-        'fields' => array(
-            'options' => 'serialized',
-        ),
-    ),
-    'Model\SelectFormElement' => array(
-        'inheritance' => array('class' => 'Model\OptionableFormElement', 'value' => 'select'),
-        'fields' => array(
-            'selectField' => 'string',
-        ),
-    ),
-    'Model\CheckboxFormElement' => array(
-        'inheritance' => array('class' => 'Model\OptionableFormElement', 'value' => 'checkbox'),
-    ),
 );
 
 use Mandango\Mondator\Mondator;
