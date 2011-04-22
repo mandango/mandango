@@ -271,6 +271,12 @@ $configClasses = array(
         'references_many' => array(
             'categories' => array('class' => 'Model\Category'),
         ),
+        'embeddeds_one' => array(
+            'source' => array('class' => 'Model\Source'),
+        ),
+        'embeddeds_many' => array(
+            'comments' => array('class' => 'Model\Comment'),
+        ),
         'events' => array(
             'preInsert'  => array('elementPreInsert'),
             'postInsert' => array('elementPostInsert'),
@@ -298,6 +304,18 @@ $configClasses = array(
         'inheritance' => array('class' => 'Model\FormElement', 'value' => 'radio'),
         'fields' => array(
             'options' => 'serialized',
+        ),
+        'references_one' => array(
+            'authorLocal' => array('class' => 'Model\Author'),
+        ),
+        'references_many' => array(
+            'categoriesLocal' => array('class' => 'Model\Category'),
+        ),
+        'embeddeds_one' => array(
+            'sourceLocal' => array('class' => 'Model\Source'),
+        ),
+        'embeddeds_many' => array(
+            'commentsLocal' => array('class' => 'Model\Comment'),
         ),
     ),
 );

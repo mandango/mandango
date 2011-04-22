@@ -878,12 +878,6 @@ class CoreDocumentTest extends TestCase
         $this->assertSame($this->mandango, \Model\Source::getMandango());
     }
 
-    public function testMetadata()
-    {
-        $this->assertSame($this->metadata->getClassInfo('Model\Article'), \Model\Article::getMetadata());
-        $this->assertSame($this->metadata->getClassInfo('Model\Source'), \Model\Source::getMetadata());
-    }
-
     public function testRootAndPath()
     {
         $article1 = new \Model\Article();
