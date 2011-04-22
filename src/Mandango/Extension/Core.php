@@ -344,10 +344,10 @@ class Core extends Extension
                 throw new \RuntimeException(sprintf('The type "%s" of the field "%s" of the class "%s" does not exists.', $field['type'], $name, $this->class));
             }
 
-            if (!isset($field['alias'])) {
-                $field['alias'] = $name;
-            } elseif (!is_string($field['alias'])) {
-                throw new \RuntimeException(sprintf('The alias of the field "%s" of the class "%s" is not an string.', $name, $this->class));
+            if (!isset($field['dbName'])) {
+                $field['dbName'] = $name;
+            } elseif (!is_string($field['dbName'])) {
+                throw new \RuntimeException(sprintf('The dbName of the field "%s" of the class "%s" is not an string.', $name, $this->class));
             }
         }
         unset($field);
@@ -367,7 +367,7 @@ class Core extends Extension
                 $reference['field'] = $name.'_reference_field';
             }
             $type = isset($reference['class']) ? 'reference_one' : 'raw';
-            $field = array('type' => $type, 'alias' => $name);
+            $field = array('type' => $type, 'dbName' => $name);
             if (!empty($reference['inherited'])) {
                 $field['inherited'] = true;
             }
@@ -386,7 +386,7 @@ class Core extends Extension
                 $reference['field'] = $name.'_reference_field';
             }
             $type = isset($reference['class']) ? 'reference_many' : 'raw';
-            $field = array('type' => $type, 'alias' => $name);
+            $field = array('type' => $type, 'dbName' => $name);
             if (!empty($reference['inherited'])) {
                 $field['inherited'] = true;
             }
@@ -687,15 +687,15 @@ EOF;
                 continue;
             }
             $typeCode = strtr(TypeContainer::get($field['type'])->toPHPInString(), array(
-                '%from%' => "\$data['{$field['alias']}']",
+                '%from%' => "\$data['{$field['dbName']}']",
                 '%to%'   => "\$this->data['fields']['$name']",
             ));
             $typeCode = str_replace("\n", "\n            ", $typeCode);
 
             $fieldsCode[] = <<<EOF
-        if (isset(\$data['{$field['alias']}'])) {
+        if (isset(\$data['{$field['dbName']}'])) {
             $typeCode
-        } elseif (isset(\$data['_fields']['{$field['alias']}'])) {
+        } elseif (isset(\$data['_fields']['{$field['dbName']}'])) {
             \$this->data['fields']['$name'] = null;
         }
 EOF;
@@ -878,14 +878,14 @@ EOF
                 '%to%' => "\$this->data['fields']['$name']",
             ));
             if (!$this->configClass['is_embedded']) {
-                $typeCode = str_replace('%from%', "\$data['{$field['alias']}']", $typeCode);
+                $typeCode = str_replace('%from%', "\$data['{$field['dbName']}']", $typeCode);
                 $queryCode = <<<EOF
             if (\$this->isNew()) {
                 \$this->data['fields']['$name'] = null;
             } elseif (!isset(\$this->data['fields']) || !array_key_exists('$name', \$this->data['fields'])) {
-                \$this->addFieldCache('{$field['alias']}');
-                \$data = static::getRepository()->getCollection()->findOne(array('_id' => \$this->id), array('{$field['alias']}' => 1));
-                if (isset(\$data['{$field['alias']}'])) {
+                \$this->addFieldCache('{$field['dbName']}');
+                \$data = static::getRepository()->getCollection()->findOne(array('_id' => \$this->id), array('{$field['dbName']}' => 1));
+                if (isset(\$data['{$field['dbName']}'])) {
                     $typeCode
                 } else {
                     \$this->data['fields']['$name'] = null;
@@ -902,7 +902,7 @@ EOF;
                 &&
                 !\$this->isEmbeddedOneChangedInParent()
             ) {
-                \$field = \$rap['path'].'.{$field['alias']}';
+                \$field = \$rap['path'].'.{$field['dbName']}';
                 \$rap['root']->addFieldCache(\$field);
                 \$collection = call_user_func(array(get_class(\$rap['root']), 'getRepository'))->getCollection();
                 \$data = \$collection->findOne(array('_id' => \$rap['root']->getId()), array(\$field => 1));
@@ -1968,7 +1968,7 @@ EOF
                 ));
 
                 // insert
-                $insertTypeCode = str_replace('%to%', "\$query['{$field['alias']}']", $typeCode);
+                $insertTypeCode = str_replace('%to%', "\$query['{$field['dbName']}']", $typeCode);
                 $fieldsInsertCode[] = <<<EOF
                 if (isset(\$this->data['fields']['$name'])) {
                     $insertTypeCode
@@ -1977,20 +1977,20 @@ EOF;
 
                 // update
                 if (!$this->configClass['is_embedded']) {
-                    $updateTypeCode = str_replace('%to%', "\$query['\$set']['{$field['alias']}']", $typeCode);
+                    $updateTypeCode = str_replace('%to%', "\$query['\$set']['{$field['dbName']}']", $typeCode);
                     $fieldUpdateSetCode = <<<EOF
                             $updateTypeCode
 EOF;
                     $fieldUpdateUnsetCode = <<<EOF
-                            \$query['\$unset']['{$field['alias']}'] = 1;
+                            \$query['\$unset']['{$field['dbName']}'] = 1;
 EOF;
                 } else {
-                    $updateTypeCode = str_replace('%to%', "\$query['\$set'][\$documentPath.'.{$field['alias']}']", $typeCode);
+                    $updateTypeCode = str_replace('%to%', "\$query['\$set'][\$documentPath.'.{$field['dbName']}']", $typeCode);
                     $fieldUpdateSetCode = <<<EOF
                             $updateTypeCode
 EOF;
                     $fieldUpdateUnsetCode = <<<EOF
-                            \$query['\$unset'][\$documentPath.'.{$field['alias']}'] = 1;
+                            \$query['\$unset'][\$documentPath.'.{$field['dbName']}'] = 1;
 EOF;
                 }
                 $fieldsUpdateCode[] = <<<EOF
