@@ -154,6 +154,22 @@ class CoreDocumentTest extends TestCase
         $this->assertSame($categories, $article->getCategories());
     }
 
+    public function testReferencesManyAdd()
+    {
+        $article = new \Model\Article();
+        $category = new \Model\Category();
+        $this->assertSame($article, $article->addCategories($category));
+        $this->assertSame(array($category), $article->getCategories()->getAdd());
+    }
+
+    public function testReferencesManyRemove()
+    {
+        $article = new \Model\Article();
+        $category = new \Model\Category();
+        $this->assertSame($article, $article->removeCategories($category));
+        $this->assertSame(array($category), $article->getCategories()->getRemove());
+    }
+
     public function testUpdateReferenceFieldsReferencesOne()
     {
         $author = \Model\Author::create();
@@ -449,6 +465,22 @@ class CoreDocumentTest extends TestCase
         $this->assertInstanceOf('Mandango\Group\EmbeddedGroup', $infos);
         $this->assertSame('Model\Info', $infos->getDocumentClass());
         $this->assertSame($infos, $comment->getInfos());
+    }
+
+    public function testEmbeddedsManyAdd()
+    {
+        $article = new \Model\Article();
+        $comment = new \Model\Comment();
+        $this->assertSame($article, $article->addComments($comment));
+        $this->assertSame(array($comment), $article->getComments()->getAdd());
+    }
+
+    public function testEmbeddedsManyRemove()
+    {
+        $article = new \Model\Article();
+        $comment = new \Model\Comment();
+        $this->assertSame($article, $article->removeComments($comment));
+        $this->assertSame(array($comment), $article->getComments()->getRemove());
     }
 
     public function testRelationsOne()

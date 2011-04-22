@@ -1147,6 +1147,46 @@ EOF;
             $method = new Method('public', 'get'.ucfirst($name), '', $getCode);
             $method->setDocComment($getDocComment);
             $this->definitions['document_base']->addMethod($method);
+
+            // add
+            $getter = 'get'.ucfirst($name);
+            $method = new Method('public', 'add'.ucfirst($name), '$documents', <<<EOF
+        \$this->$getter()->add(\$documents);
+
+        return \$this;
+EOF
+            );
+            $method->setDocComment(<<<EOF
+    /**
+     * Adds documents to the "$name" reference many.
+     *
+     * @param mixed \$documents A document or an array or documents.
+     *
+     * @return {$this->class} The document (fluent interface).
+     */
+EOF
+            );
+            $this->definitions['document_base']->addMethod($method);
+
+            // remove
+            $getter = 'get'.ucfirst($name);
+            $method = new Method('public', 'remove'.ucfirst($name), '$documents', <<<EOF
+        \$this->$getter()->remove(\$documents);
+
+        return \$this;
+EOF
+            );
+            $method->setDocComment(<<<EOF
+    /**
+     * Removes documents to the "$name" reference many.
+     *
+     * @param mixed \$documents A document or an array or documents.
+     *
+     * @return {$this->class} The document (fluent interface).
+     */
+EOF
+            );
+            $this->definitions['document_base']->addMethod($method);
         }
     }
 
@@ -1571,6 +1611,46 @@ EOF
      * Returns the "$name" embedded many.
      *
      * @return Mandango\Group\EmbeddedGroup The "$name" embedded many.
+     */
+EOF
+            );
+            $this->definitions['document_base']->addMethod($method);
+
+            // add
+            $getter = 'get'.ucfirst($name);
+            $method = new Method('public', 'add'.ucfirst($name), '$documents', <<<EOF
+        \$this->$getter()->add(\$documents);
+
+        return \$this;
+EOF
+            );
+            $method->setDocComment(<<<EOF
+    /**
+     * Adds documents to the "$name" embeddeds many.
+     *
+     * @param mixed \$documents A document or an array or documents.
+     *
+     * @return {$this->class} The document (fluent interface).
+     */
+EOF
+            );
+            $this->definitions['document_base']->addMethod($method);
+
+            // remove
+            $getter = 'get'.ucfirst($name);
+            $method = new Method('public', 'remove'.ucfirst($name), '$documents', <<<EOF
+        \$this->$getter()->remove(\$documents);
+
+        return \$this;
+EOF
+            );
+            $method->setDocComment(<<<EOF
+    /**
+     * Removes documents to the "$name" embeddeds many.
+     *
+     * @param mixed \$documents A document or an array or documents.
+     *
+     * @return {$this->class} The document (fluent interface).
      */
 EOF
             );
