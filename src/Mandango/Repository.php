@@ -183,30 +183,16 @@ abstract class Repository
     }
 
     /**
-     * Find one or several documents by id.
+     * Find documents by id.
      *
-     * @param mixed $id The document/s id/s, as \MongoId or string.
+     * @param array $ids An array of ids.
      *
-     * @return mixed The document/s or null if it does not exists.
+     * @return array An array of documents.
      */
-    public function find($ids)
+    public function findById(array $ids)
     {
-        // one
-        if (!is_array($ids)) {
-            if (is_string($ids)) {
-                $ids = new \MongoId($ids);
-            }
-
-            if ($this->identityMap->has($ids)) {
-                return $this->identityMap->get($ids);
-            }
-
-            return $this->createQuery(array('_id' => $ids))->one();
-        }
-
-        // many
         foreach ($ids as &$id) {
-            if (is_string($id)) {
+            if (!is_string($id)) {
                 $id = new \MongoId($id);
             }
         }
@@ -215,7 +201,7 @@ abstract class Repository
         $documents = array();
         foreach ($ids as $id) {
             if ($this->identityMap->has($id)) {
-                $documents[$id->__toString()] = $this->identityMap->get($id);
+                $documents[(string) $id] = $this->identityMap->get($id);
             }
         }
 
@@ -224,6 +210,26 @@ abstract class Repository
         }
 
         return $this->createQuery(array('_id' => array('$in' => $ids)))->all();
+    }
+
+    /**
+     * Returns one document by id.
+     *
+     * @param mixed $id An id.
+     *
+     * @return Mandango\Docment\Document|null The document or null if it does not exist.
+     */
+    public function findOneById($id)
+    {
+        if (is_string($id)) {
+            $id = new \MongoId($id);
+        }
+
+        if ($this->identityMap->has($id)) {
+            return $this->identityMap->get($id);
+        }
+
+        return $this->createQuery(array('_id' => $id))->one();
     }
 
     /**

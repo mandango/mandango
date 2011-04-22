@@ -938,7 +938,7 @@ EOF;
             if (!\$id = \$this->$fieldGetter()) {
                 return null;
             }
-            if (!\$document = \\{$reference['class']}::getRepository()->find(\$id)) {
+            if (!\$document = \\{$reference['class']}::getRepository()->findOneById(\$id)) {
                 throw new \RuntimeException('The reference "$name" does not exist.');
             }
             \$this->data['references_one']['$name'] = \$document;
@@ -1018,7 +1018,7 @@ EOF;
                 return null;
             }
 $getDiscriminatorValue
-            if (!\$document = call_user_func(array(\$discriminatorValue, 'getRepository'))->find(\$ref['id'])) {
+            if (!\$document = call_user_func(array(\$discriminatorValue, 'getRepository'))->findOneById(\$ref['id'])) {
                 throw new \RuntimeException('The reference "$name" does not exist.');
             }
             \$this->data['references_one']['$name'] = \$document;
@@ -2422,7 +2422,7 @@ $createObjects
                         }
                     }
                     if (\$ids) {
-                        \$mandango->getRepository(\$reference['class'])->find(array_unique(\$ids));
+                        \$mandango->getRepository(\$reference['class'])->findById(array_unique(\$ids));
                     }
 
                     continue;
@@ -2442,7 +2442,7 @@ $createObjects
                         }
                     }
                     if (\$ids) {
-                        \$mandango->getRepository(\$reference['class'])->find(array_unique(\$ids));
+                        \$mandango->getRepository(\$reference['class'])->findById(array_unique(\$ids));
                     }
 
                     continue;

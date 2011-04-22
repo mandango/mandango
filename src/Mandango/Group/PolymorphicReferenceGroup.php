@@ -105,7 +105,7 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
 
         $documents = array();
         foreach ($ids as $documentClass => $documentClassIds) {
-            foreach ((array) call_user_func(array($documentClass, 'getRepository'))->find($documentClassIds) as $document) {
+            foreach ((array) call_user_func(array($documentClass, 'getRepository'))->findById($documentClassIds) as $document) {
                 $documents[] = $document;
             }
         }

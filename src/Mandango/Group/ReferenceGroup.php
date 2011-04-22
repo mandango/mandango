@@ -78,6 +78,6 @@ class ReferenceGroup extends Group
      */
     protected function doInitializeSaved(array $data)
     {
-        return call_user_func(array($this->getDocumentClass(), 'getRepository'))->find($data);
+        return call_user_func(array($this->getDocumentClass(), 'getRepository'))->findById($data);
     }
 }
