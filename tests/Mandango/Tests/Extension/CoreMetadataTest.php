@@ -44,35 +44,35 @@ class CoreMetadataTest extends TestCase
         $this->assertFalse($metadata['fields']['options']['inherited']);
 
         // referencesOne
-        $this->assertTrue(isset($metadata['references_one']['author']));
-        $this->assertTrue(isset($metadata['references_one']['author']['inherited']));
-        $this->assertTrue($metadata['references_one']['author']['inherited']);
-        $this->assertTrue(isset($metadata['references_one']['authorLocal']));
-        $this->assertTrue(isset($metadata['references_one']['authorLocal']['inherited']));
-        $this->assertFalse($metadata['references_one']['authorLocal']['inherited']);
+        $this->assertTrue(isset($metadata['referencesOne']['author']));
+        $this->assertTrue(isset($metadata['referencesOne']['author']['inherited']));
+        $this->assertTrue($metadata['referencesOne']['author']['inherited']);
+        $this->assertTrue(isset($metadata['referencesOne']['authorLocal']));
+        $this->assertTrue(isset($metadata['referencesOne']['authorLocal']['inherited']));
+        $this->assertFalse($metadata['referencesOne']['authorLocal']['inherited']);
 
         // referencesMany
-        $this->assertTrue(isset($metadata['references_many']['categories']));
-        $this->assertTrue(isset($metadata['references_many']['categories']));
-        $this->assertTrue($metadata['references_many']['categories']['inherited']);
-        $this->assertTrue(isset($metadata['references_many']['categoriesLocal']));
-        $this->assertTrue(isset($metadata['references_many']['categoriesLocal']['inherited']));
-        $this->assertFalse($metadata['references_many']['categoriesLocal']['inherited']);
+        $this->assertTrue(isset($metadata['referencesMany']['categories']));
+        $this->assertTrue(isset($metadata['referencesMany']['categories']));
+        $this->assertTrue($metadata['referencesMany']['categories']['inherited']);
+        $this->assertTrue(isset($metadata['referencesMany']['categoriesLocal']));
+        $this->assertTrue(isset($metadata['referencesMany']['categoriesLocal']['inherited']));
+        $this->assertFalse($metadata['referencesMany']['categoriesLocal']['inherited']);
 
         // embeddedsOne
-        $this->assertTrue(isset($metadata['embeddeds_one']['source']));
-        $this->assertTrue(isset($metadata['embeddeds_one']['source']['inherited']));
-        $this->assertTrue($metadata['embeddeds_one']['source']['inherited']);
-        $this->assertTrue(isset($metadata['embeddeds_one']['sourceLocal']));
-        $this->assertTrue(isset($metadata['embeddeds_one']['sourceLocal']['inherited']));
-        $this->assertFalse($metadata['embeddeds_one']['sourceLocal']['inherited']);
+        $this->assertTrue(isset($metadata['embeddedsOne']['source']));
+        $this->assertTrue(isset($metadata['embeddedsOne']['source']['inherited']));
+        $this->assertTrue($metadata['embeddedsOne']['source']['inherited']);
+        $this->assertTrue(isset($metadata['embeddedsOne']['sourceLocal']));
+        $this->assertTrue(isset($metadata['embeddedsOne']['sourceLocal']['inherited']));
+        $this->assertFalse($metadata['embeddedsOne']['sourceLocal']['inherited']);
 
         // embeddedsMany
-        $this->assertTrue(isset($metadata['embeddeds_many']['comments']));
-        $this->assertTrue(isset($metadata['embeddeds_many']['comments']['inherited']));
-        $this->assertTrue($metadata['embeddeds_many']['comments']['inherited']);
-        $this->assertTrue(isset($metadata['embeddeds_many']['commentsLocal']));
-        $this->assertTrue(isset($metadata['embeddeds_many']['commentsLocal']['inherited']));
-        $this->assertFalse($metadata['embeddeds_many']['commentsLocal']['inherited']);
+        $this->assertTrue(isset($metadata['embeddedsMany']['comments']));
+        $this->assertTrue(isset($metadata['embeddedsMany']['comments']['inherited']));
+        $this->assertTrue($metadata['embeddedsMany']['comments']['inherited']);
+        $this->assertTrue(isset($metadata['embeddedsMany']['commentsLocal']));
+        $this->assertTrue(isset($metadata['embeddedsMany']['commentsLocal']['inherited']));
+        $this->assertFalse($metadata['embeddedsMany']['commentsLocal']['inherited']);
     }
 }

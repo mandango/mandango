@@ -39,7 +39,7 @@ class ReferenceManyType extends Type
 
         foreach ($value as $v) {
             if (!$v instanceof \MongoId) {
-                throw new \InvalidArgumentException('The value of the "reference_many" type must be an instance of \MongoId.');
+                throw new \InvalidArgumentException('The value of the "referenceMany" type must be an instance of \MongoId.');
             }
         }
 
@@ -65,7 +65,7 @@ if (!is_array(%from%)) {
 }
 foreach (%from% as \$_v) {
     if (!\$_v instanceof \MongoId) {
-        throw new \InvalidArgumentException('The value of the "reference_many" type must be an instance of \MongoId.');
+        throw new \InvalidArgumentException('The value of the "referenceMany" type must be an instance of \MongoId.');
     }
 }
 %to% = %from%;

@@ -44,7 +44,7 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
 
         Archive::set($this, 'parent', $parent);
         Archive::set($this, 'field', $field);
-        Archive::set($this, 'discriminator_map', $discriminatorMap);
+        Archive::set($this, 'discriminatorMap', $discriminatorMap);
     }
 
     /**
@@ -74,7 +74,7 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
      */
     public function getDiscriminatorMap()
     {
-        return Archive::get($this, 'discriminator_map');
+        return Archive::get($this, 'discriminatorMap');
     }
 
     /**

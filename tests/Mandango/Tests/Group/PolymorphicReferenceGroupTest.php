@@ -28,7 +28,7 @@ class PolymorphicReferenceGroupTest extends TestCase
 {
     public function testConstructor()
     {
-        $group = new PolymorphicReferenceGroup('_mandango_document_class', $article = new \Model\Article(), 'related_ref');
+        $group = new PolymorphicReferenceGroup('_mandangoDocumentClass', $article = new \Model\Article(), 'related_ref');
         $this->assertSame($article, $group->getParent());
         $this->assertSame('related_ref', $group->getField());
         $this->assertFalse($group->getDiscriminatorMap());
@@ -37,7 +37,7 @@ class PolymorphicReferenceGroupTest extends TestCase
             'au' => 'Model\Author',
             'ct' => 'Model\Category',
         );
-        $group = new PolymorphicReferenceGroup('_mandango_document_class', $article = new \Model\Article(), 'related_ref', $discriminatorMap);
+        $group = new PolymorphicReferenceGroup('_mandangoDocumentClass', $article = new \Model\Article(), 'related_ref', $discriminatorMap);
         $this->assertSame($discriminatorMap, $group->getDiscriminatorMap());
     }
 }

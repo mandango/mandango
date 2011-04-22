@@ -37,7 +37,7 @@ abstract class PolymorphicGroup extends AbstractGroup
      */
     public function __construct($discriminatorField)
     {
-        Archive::set($this, 'discriminator_field', $discriminatorField);
+        Archive::set($this, 'discriminatorField', $discriminatorField);
     }
 
     /**
@@ -47,6 +47,6 @@ abstract class PolymorphicGroup extends AbstractGroup
      */
     public function getDiscriminatorField()
     {
-        return Archive::get($this, 'discriminator_field');
+        return Archive::get($this, 'discriminatorField');
     }
 }

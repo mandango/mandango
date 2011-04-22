@@ -462,8 +462,8 @@ abstract class Query implements \Countable, \IteratorAggregate
             $metadata = $mandango->getMetadata()->getClassInfo($this->repository->getDocumentClass());
             foreach ($this->references as $referenceName) {
                 // one
-                if (isset($metadata['references_one'][$referenceName])) {
-                    $reference = $metadata['references_one'][$referenceName];
+                if (isset($metadata['referencesOne'][$referenceName])) {
+                    $reference = $metadata['referencesOne'][$referenceName];
                     $field = $reference['field'];
 
                     $ids = array();
@@ -480,8 +480,8 @@ abstract class Query implements \Countable, \IteratorAggregate
                 }
 
                 // many
-                if (isset($metadata['references_many'][$referenceName])) {
-                    $reference = $metadata['references_many'][$referenceName];
+                if (isset($metadata['referencesMany'][$referenceName])) {
+                    $reference = $metadata['referencesMany'][$referenceName];
                     $field = $reference['field'];
 
                     $ids = array();

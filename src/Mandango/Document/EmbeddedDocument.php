@@ -41,14 +41,14 @@ abstract class EmbeddedDocument extends AbstractDocument
     {
         Archive::set($this, 'root_and_path', array('root' => $root, 'path' => $path));
 
-        if (isset($this->data['embeddeds_one'])) {
-            foreach ($this->data['embeddeds_one'] as $name => $embedded) {
+        if (isset($this->data['embeddedsOne'])) {
+            foreach ($this->data['embeddedsOne'] as $name => $embedded) {
                 $embedded->setRootAndPath($root, $path.'.'.$name);
             }
         }
 
-        if (isset($this->data['embeddeds_many'])) {
-            foreach ($this->data['embeddeds_many'] as $name => $embedded) {
+        if (isset($this->data['embeddedsMany'])) {
+            foreach ($this->data['embeddedsMany'] as $name => $embedded) {
                 $embedded->setRootAndPath($root, $path.'.'.$name);
             }
         }

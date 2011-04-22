@@ -38,7 +38,7 @@ class PolymorphicGroupTest extends TestCase
 {
     public function testConstructor()
     {
-        $group = new PolymorphicGroup('my_discriminator_field');
-        $this->assertSame('my_discriminator_field', $group->getDiscriminatorField());
+        $group = new PolymorphicGroup('my_discriminatorField');
+        $this->assertSame('my_discriminatorField', $group->getDiscriminatorField());
     }
 }

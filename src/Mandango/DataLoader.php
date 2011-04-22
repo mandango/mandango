@@ -95,15 +95,15 @@ class DataLoader
         $referencesOne = array();
         $referencesMany = array();
         foreach ($maps as $class => $metadata) {
-            $referencesOne[$class] = $metadata['references_one'];
-            $referencesMany[$class] = $metadata['references_many'];
+            $referencesOne[$class] = $metadata['referencesOne'];
+            $referencesMany[$class] = $metadata['referencesMany'];
 
             $map = $metadata;
             while ($map['inheritance']) {
                 $inheritanceClass = $map['inheritance']['class'];
                 $map = $inheritanceClass::getMetadata();
-                $referencesOne[$class] = array_merge($map['references_one'], $referencesOne[$class]);
-                $referencesMany[$class] = array_merge($map['references_many'], $referencesMany[$class]);
+                $referencesOne[$class] = array_merge($map['referencesOne'], $referencesOne[$class]);
+                $referencesMany[$class] = array_merge($map['referencesMany'], $referencesMany[$class]);
             }
         }
 
@@ -122,7 +122,7 @@ class DataLoader
 
             $documents[$class][$key] = $document = new $class();
 
-            // references_one
+            // referencesOne
             foreach ($referencesOne[$class] as $name => $reference) {
                 if (!isset($datum[$name])) {
                     continue;
@@ -137,7 +137,7 @@ class DataLoader
                 unset($datum[$name]);
             }
 
-            // references_many
+            // referencesMany
             foreach ($referencesMany[$class] as $name => $reference) {
                 if (!isset($datum[$name])) {
                     continue;

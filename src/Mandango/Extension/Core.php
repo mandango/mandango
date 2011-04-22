@@ -58,7 +58,7 @@ class Core extends Extension
     {
         // default behaviors
         foreach ($this->getOption('default_behaviors') as $behavior) {
-            if (!empty($configClass['is_embedded']) && !empty($behavior['not_with_embeddeds'])) {
+            if (!empty($configClass['isEmbedded']) && !empty($behavior['not_with_embeddeds'])) {
                 continue;
             }
             $this->newClassExtensions[] = $this->createClassExtensionFromArray($behavior);
@@ -83,7 +83,7 @@ class Core extends Extension
         $this->initInheritanceProcess();
 
         $this->initMandangoProcess();
-        if (!$this->configClass['is_embedded']) {
+        if (!$this->configClass['isEmbedded']) {
             $this->initConnectionNameProcess();
             $this->initCollectionNameProcess();
         }
@@ -92,7 +92,7 @@ class Core extends Extension
         $this->initFieldsProcess();
         $this->initReferencesProcess();
         $this->initEmbeddedsProcess();
-        if (!$this->configClass['is_embedded']) {
+        if (!$this->configClass['isEmbedded']) {
             $this->initRelationsProcess();
         }
 
@@ -109,7 +109,7 @@ class Core extends Extension
         $this->parseAndCheckFieldsProcess();
         $this->parseAndCheckReferencesProcess();
         $this->parseAndCheckEmbeddedsProcess();
-        if (!$this->configClass['is_embedded']) {
+        if (!$this->configClass['isEmbedded']) {
             $this->parseAndCheckRelationsProcess();
         }
         $this->checkDataNamesProcess();
@@ -131,7 +131,7 @@ class Core extends Extension
         }
         $this->documentEmbeddedsOneProcess();
         $this->documentEmbeddedsManyProcess();
-        if (!$this->configClass['is_embedded']) {
+        if (!$this->configClass['isEmbedded']) {
             $this->documentRelationsOneProcess();
             $this->documentRelationsManyOneProcess();
             $this->documentRelationsManyManyProcess();
@@ -144,7 +144,7 @@ class Core extends Extension
         $this->documentEventsMethodsProcess();
         $this->documentQueryForSaveMethodProcess();
 
-        if (!$this->configClass['is_embedded']) {
+        if (!$this->configClass['isEmbedded']) {
             // repository
             $this->repositoryDocumentClassPropertyProcess();
             $this->repositoryIsFilePropertyProcess();
@@ -189,7 +189,7 @@ class Core extends Extension
     {
         if (!isset($this->configClass['inheritable'])) {
             $this->configClass['inheritable'] = false;
-        } elseif ($this->configClass['is_embedded']) {
+        } elseif ($this->configClass['isEmbedded']) {
             throw new \RuntimeException(sprintf('Using unheritance in a embedded document "%s".', $this->class));
         }
     }
@@ -198,19 +198,19 @@ class Core extends Extension
     {
         if (!isset($this->configClass['inheritance'])) {
             $this->configClass['inheritance'] = false;
-        } elseif ($this->configClass['is_embedded']) {
+        } elseif ($this->configClass['isEmbedded']) {
             throw new \RuntimeException(sprintf('Using unheritance in a embedded document "%s".', $this->class));
         }
     }
 
     protected function initIsEmbeddedProcess()
     {
-        if (isset($this->configClass['is_embedded'])) {
-            if (!is_bool($this->configClass['is_embedded'])) {
-                throw new \RuntimeException(sprintf('The "is_embedded" of the class "%s" is not a boolean.', $this->class));
+        if (isset($this->configClass['isEmbedded'])) {
+            if (!is_bool($this->configClass['isEmbedded'])) {
+                throw new \RuntimeException(sprintf('The "isEmbedded" of the class "%s" is not a boolean.', $this->class));
             }
         } else {
-            $this->configClass['is_embedded'] = false;
+            $this->configClass['isEmbedded'] = false;
         }
     }
 
@@ -244,37 +244,37 @@ class Core extends Extension
 
     protected function initReferencesProcess()
     {
-        if (!isset($this->configClass['references_one'])) {
-            $this->configClass['references_one'] = array();
+        if (!isset($this->configClass['referencesOne'])) {
+            $this->configClass['referencesOne'] = array();
         }
-        if (!isset($this->configClass['references_many'])) {
-            $this->configClass['references_many'] = array();
+        if (!isset($this->configClass['referencesMany'])) {
+            $this->configClass['referencesMany'] = array();
         }
     }
 
     protected function initEmbeddedsProcess()
     {
-        if (!isset($this->configClass['embeddeds_one'])) {
-            $this->configClass['embeddeds_one'] = array();
+        if (!isset($this->configClass['embeddedsOne'])) {
+            $this->configClass['embeddedsOne'] = array();
         }
-        if (!isset($this->configClass['embeddeds_many'])) {
-            $this->configClass['embeddeds_many'] = array();
+        if (!isset($this->configClass['embeddedsMany'])) {
+            $this->configClass['embeddedsMany'] = array();
         }
     }
 
     protected function initRelationsProcess()
     {
-        if (!isset($this->configClass['relations_one'])) {
-            $this->configClass['relations_one'] = array();
+        if (!isset($this->configClass['relationsOne'])) {
+            $this->configClass['relationsOne'] = array();
         }
-        if (!isset($this->configClass['relations_many_one'])) {
-            $this->configClass['relations_many_one'] = array();
+        if (!isset($this->configClass['relationsManyOne'])) {
+            $this->configClass['relationsManyOne'] = array();
         }
-        if (!isset($this->configClass['relations_many_many'])) {
-            $this->configClass['relations_many_many'] = array();
+        if (!isset($this->configClass['relationsManyMany'])) {
+            $this->configClass['relationsManyMany'] = array();
         }
-        if (!isset($this->configClass['relations_many_through'])) {
-            $this->configClass['relations_many_through'] = array();
+        if (!isset($this->configClass['relationsManyThrough'])) {
+            $this->configClass['relationsManyThrough'] = array();
         }
     }
 
@@ -356,7 +356,7 @@ class Core extends Extension
     protected function parseAndCheckReferencesProcess()
     {
         // one
-        foreach ($this->configClass['references_one'] as $name => &$reference) {
+        foreach ($this->configClass['referencesOne'] as $name => &$reference) {
             $this->parseAndCheckAssociationClass($reference, $name);
 
             if ($this->configClass['inheritance'] && !isset($reference['inherited'])) {
@@ -366,7 +366,7 @@ class Core extends Extension
             if (!isset($reference['field'])) {
                 $reference['field'] = $name.'_reference_field';
             }
-            $type = isset($reference['class']) ? 'reference_one' : 'raw';
+            $type = isset($reference['class']) ? 'referenceOne' : 'raw';
             $field = array('type' => $type, 'dbName' => $name);
             if (!empty($reference['inherited'])) {
                 $field['inherited'] = true;
@@ -375,7 +375,7 @@ class Core extends Extension
         }
 
         // many
-        foreach ($this->configClass['references_many'] as $name => &$reference) {
+        foreach ($this->configClass['referencesMany'] as $name => &$reference) {
             $this->parseAndCheckAssociationClass($reference, $name);
 
             if ($this->configClass['inheritance'] && !isset($reference['inherited'])) {
@@ -385,7 +385,7 @@ class Core extends Extension
             if (!isset($reference['field'])) {
                 $reference['field'] = $name.'_reference_field';
             }
-            $type = isset($reference['class']) ? 'reference_many' : 'raw';
+            $type = isset($reference['class']) ? 'referenceMany' : 'raw';
             $field = array('type' => $type, 'dbName' => $name);
             if (!empty($reference['inherited'])) {
                 $field['inherited'] = true;
@@ -397,7 +397,7 @@ class Core extends Extension
     protected function parseAndCheckEmbeddedsProcess()
     {
         // one
-        foreach ($this->configClass['embeddeds_one'] as $name => &$embedded) {
+        foreach ($this->configClass['embeddedsOne'] as $name => &$embedded) {
             $this->parseAndCheckAssociationClass($embedded, $name);
 
             if ($this->configClass['inheritance'] && !isset($embedded['inherited'])) {
@@ -406,7 +406,7 @@ class Core extends Extension
         }
 
         // many
-        foreach ($this->configClass['embeddeds_many'] as $name => &$embedded) {
+        foreach ($this->configClass['embeddedsMany'] as $name => &$embedded) {
             $this->parseAndCheckAssociationClass($embedded, $name);
 
             if ($this->configClass['inheritance'] && !isset($embedded['inherited'])) {
@@ -418,7 +418,7 @@ class Core extends Extension
     protected function parseAndCheckRelationsProcess()
     {
         // one
-        foreach ($this->configClass['relations_one'] as $name => &$relation) {
+        foreach ($this->configClass['relationsOne'] as $name => &$relation) {
             $this->parseAndCheckAssociationClass($relation, $name);
 
             if (!isset($relation['reference'])) {
@@ -427,7 +427,7 @@ class Core extends Extension
         }
 
         // many_one
-        foreach ($this->configClass['relations_many_one'] as $name => &$relation) {
+        foreach ($this->configClass['relationsManyOne'] as $name => &$relation) {
             $this->parseAndCheckAssociationClass($relation, $name);
 
             if (!isset($relation['reference'])) {
@@ -436,7 +436,7 @@ class Core extends Extension
         }
 
         // many_many
-        foreach ($this->configClass['relations_many_many'] as $name => &$relation) {
+        foreach ($this->configClass['relationsManyMany'] as $name => &$relation) {
             $this->parseAndCheckAssociationClass($relation, $name);
 
             if (!isset($relation['reference'])) {
@@ -445,7 +445,7 @@ class Core extends Extension
         }
 
         // many_through
-        foreach ($this->configClass['relations_many_through'] as $name => &$relation) {
+        foreach ($this->configClass['relationsManyThrough'] as $name => &$relation) {
             if (!is_array($relation)) {
                 throw new \RuntimeException(sprintf('The relation_many_through "%s" of the class "%s" is not an array.', $name, $this->class));
             }
@@ -469,14 +469,14 @@ class Core extends Extension
     {
         foreach (array_merge(
             array_keys($this->configClass['fields']),
-            array_keys($this->configClass['references_one']),
-            array_keys($this->configClass['references_many']),
-            array_keys($this->configClass['embeddeds_one']),
-            array_keys($this->configClass['embeddeds_many']),
-            !$this->configClass['is_embedded'] ? array_keys($this->configClass['relations_one']) : array(),
-            !$this->configClass['is_embedded'] ? array_keys($this->configClass['relations_many_one']) : array(),
-            !$this->configClass['is_embedded'] ? array_keys($this->configClass['relations_many_many']) : array(),
-            !$this->configClass['is_embedded'] ? array_keys($this->configClass['relations_many_through']) : array()
+            array_keys($this->configClass['referencesOne']),
+            array_keys($this->configClass['referencesMany']),
+            array_keys($this->configClass['embeddedsOne']),
+            array_keys($this->configClass['embeddedsMany']),
+            !$this->configClass['isEmbedded'] ? array_keys($this->configClass['relationsOne']) : array(),
+            !$this->configClass['isEmbedded'] ? array_keys($this->configClass['relationsManyOne']) : array(),
+            !$this->configClass['isEmbedded'] ? array_keys($this->configClass['relationsManyMany']) : array(),
+            !$this->configClass['isEmbedded'] ? array_keys($this->configClass['relationsManyThrough']) : array()
         ) as $name) {
             if (in_array($name, array('mandango', 'repository', 'collection', 'id', 'query_for_save', 'fields_modified', 'document_data'))) {
                 throw new \RuntimeException(sprintf('The document cannot be a data with the name "%s".', $name));
@@ -527,7 +527,7 @@ EOF
 
         $this->definitions['document_base'] = $definition = new Definition($classes['document_base'], $output);
         $definition->setIsAbstract(true);
-        if ($this->configClass['is_embedded']) {
+        if ($this->configClass['isEmbedded']) {
             $definition->setParentClass('\Mandango\Document\EmbeddedDocument');
         } else {
             if ($this->configClass['inheritance']) {
@@ -543,7 +543,7 @@ EOF
 EOF
         );
 
-        if (!$this->configClass['is_embedded']) {
+        if (!$this->configClass['isEmbedded']) {
             // repository
             $dir = $this->getOption('default_output');
             if (isset($this->configClass['output'])) {
@@ -668,7 +668,7 @@ EOF
             \$this->id = \$data['_id'];
         }
 EOF;
-        if ($this->configClass['is_embedded']) {
+        if ($this->configClass['isEmbedded']) {
             $idCode = '';
         }
 
@@ -709,12 +709,12 @@ EOF;
 
         // embeddeds one
         $embeddedsOneCode = array();
-        foreach ($this->configClass['embeddeds_one'] as $name => $embedded) {
+        foreach ($this->configClass['embeddedsOne'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
                 continue;
             }
 
-            if (!$this->configClass['is_embedded']) {
+            if (!$this->configClass['isEmbedded']) {
                 $rap = <<<EOF
             \$embedded->setRootAndPath(\$this, '$name');
 EOF;
@@ -735,7 +735,7 @@ $rap
                 \$data['$name']['_fields'] = \$data['_fields']['$name'];
             }
             \$embedded->setDocumentData(\$data['$name']);
-            \$this->data['embeddeds_one']['$name'] = \$embedded;
+            \$this->data['embeddedsOne']['$name'] = \$embedded;
         }
 EOF;
         }
@@ -743,12 +743,12 @@ EOF;
 
         // embeddeds many
         $embeddedsManyCode = array();
-        foreach ($this->configClass['embeddeds_many'] as $name => $embedded) {
+        foreach ($this->configClass['embeddedsMany'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
                 continue;
             }
 
-            if (!$this->configClass['is_embedded']) {
+            if (!$this->configClass['isEmbedded']) {
                 $rap = <<<EOF
             \$embedded->setRootAndPath(\$this, '$name');
 EOF;
@@ -765,7 +765,7 @@ EOF;
             \$embedded = new \Mandango\Group\EmbeddedGroup('{$embedded['class']}');
 $rap
             \$embedded->setSavedData(\$data['$name']);
-            \$this->data['embeddeds_many']['$name'] = \$embedded;
+            \$this->data['embeddedsMany']['$name'] = \$embedded;
         }
 EOF;
         }
@@ -824,7 +824,7 @@ EOF
                 continue;
             }
             // setter
-            if (!$this->configClass['is_embedded']) {
+            if (!$this->configClass['isEmbedded']) {
                 $isNotNewCode = "null !== \$this->id";
             } else {
                 $isNotNewCode = "(\$rap = \$this->getRootAndPath()) && !\$rap['root']->isNew()";
@@ -877,7 +877,7 @@ EOF
             $typeCode = strtr(TypeContainer::get($field['type'])->toPHPInString(), array(
                 '%to%' => "\$this->data['fields']['$name']",
             ));
-            if (!$this->configClass['is_embedded']) {
+            if (!$this->configClass['isEmbedded']) {
                 $typeCode = str_replace('%from%', "\$data['{$field['dbName']}']", $typeCode);
                 $queryCode = <<<EOF
             if (\$this->isNew()) {
@@ -945,7 +945,7 @@ EOF
 
     protected function documentReferencesOneProcess()
     {
-        foreach ($this->configClass['references_one'] as $name => $reference) {
+        foreach ($this->configClass['referencesOne'] as $name => $reference) {
             if (!empty($reference['inherited'])) {
                 continue;
             }
@@ -963,7 +963,7 @@ EOF
 
         \$this->$fieldSetter((null === \$value || \$value->isNew()) ? null : \$value->getId());
 
-        \$this->data['references_one']['$name'] = \$value;
+        \$this->data['referencesOne']['$name'] = \$value;
 
         return \$this;
 EOF;
@@ -980,17 +980,17 @@ EOF;
 EOF;
                 // get
                 $getCode = <<<EOF
-        if (!isset(\$this->data['references_one']['$name'])) {
+        if (!isset(\$this->data['referencesOne']['$name'])) {
             if (!\$id = \$this->$fieldGetter()) {
                 return null;
             }
             if (!\$document = \\{$reference['class']}::getRepository()->findOneById(\$id)) {
                 throw new \RuntimeException('The reference "$name" does not exist.');
             }
-            \$this->data['references_one']['$name'] = \$document;
+            \$this->data['referencesOne']['$name'] = \$document;
         }
 
-        return \$this->data['references_one']['$name'];
+        return \$this->data['referencesOne']['$name'];
 EOF;
                 $getDocComment = <<<EOF
     /**
@@ -1001,8 +1001,8 @@ EOF;
 EOF;
             // polymorphic
             } else {
-                $discriminatorField = $reference['discriminator_field'];
-                $discriminatorMap = $reference['discriminator_map'];
+                $discriminatorField = $reference['discriminatorField'];
+                $discriminatorMap = $reference['discriminatorMap'];
 
                 // discriminator map
                 if ($discriminatorMap) {
@@ -1042,7 +1042,7 @@ $setDiscriminatorValue
         }
         \$this->$fieldSetter(\$fieldValue);
 
-        \$this->data['references_one']['$name'] = \$value;
+        \$this->data['referencesOne']['$name'] = \$value;
 
         return \$this;
 EOF;
@@ -1059,7 +1059,7 @@ EOF;
 EOF;
                 // get
                 $getCode = <<<EOF
-        if (!isset(\$this->data['references_one']['$name'])) {
+        if (!isset(\$this->data['referencesOne']['$name'])) {
             if (!\$ref = \$this->$fieldGetter()) {
                 return null;
             }
@@ -1067,10 +1067,10 @@ $getDiscriminatorValue
             if (!\$document = call_user_func(array(\$discriminatorValue, 'getRepository'))->findOneById(\$ref['id'])) {
                 throw new \RuntimeException('The reference "$name" does not exist.');
             }
-            \$this->data['references_one']['$name'] = \$document;
+            \$this->data['referencesOne']['$name'] = \$document;
         }
 
-        return \$this->data['references_one']['$name'];
+        return \$this->data['referencesOne']['$name'];
 EOF;
                 $getDocComment = <<<EOF
     /**
@@ -1095,7 +1095,7 @@ EOF;
 
     protected function documentReferencesManyProcess()
     {
-        foreach ($this->configClass['references_many'] as $name => $reference) {
+        foreach ($this->configClass['referencesMany'] as $name => $reference) {
             if (!empty($reference['inherited'])) {
                 continue;
             }
@@ -1103,11 +1103,11 @@ EOF;
             // normal
             if (isset($reference['class'])) {
                 $getCode = <<<EOF
-        if (!isset(\$this->data['references_many']['$name'])) {
-            \$this->data['references_many']['$name'] = new \Mandango\Group\ReferenceGroup('{$reference['class']}', \$this, '{$reference['field']}');
+        if (!isset(\$this->data['referencesMany']['$name'])) {
+            \$this->data['referencesMany']['$name'] = new \Mandango\Group\ReferenceGroup('{$reference['class']}', \$this, '{$reference['field']}');
         }
 
-        return \$this->data['references_many']['$name'];
+        return \$this->data['referencesMany']['$name'];
 EOF;
                 $getDocComment = <<<EOF
     /**
@@ -1118,8 +1118,8 @@ EOF;
 EOF;
             // polymorphic
             } else {
-                $discriminatorField = $reference['discriminator_field'];
-                $discriminatorMap = $reference['discriminator_map'];
+                $discriminatorField = $reference['discriminatorField'];
+                $discriminatorMap = $reference['discriminatorMap'];
 
                 if ($discriminatorMap) {
                     $discriminatorMap = \Mandango\Mondator\Dumper::exportArray($discriminatorMap, 16);
@@ -1128,11 +1128,11 @@ EOF;
                 }
 
                 $getCode = <<<EOF
-        if (!isset(\$this->data['references_many']['$name'])) {
-            \$this->data['references_many']['$name'] = new \Mandango\Group\PolymorphicReferenceGroup('$discriminatorField', \$this, '{$reference['field']}', $discriminatorMap);
+        if (!isset(\$this->data['referencesMany']['$name'])) {
+            \$this->data['referencesMany']['$name'] = new \Mandango\Group\PolymorphicReferenceGroup('$discriminatorField', \$this, '{$reference['field']}', $discriminatorMap);
         }
 
-        return \$this->data['references_many']['$name'];
+        return \$this->data['referencesMany']['$name'];
 EOF;
                 $getDocComment = <<<EOF
     /**
@@ -1163,7 +1163,7 @@ EOF;
 
         $referencesCode = array();
         // references one
-        foreach ($this->configClass['references_one'] as $name => $reference) {
+        foreach ($this->configClass['referencesOne'] as $name => $reference) {
             if (!empty($reference['inherited'])) {
                 continue;
             }
@@ -1173,14 +1173,14 @@ EOF;
             // normal
             if (isset($reference['class'])) {
                 $referencesCode[] = <<<EOF
-        if (isset(\$this->data['references_one']['$name']) && !isset(\$this->data['fields']['{$reference['field']}'])) {
-            \$this->$fieldSetter(\$this->data['references_one']['$name']->getId());
+        if (isset(\$this->data['referencesOne']['$name']) && !isset(\$this->data['fields']['{$reference['field']}'])) {
+            \$this->$fieldSetter(\$this->data['referencesOne']['$name']->getId());
         }
 EOF;
             // polymorphic
             } else {
-                $discriminatorField = $reference['discriminator_field'];
-                $discriminatorMap = $reference['discriminator_map'];
+                $discriminatorField = $reference['discriminatorField'];
+                $discriminatorMap = $reference['discriminatorMap'];
 
                 // discriminator map
                 if ($discriminatorMap) {
@@ -1197,8 +1197,8 @@ EOF;
                 }
 
                 $referencesCode[] = <<<EOF
-        if (isset(\$this->data['references_one']['$name']) && !isset(\$this->data['fields']['{$reference['field']}'])) {
-            \$document = \$this->data['references_one']['$name'];
+        if (isset(\$this->data['referencesOne']['$name']) && !isset(\$this->data['fields']['{$reference['field']}'])) {
+            \$document = \$this->data['referencesOne']['$name'];
 $discriminatorValue
             \$this->$fieldSetter(array(
                 '$discriminatorField' => \$discriminatorValue,
@@ -1209,7 +1209,7 @@ EOF;
             }
         }
         // references many
-        foreach ($this->configClass['references_many'] as $name => $reference) {
+        foreach ($this->configClass['referencesMany'] as $name => $reference) {
             if (!empty($reference['inherited'])) {
                 continue;
             }
@@ -1220,8 +1220,8 @@ EOF;
             // normal
             if (isset($reference['class'])) {
                 $referencesCode[] = <<<EOF
-        if (isset(\$this->data['references_many']['$name'])) {
-            \$group = \$this->data['references_many']['$name'];
+        if (isset(\$this->data['referencesMany']['$name'])) {
+            \$group = \$this->data['referencesMany']['$name'];
             \$add = \$group->getAdd();
             \$remove = \$group->getRemove();
             if (\$add || \$remove) {
@@ -1238,8 +1238,8 @@ EOF;
 EOF;
             // polymorphic
             } else {
-                $discriminatorField = $reference['discriminator_field'];
-                $discriminatorMap = $reference['discriminator_map'];
+                $discriminatorField = $reference['discriminatorField'];
+                $discriminatorMap = $reference['discriminatorMap'];
 
                 // discriminator map
                 if ($discriminatorMap) {
@@ -1260,8 +1260,8 @@ EOF;
                 }
 
                 $referencesCode[] = <<<EOF
-        if (isset(\$this->data['references_many']['$name'])) {
-            \$group = \$this->data['references_many']['$name'];
+        if (isset(\$this->data['referencesMany']['$name'])) {
+            \$group = \$this->data['referencesMany']['$name'];
             \$add = \$group->getAdd();
             \$remove = \$group->getRemove();
             if (\$add || \$remove) {
@@ -1293,7 +1293,7 @@ EOF;
 
         $embeddedsCode = array();
         // embeddeds one
-        foreach ($this->configClass['embeddeds_one'] as $name => $embedded) {
+        foreach ($this->configClass['embeddedsOne'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
                 continue;
             }
@@ -1303,13 +1303,13 @@ EOF;
             }
 
             $embeddedsCode[] = <<<EOF
-        if (isset(\$this->data['embeddeds_one']['$name'])) {
-            \$this->data['embeddeds_one']['$name']->updateReferenceFields();
+        if (isset(\$this->data['embeddedsOne']['$name'])) {
+            \$this->data['embeddedsOne']['$name']->updateReferenceFields();
         }
 EOF;
         }
         // embeddeds many
-        foreach ($this->configClass['embeddeds_many'] as $name => $embedded) {
+        foreach ($this->configClass['embeddedsMany'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
                 continue;
             }
@@ -1319,8 +1319,8 @@ EOF;
             }
 
             $embeddedsCode[] = <<<EOF
-        if (isset(\$this->data['embeddeds_many']['$name'])) {
-            \$group = \$this->data['embeddeds_many']['$name'];
+        if (isset(\$this->data['embeddedsMany']['$name'])) {
+            \$group = \$this->data['embeddedsMany']['$name'];
             foreach (\$group->saved() as \$document) {
                 \$document->updateReferenceFields();
             }
@@ -1348,7 +1348,7 @@ EOF
     {
         // references one
         $referencesOneCode = array();
-        foreach ($this->configClass['references_one'] as $name => $reference) {
+        foreach ($this->configClass['referencesOne'] as $name => $reference) {
             if (!empty($reference['inherited'])) {
                 continue;
             }
@@ -1358,8 +1358,8 @@ EOF
             }
 
             $referencesOneCode[] = <<<EOF
-        if (isset(\$this->data['references_one']['$name'])) {
-            \$this->data['references_one']['$name']->save();
+        if (isset(\$this->data['referencesOne']['$name'])) {
+            \$this->data['referencesOne']['$name']->save();
         }
 EOF;
         }
@@ -1367,7 +1367,7 @@ EOF;
 
         // references many
         $referencesManyCode = array();
-        foreach ($this->configClass['references_many'] as $name => $reference) {
+        foreach ($this->configClass['referencesMany'] as $name => $reference) {
             if (!empty($reference['inherited'])) {
                 continue;
             }
@@ -1377,8 +1377,8 @@ EOF;
             }
 
             $referencesManyCode[] = <<<EOF
-        if (isset(\$this->data['references_many']['$name'])) {
-            \$group = \$this->data['references_many']['$name'];
+        if (isset(\$this->data['referencesMany']['$name'])) {
+            \$group = \$this->data['referencesMany']['$name'];
             \$documents = array();
             foreach (\$group->getAdd() as \$document) {
                 \$documents[] = \$document;
@@ -1398,7 +1398,7 @@ EOF;
 
         // embeddeds one
         $embeddedsOneCode = array();
-        foreach ($this->configClass['embeddeds_one'] as $name => $embedded) {
+        foreach ($this->configClass['embeddedsOne'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
                 continue;
             }
@@ -1407,8 +1407,8 @@ EOF;
                 continue;
             }
             $embeddedsOneCode[] = <<<EOF
-        if (isset(\$this->data['embeddeds_one']['$name'])) {
-            \$this->data['embeddeds_one']['$name']->saveReferences();
+        if (isset(\$this->data['embeddedsOne']['$name'])) {
+            \$this->data['embeddedsOne']['$name']->saveReferences();
         }
 EOF;
         }
@@ -1431,13 +1431,13 @@ EOF
 
     protected function documentEmbeddedsOneProcess()
     {
-        foreach ($this->configClass['embeddeds_one'] as $name => $embedded) {
+        foreach ($this->configClass['embeddedsOne'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
                 continue;
             }
 
             // setter
-            $rootDocument = !$this->configClass['is_embedded'] ? '$this' : '$this->getRootDocument()';
+            $rootDocument = !$this->configClass['isEmbedded'] ? '$this' : '$this->getRootDocument()';
 
             $method = new Method('public', 'set'.ucfirst($name), '$value', <<<EOF
         if (null !== \$value && !\$value instanceof \\{$embedded['class']}) {
@@ -1452,13 +1452,13 @@ EOF
         }
 
         if (!\Mandango\Archive::has(\$this, 'embedded_one.$name')) {
-            \$originalValue = isset(\$this->data['embeddeds_one']['$name']) ? \$this->data['embeddeds_one']['$name'] : null;
+            \$originalValue = isset(\$this->data['embeddedsOne']['$name']) ? \$this->data['embeddedsOne']['$name'] : null;
             \Mandango\Archive::set(\$this, 'embedded_one.$name', \$originalValue);
         } elseif (\Mandango\Archive::get(\$this, 'embedded_one.$name') === \$value) {
             \Mandango\Archive::remove(\$this, 'embedded_one.$name');
         }
 
-        \$this->data['embeddeds_one']['$name'] = \$value;
+        \$this->data['embeddedsOne']['$name'] = \$value;
 
         return \$this;
 EOF
@@ -1478,25 +1478,25 @@ EOF
             $this->definitions['document_base']->addMethod($method);
 
             // getter
-            if (!$this->configClass['is_embedded']) {
+            if (!$this->configClass['isEmbedded']) {
                 $queryCode = <<<EOF
             if (\$this->isNew()) {
-                \$this->data['embeddeds_one']['$name'] = null;
-            } elseif (!isset(\$this->data['embeddeds_one']) || !array_key_exists('$name', \$this->data['embeddeds_one'])) {
+                \$this->data['embeddedsOne']['$name'] = null;
+            } elseif (!isset(\$this->data['embeddedsOne']) || !array_key_exists('$name', \$this->data['embeddedsOne'])) {
                 \$exists = static::getRepository()->getCollection()->findOne(array('_id' => \$this->id, '$name' => array('\$exists' => 1)));
                 if (\$exists) {
                     \$embedded = new \\{$embedded['class']}();
                     \$embedded->setRootAndPath(\$this, '$name');
-                    \$this->data['embeddeds_one']['$name'] = \$embedded;
+                    \$this->data['embeddedsOne']['$name'] = \$embedded;
                 } else {
-                    \$this->data['embeddeds_one']['$name'] = null;
+                    \$this->data['embeddedsOne']['$name'] = null;
                 }
             }
 EOF;
             } else {
                 $queryCode = <<<EOF
             if (
-                (!isset(\$this->data['embeddeds_one']) || !array_key_exists('$name', \$this->data['embeddeds_one']))
+                (!isset(\$this->data['embeddedsOne']) || !array_key_exists('$name', \$this->data['embeddedsOne']))
                 &&
                 (\$rap = \$this->getRootAndPath())
                 &&
@@ -1510,20 +1510,20 @@ EOF;
                 if (\$result) {
                     \$embedded = new \\{$embedded['class']}();
                     \$embedded->setRootAndPath(\$rap['root'], \$field);
-                    \$this->data['embeddeds_one']['$name'] = \$embedded;
+                    \$this->data['embeddedsOne']['$name'] = \$embedded;
                 }
             }
-            if (!isset(\$this->data['embeddeds_one']['$name'])) {
-                \$this->data['embeddeds_one']['$name'] = null;
+            if (!isset(\$this->data['embeddedsOne']['$name'])) {
+                \$this->data['embeddedsOne']['$name'] = null;
             }
 EOF;
             }
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
-        if (!isset(\$this->data['embeddeds_one']['$name'])) {
+        if (!isset(\$this->data['embeddedsOne']['$name'])) {
 $queryCode
         }
 
-        return \$this->data['embeddeds_one']['$name'];
+        return \$this->data['embeddedsOne']['$name'];
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1540,12 +1540,12 @@ EOF
 
     protected function documentEmbeddedsManyProcess()
     {
-        foreach ($this->configClass['embeddeds_many'] as $name => $embedded) {
+        foreach ($this->configClass['embeddedsMany'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
                 continue;
             }
 
-            if (!$this->configClass['is_embedded']) {
+            if (!$this->configClass['isEmbedded']) {
                 $rootAndPath = <<<EOF
             \$embedded->setRootAndPath(\$this, '$name');
 EOF;
@@ -1558,12 +1558,12 @@ EOF;
             }
 
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
-        if (!isset(\$this->data['embeddeds_many']['$name'])) {
-            \$this->data['embeddeds_many']['$name'] = \$embedded = new \Mandango\Group\EmbeddedGroup('{$embedded['class']}');
+        if (!isset(\$this->data['embeddedsMany']['$name'])) {
+            \$this->data['embeddedsMany']['$name'] = \$embedded = new \Mandango\Group\EmbeddedGroup('{$embedded['class']}');
 $rootAndPath
         }
 
-        return \$this->data['embeddeds_many']['$name'];
+        return \$this->data['embeddedsMany']['$name'];
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1580,7 +1580,7 @@ EOF
 
     protected function documentRelationsOneProcess()
     {
-        foreach ($this->configClass['relations_one'] as $name => $relation) {
+        foreach ($this->configClass['relationsOne'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         return \\{$relation['class']}::getRepository()->createQuery(array('{$relation['reference']}' => \$this->getId()))->one();
 EOF
@@ -1599,7 +1599,7 @@ EOF
 
     protected function documentRelationsManyOneProcess()
     {
-        foreach ($this->configClass['relations_many_one'] as $name => $relation) {
+        foreach ($this->configClass['relationsManyOne'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         return \\{$relation['class']}::getRepository()->createQuery(array('{$relation['reference']}' => \$this->getId()));
 EOF
@@ -1618,7 +1618,7 @@ EOF
 
     protected function documentRelationsManyManyProcess()
     {
-        foreach ($this->configClass['relations_many_many'] as $name => $relation) {
+        foreach ($this->configClass['relationsManyMany'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         return \\{$relation['class']}::getRepository()->createQuery(array('{$relation['reference']}' => \$this->getId()));
 EOF
@@ -1637,7 +1637,7 @@ EOF
 
     protected function documentRelationsManyThroughProcess()
     {
-        foreach ($this->configClass['relations_many_through'] as $name => $relation) {
+        foreach ($this->configClass['relationsManyThrough'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         \$ids = array();
         foreach (\\{$relation['through']}::getRepository()->getCollection()
@@ -1679,8 +1679,8 @@ EOF;
 
         foreach (array_merge(
             $this->configClass['fields'],
-            $this->configClass['references_one'],
-            $this->configClass['embeddeds_one']
+            $this->configClass['referencesOne'],
+            $this->configClass['embeddedsOne']
         ) as $name => $data) {
             if (!empty($data['inherited'])) {
                 continue;
@@ -1738,10 +1738,10 @@ EOF;
         $getCode = array();
         foreach (array_merge(
             $this->configClass['fields'],
-            $this->configClass['references_one'],
-            $this->configClass['references_many'],
-            $this->configClass['embeddeds_one'],
-            $this->configClass['embeddeds_many']
+            $this->configClass['referencesOne'],
+            $this->configClass['referencesMany'],
+            $this->configClass['embeddedsOne'],
+            $this->configClass['embeddedsMany']
         ) as $name => $data) {
             if (!empty($data['inherited'])) {
                 continue;
@@ -1809,7 +1809,7 @@ EOF;
 
         // embeddeds one
         $embeddedsOneCode = array();
-        foreach ($this->configClass['embeddeds_one'] as $name => $embedded) {
+        foreach ($this->configClass['embeddedsOne'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
                 continue;
             }
@@ -1827,7 +1827,7 @@ EOF;
 
         // embeddeds many
         $embeddedsManyCode = array();
-        foreach ($this->configClass['embeddeds_many'] as $name => $embedded) {
+        foreach ($this->configClass['embeddedsMany'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
                 continue;
             }
@@ -1976,7 +1976,7 @@ EOF
 EOF;
 
                 // update
-                if (!$this->configClass['is_embedded']) {
+                if (!$this->configClass['isEmbedded']) {
                     $updateTypeCode = str_replace('%to%', "\$query['\$set']['{$field['dbName']}']", $typeCode);
                     $fieldUpdateSetCode = <<<EOF
                             $updateTypeCode
@@ -2010,7 +2010,7 @@ EOF;
             $fieldsInsertCode = implode("\n", $fieldsInsertCode);
             $fieldsUpdateCode = implode("\n", $fieldsUpdateCode);
 
-            if ($this->configClass['is_embedded']) {
+            if ($this->configClass['isEmbedded']) {
                 $fieldsInsertCode = <<<EOF
                 \$rootQuery = \$query;
                 \$query =& \$rootQuery;
@@ -2058,7 +2058,7 @@ EOF;
 
         // references
         $referencesCode = '';
-        if ($this->configClass['_has_references'] && !$this->configClass['is_embedded']) {
+        if ($this->configClass['_has_references'] && !$this->configClass['isEmbedded']) {
             $referencesCode = <<<EOF
         \$this->updateReferenceFields();
 EOF;
@@ -2066,19 +2066,19 @@ EOF;
 
         // embeddeds one
         $embeddedsOneCode = '';
-        if ($this->configClass['embeddeds_one']) {
+        if ($this->configClass['embeddedsOne']) {
             $embeddedsOneCode = array();
-            foreach ($this->configClass['embeddeds_one'] as $name => $embedded) {
+            foreach ($this->configClass['embeddedsOne'] as $name => $embedded) {
                 if (!empty($embedded['inherited'])) {
                     continue;
                 }
 
                 $embeddedsOneCode[] = <<<EOF
             \$originalValue = \$this->getOriginalEmbeddedOneValue('$name');
-            if (isset(\$this->data['embeddeds_one']['$name'])) {
-                \$resetValue = \$reset ? \$reset : (!\$isNew && \$this->data['embeddeds_one']['$name'] !== \$originalValue);
-                \$query = \$this->data['embeddeds_one']['$name']->queryForSave(\$query, \$isNew, \$resetValue);
-            } elseif (array_key_exists('$name', \$this->data['embeddeds_one'])) {
+            if (isset(\$this->data['embeddedsOne']['$name'])) {
+                \$resetValue = \$reset ? \$reset : (!\$isNew && \$this->data['embeddedsOne']['$name'] !== \$originalValue);
+                \$query = \$this->data['embeddedsOne']['$name']->queryForSave(\$query, \$isNew, \$resetValue);
+            } elseif (array_key_exists('$name', \$this->data['embeddedsOne'])) {
                 if (\$originalValue) {
                     \$rap = \$originalValue->getRootAndPath();
                     \$query['\$unset'][\$rap['path']] = 1;
@@ -2089,7 +2089,7 @@ EOF;
 
             $embeddedsOneCode = implode("\n", $embeddedsOneCode);
             $embeddedsOneCode = <<<EOF
-        if (isset(\$this->data['embeddeds_one'])) {
+        if (isset(\$this->data['embeddedsOne'])) {
 $embeddedsOneCode
         }
 EOF;
@@ -2097,24 +2097,24 @@ EOF;
 
         // embeddeds many
         $embeddedsManyCode = '';
-        if ($this->configClass['embeddeds_many']) {
+        if ($this->configClass['embeddedsMany']) {
             $embeddedsManyInsertCode = array();
             $embeddedsManyUpdateCode = array();
-            foreach ($this->configClass['embeddeds_many'] as $name => $embedded) {
+            foreach ($this->configClass['embeddedsMany'] as $name => $embedded) {
                 if (!empty($embedded['inherited'])) {
                     continue;
                 }
 
                 $embeddedsManyInsertCode[] = <<<EOF
-                if (isset(\$this->data['embeddeds_many']['$name'])) {
-                    foreach (\$this->data['embeddeds_many']['$name']->getAdd() as \$document) {
+                if (isset(\$this->data['embeddedsMany']['$name'])) {
+                    foreach (\$this->data['embeddedsMany']['$name']->getAdd() as \$document) {
                         \$query = \$document->queryForSave(\$query, \$isNew);
                     }
                 }
 EOF;
                 $embeddedsManyUpdateCode[] = <<<EOF
-                if (isset(\$this->data['embeddeds_many']['$name'])) {
-                    \$group = \$this->data['embeddeds_many']['$name'];
+                if (isset(\$this->data['embeddedsMany']['$name'])) {
+                    \$group = \$this->data['embeddedsMany']['$name'];
                     foreach (\$group->saved() as \$document) {
                         \$query = \$document->queryForSave(\$query, \$isNew);
                     }
@@ -2141,7 +2141,7 @@ EOF;
             $embeddedsManyUpdateCode = implode("\n", $embeddedsManyUpdateCode);
 
             $embeddedsManyCode = <<<EOF
-        if (isset(\$this->data['embeddeds_many'])) {
+        if (isset(\$this->data['embeddedsMany'])) {
             if (\$isNew) {
 $embeddedsManyInsertCode
             } else {
@@ -2152,7 +2152,7 @@ EOF;
         }
 
         // document or embedded
-        if (!$this->configClass['is_embedded']) {
+        if (!$this->configClass['isEmbedded']) {
             $arguments = '';
             // single inheritance
             if ($this->configClass['inheritance'] && 'single' == $this->configClass['inheritance']['type']) {
@@ -2544,8 +2544,8 @@ $createObjects
             \$metadata = \$mandango->getMetadata()->getClassInfo(\$this->repository->getDocumentClass());
             foreach (\$this->references as \$referenceName) {
                 // one
-                if (isset(\$metadata['references_one'][\$referenceName])) {
-                    \$reference = \$metadata['references_one'][\$referenceName];
+                if (isset(\$metadata['referencesOne'][\$referenceName])) {
+                    \$reference = \$metadata['referencesOne'][\$referenceName];
                     \$field = \$reference['field'];
 
                     \$ids = array();
@@ -2562,8 +2562,8 @@ $createObjects
                 }
 
                 // many
-                if (isset(\$metadata['references_many'][\$referenceName])) {
-                    \$reference = \$metadata['references_many'][\$referenceName];
+                if (isset(\$metadata['referencesMany'][\$referenceName])) {
+                    \$reference = \$metadata['referencesMany'][\$referenceName];
                     \$field = \$reference['field'];
 
                     \$ids = array();
@@ -2677,10 +2677,10 @@ EOF
 
             // inherited
             $inheritedFields = $this->configClasses[$inheritanceClass]['fields'];
-            $inheritedReferencesOne = $this->configClasses[$inheritanceClass]['references_one'];
-            $inheritedReferencesMany = $this->configClasses[$inheritanceClass]['references_many'];
-            $inheritedEmbeddedsOne = $this->configClasses[$inheritanceClass]['embeddeds_one'];
-            $inheritedEmbeddedsMany = $this->configClasses[$inheritanceClass]['embeddeds_many'];
+            $inheritedReferencesOne = $this->configClasses[$inheritanceClass]['referencesOne'];
+            $inheritedReferencesMany = $this->configClasses[$inheritanceClass]['referencesMany'];
+            $inheritedEmbeddedsOne = $this->configClasses[$inheritanceClass]['embeddedsOne'];
+            $inheritedEmbeddedsMany = $this->configClasses[$inheritanceClass]['embeddedsMany'];
 
             // inheritable
             if ($this->configClasses[$inheritanceClass]['inheritable']) {
@@ -2693,10 +2693,10 @@ EOF
 
                     // inherited
                     $inheritedFields = array_merge($inheritedFields, $this->configClasses[$parentInheritance['class']]['fields']);
-                    $inheritedReferencesOne = array_merge($inheritedReferencesOne, $this->configClasses[$parentInheritance['class']]['references_one']);
-                    $inheritedReferencesMany = array_merge($inheritanceReferencesMany, $this->configClasses[$parentInheritance['class']]['references_many']);
-                    $inheritedEmbeddedsOne = array_merge($inheritedEmbeddedsOne, $this->configClasses[$parentInheritance['class']]['embeddeds_one']);
-                    $inheritedEmbeddedsMany = array_merge($inheritedEmbeddedsMany, $this->configClasses[$parentInheritance['class']]['embeddeds_many']);
+                    $inheritedReferencesOne = array_merge($inheritedReferencesOne, $this->configClasses[$parentInheritance['class']]['referencesOne']);
+                    $inheritedReferencesMany = array_merge($inheritanceReferencesMany, $this->configClasses[$parentInheritance['class']]['referencesMany']);
+                    $inheritedEmbeddedsOne = array_merge($inheritedEmbeddedsOne, $this->configClasses[$parentInheritance['class']]['embeddedsOne']);
+                    $inheritedEmbeddedsMany = array_merge($inheritedEmbeddedsMany, $this->configClasses[$parentInheritance['class']]['embeddedsMany']);
 
                     if ($this->configClasses[$parentInheritance['class']]['inheritable']) {
                         $inheritableClass = $parentInheritance['class'];
@@ -2726,7 +2726,7 @@ EOF
                 $referenceOne['inherited'] = true;
             }
             unset($referenceOne);
-            $configClass['references_one'] = array_merge($inheritedReferencesOne, $configClass['references_one']);
+            $configClass['referencesOne'] = array_merge($inheritedReferencesOne, $configClass['referencesOne']);
 
             $configClass['inheritance']['type'] = $inheritable['type'];
 
@@ -2735,21 +2735,21 @@ EOF
                 $referenceMany['inherited'] = true;
             }
             unset($referenceMany);
-            $configClass['references_many'] = array_merge($inheritedReferencesMany, $configClass['references_many']);
+            $configClass['referencesMany'] = array_merge($inheritedReferencesMany, $configClass['referencesMany']);
 
             // inherited embeddedsOne
             foreach ($inheritedEmbeddedsOne as $name => &$embeddedOne) {
                 $embeddedOne['inherited'] = true;
             }
             unset($embeddedOne);
-            $configClass['embeddeds_one'] = array_merge($inheritedEmbeddedsOne, $configClass['embeddeds_one']);
+            $configClass['embeddedsOne'] = array_merge($inheritedEmbeddedsOne, $configClass['embeddedsOne']);
 
             // inherited embeddedsMany
             foreach ($inheritedEmbeddedsMany as $name => &$embeddedMany) {
                 $embeddedMany['inherited'] = true;
             }
             unset($embeddedMany);
-            $configClass['embeddeds_many'] = array_merge($inheritedEmbeddedsMany, $configClass['embeddeds_many']);
+            $configClass['embeddedsMany'] = array_merge($inheritedEmbeddedsMany, $configClass['embeddedsMany']);
 
             // parent events
             $parentEvents = array(
@@ -2804,10 +2804,10 @@ EOF
                  }
 
                  $hasReferences = false;
-                 if ($configClass['references_one'] || $configClass['references_many']) {
+                 if ($configClass['referencesOne'] || $configClass['referencesMany']) {
                      $hasReferences = true;
                  }
-                 foreach (array_merge($configClass['embeddeds_one'], $configClass['embeddeds_many']) as $name => $embedded) {
+                 foreach (array_merge($configClass['embeddedsOne'], $configClass['embeddedsMany']) as $name => $embedded) {
                      if (!isset($this->configClasses[$embedded['class']]['_has_references'])) {
                          $continue = true;
                          continue 2;
@@ -2831,7 +2831,7 @@ EOF
                 }
 
                 $indexes = $configClass['indexes'];
-                foreach (array_merge($configClass['embeddeds_one'], $configClass['embeddeds_many']) as $name => $embedded) {
+                foreach (array_merge($configClass['embeddedsOne'], $configClass['embeddedsMany']) as $name => $embedded) {
                     if (!isset($this->configClasses[$embedded['class']]['_indexes'])) {
                         $continue = true;
                         continue 2;
@@ -2868,12 +2868,12 @@ EOF
 
         $classes = array();
         foreach ($this->configClasses as $class => $configClass) {
-            $classes[$class] = $configClass['is_embedded'];
+            $classes[$class] = $configClass['isEmbedded'];
 
             $info = array();
             // general
-            $info['is_embedded'] = $configClass['is_embedded'];
-            if (!$info['is_embedded']) {
+            $info['isEmbedded'] = $configClass['isEmbedded'];
+            if (!$info['isEmbedded']) {
                 $info['mandango'] = $configClass['mandango'];
                 $info['connection'] = $configClass['connection'];
                 $info['collection'] = $configClass['collection'];
@@ -2886,17 +2886,17 @@ EOF
             $info['fields'] = $configClass['fields'];
             // references
             $info['_has_references'] = $configClass['_has_references'];
-            $info['references_one'] = $configClass['references_one'];
-            $info['references_many'] = $configClass['references_many'];
+            $info['referencesOne'] = $configClass['referencesOne'];
+            $info['referencesMany'] = $configClass['referencesMany'];
             // embeddeds
-            $info['embeddeds_one'] = $configClass['embeddeds_one'];
-            $info['embeddeds_many'] = $configClass['embeddeds_many'];
+            $info['embeddedsOne'] = $configClass['embeddedsOne'];
+            $info['embeddedsMany'] = $configClass['embeddedsMany'];
             // relations
-            if (!$info['is_embedded']) {
-                $info['relations_one'] = $configClass['relations_one'];
-                $info['relations_many_one'] = $configClass['relations_many_one'];
-                $info['relations_many_many'] = $configClass['relations_many_many'];
-                $info['relations_many_through'] = $configClass['relations_many_through'];
+            if (!$info['isEmbedded']) {
+                $info['relationsOne'] = $configClass['relationsOne'];
+                $info['relationsManyOne'] = $configClass['relationsManyOne'];
+                $info['relationsManyMany'] = $configClass['relationsManyMany'];
+                $info['relationsManyThrough'] = $configClass['relationsManyThrough'];
             }
             // indexes
             $info['indexes'] = $configClass['indexes'];
@@ -2926,11 +2926,11 @@ EOF
                 throw new \RuntimeException(sprintf('The class of the association "%s" of the class "%s" is not an string.', $name, $this->class));
             }
         } elseif (!empty($association['polymorphic'])) {
-            if (empty($association['discriminator_field'])) {
-                $association['discriminator_field'] = '_mandango_document_class';
+            if (empty($association['discriminatorField'])) {
+                $association['discriminatorField'] = '_mandangoDocumentClass';
             }
-            if (empty($association['discriminator_map'])) {
-                $association['discriminator_map'] = false;
+            if (empty($association['discriminatorMap'])) {
+                $association['discriminatorMap'] = false;
             }
         } else {
             throw new \RuntimeException(sprintf('The association "%s" of the class "%s" does not have class and it is not polymorphic.', $name, $this->class));

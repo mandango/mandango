@@ -264,7 +264,7 @@ class CoreRepositoryTest extends TestCase
         // embeddeds one
         $this->assertSame(array('source.name' => 1), $indexInfo[3]['key']);
         $this->assertSame(true, $indexInfo[3]['unique']);
-        $this->assertSame(array('source.author_id' => 1, 'source.line' => 1), $indexInfo[4]['key']);
+        $this->assertSame(array('source.authorId' => 1, 'source.line' => 1), $indexInfo[4]['key']);
 
         // embeddeds one deep
         $this->assertSame(array('source.info.note' => 1), $indexInfo[5]['key']);
@@ -274,7 +274,7 @@ class CoreRepositoryTest extends TestCase
         // embeddeds many
         $this->assertSame(array('comments.line' => 1), $indexInfo[7]['key']);
         $this->assertSame(true, $indexInfo[7]['unique']);
-        $this->assertSame(array('comments.author_id' => 1, 'comments.note' => 1), $indexInfo[8]['key']);
+        $this->assertSame(array('comments.authorId' => 1, 'comments.note' => 1), $indexInfo[8]['key']);
 
         // embeddeds many deep
         $this->assertSame(array('comments.infos.note' => 1), $indexInfo[9]['key']);

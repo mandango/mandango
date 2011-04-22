@@ -35,12 +35,12 @@ class CorePolymorphicReferencesTest extends TestCase
         $this->assertSame($article, $article->setLike($author));
         $this->assertSame($author, $article->getLike());
         $this->assertSame(array(
-            '_mandango_document_class' => 'Model\Author',
+            '_mandangoDocumentClass' => 'Model\Author',
             'id' => $author->getId(),
         ), $article->getLikeRef());
         $article->setLike($category);
         $this->assertSame(array(
-            '_mandango_document_class' => 'Model\Category',
+            '_mandangoDocumentClass' => 'Model\Category',
             'id' => $category->getId(),
         ), $article->getLikeRef());
         $this->assertSame($category, $article->getLike());
@@ -74,7 +74,7 @@ class CorePolymorphicReferencesTest extends TestCase
         $article = \Model\Article::create();
         $this->assertNull($article->getLike());
         $article->setLikeRef(array(
-            '_mandango_document_class' => 'Model\Author',
+            '_mandangoDocumentClass' => 'Model\Author',
             'id' => $author->getId(),
         ));
         $this->assertSame($author, $article->getLike());
@@ -108,7 +108,7 @@ class CorePolymorphicReferencesTest extends TestCase
         $author->setId(new \MongoId('123'));
         $article->updateReferenceFields();
         $this->assertSame(array(
-            '_mandango_document_class' => 'Model\Author',
+            '_mandangoDocumentClass' => 'Model\Author',
             'id' => $author->getId(),
         ), $article->getLikeRef());
     }
@@ -132,7 +132,7 @@ class CorePolymorphicReferencesTest extends TestCase
 
         $this->assertSame(array(
             'like' => array(
-                '_mandango_document_class' => 'Model\Author',
+                '_mandangoDocumentClass' => 'Model\Author',
                 'id' => $author->getId(),
             ),
         ), $article->queryForSave());
@@ -143,7 +143,7 @@ class CorePolymorphicReferencesTest extends TestCase
         $article = \Model\Article::create();
         $related = $article->getRelated();
         $this->assertInstanceOf('Mandango\Group\PolymorphicReferenceGroup', $related);
-        $this->assertSame('_mandango_document_class', $related->getDiscriminatorField());
+        $this->assertSame('_mandangoDocumentClass', $related->getDiscriminatorField());
         $this->assertSame($article, $related->getParent());
         $this->assertSame('relatedRef', $related->getField());
         $this->assertSame($related, $article->getRelated());
@@ -161,10 +161,10 @@ class CorePolymorphicReferencesTest extends TestCase
 
         $article->updateReferenceFields();
         $this->assertSame(array(
-            array('_mandango_document_class' => 'Model\Author', 'id' => $author1->getId()),
-            array('_mandango_document_class' => 'Model\Author', 'id' => $author2->getId()),
-            array('_mandango_document_class' => 'Model\Category', 'id' => $category1->getId()),
-            array('_mandango_document_class' => 'Model\User', 'id' => $user1->getId()),
+            array('_mandangoDocumentClass' => 'Model\Author', 'id' => $author1->getId()),
+            array('_mandangoDocumentClass' => 'Model\Author', 'id' => $author2->getId()),
+            array('_mandangoDocumentClass' => 'Model\Category', 'id' => $category1->getId()),
+            array('_mandangoDocumentClass' => 'Model\User', 'id' => $user1->getId()),
         ), $article->getRelatedRef());
     }
 
@@ -173,10 +173,10 @@ class CorePolymorphicReferencesTest extends TestCase
         $article = \Model\Article::create()->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'related' => $relatedRef = array(
-                array('_mandango_document_class' => 'Model\Author', 'id' => new \MongoId('1')),
-                array('_mandango_document_class' => 'Model\Author', 'id' => new \MongoId('2')),
-                array('_mandango_document_class' => 'Model\Category', 'id' => new \MongoId('3')),
-                array('_mandango_document_class' => 'Model\Category', 'id' => new \MongoId('4')),
+                array('_mandangoDocumentClass' => 'Model\Author', 'id' => new \MongoId('1')),
+                array('_mandangoDocumentClass' => 'Model\Author', 'id' => new \MongoId('2')),
+                array('_mandangoDocumentClass' => 'Model\Category', 'id' => new \MongoId('3')),
+                array('_mandangoDocumentClass' => 'Model\Category', 'id' => new \MongoId('4')),
             ),
         ));
         $related = $article->getRelated();
@@ -189,11 +189,11 @@ class CorePolymorphicReferencesTest extends TestCase
 
         $article->updateReferenceFields();
         $this->assertSame(array(
-            array('_mandango_document_class' => 'Model\Author', 'id' => $relatedRef[0]['id']),
-            array('_mandango_document_class' => 'Model\Category', 'id' => $relatedRef[2]['id']),
-            array('_mandango_document_class' => get_class($add[0]), 'id' => $add[0]->getId()),
-            array('_mandango_document_class' => get_class($add[1]), 'id' => $add[1]->getId()),
-            array('_mandango_document_class' => get_class($add[2]), 'id' => $add[2]->getId()),
+            array('_mandangoDocumentClass' => 'Model\Author', 'id' => $relatedRef[0]['id']),
+            array('_mandangoDocumentClass' => 'Model\Category', 'id' => $relatedRef[2]['id']),
+            array('_mandangoDocumentClass' => get_class($add[0]), 'id' => $add[0]->getId()),
+            array('_mandangoDocumentClass' => get_class($add[1]), 'id' => $add[1]->getId()),
+            array('_mandangoDocumentClass' => get_class($add[2]), 'id' => $add[2]->getId()),
         ), $article->getRelatedRef());
     }
 
@@ -264,10 +264,10 @@ class CorePolymorphicReferencesTest extends TestCase
         }
 
         $relatedRef = array();
-        $relatedRef[] = array('_mandango_document_class' => 'Model\Author', 'id' => $authors[3]->getId());
-        $relatedRef[] = array('_mandango_document_class' => 'Model\Author', 'id' => $authors[5]->getId());
-        $relatedRef[] = array('_mandango_document_class' => 'Model\Category', 'id' => $categories[1]->getId());
-        $relatedRef[] = array('_mandango_document_class' => 'Model\User', 'id' => $users[8]->getId());
+        $relatedRef[] = array('_mandangoDocumentClass' => 'Model\Author', 'id' => $authors[3]->getId());
+        $relatedRef[] = array('_mandangoDocumentClass' => 'Model\Author', 'id' => $authors[5]->getId());
+        $relatedRef[] = array('_mandangoDocumentClass' => 'Model\Category', 'id' => $categories[1]->getId());
+        $relatedRef[] = array('_mandangoDocumentClass' => 'Model\User', 'id' => $users[8]->getId());
         $article = \Model\Article::create()->setRelatedRef($relatedRef);
         $this->assertSame(array(
             $authors[3],
@@ -317,11 +317,11 @@ class CorePolymorphicReferencesTest extends TestCase
         $this->assertSame(array(
             'related' => array(
                 array(
-                    '_mandango_document_class' => 'Model\Author',
+                    '_mandangoDocumentClass' => 'Model\Author',
                     'id' => $author->getId(),
                 ),
                 array(
-                    '_mandango_document_class' => 'Model\Category',
+                    '_mandangoDocumentClass' => 'Model\Category',
                     'id' => $category->getId(),
                 ),
             ),

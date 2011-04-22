@@ -86,8 +86,8 @@ abstract class AbstractDocument
             }
         }
 
-        if (isset($this->data['embeddeds_one'])) {
-            foreach ($this->data['embeddeds_one'] as $name => $embedded) {
+        if (isset($this->data['embeddedsOne'])) {
+            foreach ($this->data['embeddedsOne'] as $name => $embedded) {
                 if ($embedded && $embedded->isModified()) {
                     return true;
                 }
@@ -105,8 +105,8 @@ abstract class AbstractDocument
             }
         }
 
-        if (isset($this->data['embeddeds_many'])) {
-            foreach ($this->data['embeddeds_many'] as $name => $group) {
+        if (isset($this->data['embeddedsMany'])) {
+            foreach ($this->data['embeddedsMany'] as $name => $group) {
                 foreach ($group->getAdd() as $document) {
                     if ($document->isModified()) {
                         return true;
@@ -145,17 +145,17 @@ abstract class AbstractDocument
             $this->clearFieldsModified();
         }
 
-        if (isset($this->data['embeddeds_one'])) {
+        if (isset($this->data['embeddedsOne'])) {
             $this->clearEmbeddedsOneChanged();
-            foreach ($this->data['embeddeds_one'] as $name => $embedded) {
+            foreach ($this->data['embeddedsOne'] as $name => $embedded) {
                 if ($embedded) {
                     $embedded->clearModified();
                 }
             }
         }
 
-        if (isset($this->data['embeddeds_many'])) {
-            foreach ($this->data['embeddeds_many'] as $name => $group) {
+        if (isset($this->data['embeddedsMany'])) {
+            foreach ($this->data['embeddedsMany'] as $name => $group) {
                 $group->clearAdd();
                 $group->clearRemove();
                 $group->clearSaved();
@@ -222,11 +222,11 @@ abstract class AbstractDocument
      */
     public function isEmbeddedOneChanged($name)
     {
-        if (!isset($this->data['embeddeds_one'])) {
+        if (!isset($this->data['embeddedsOne'])) {
             return false;
         }
 
-        if (!isset($this->data['embeddeds_one'][$name]) && !array_key_exists($name, $this->data['embeddeds_one'])) {
+        if (!isset($this->data['embeddedsOne'][$name]) && !array_key_exists($name, $this->data['embeddedsOne'])) {
             return false;
         }
 
@@ -246,8 +246,8 @@ abstract class AbstractDocument
             return Archive::get($this, 'embedded_one.'.$name);
         }
 
-        if (isset($this->data['embeddeds_one'][$name])) {
-            return $this->data['embeddeds_one'][$name];
+        if (isset($this->data['embeddedsOne'][$name])) {
+            return $this->data['embeddedsOne'][$name];
         }
 
         return null;
@@ -261,8 +261,8 @@ abstract class AbstractDocument
     public function getEmbeddedsOneChanged()
     {
         $embeddedsOneChanged = array();
-        if (isset($this->data['embeddeds_one'])) {
-            foreach ($this->data['embeddeds_one'] as $name => $embedded) {
+        if (isset($this->data['embeddedsOne'])) {
+            foreach ($this->data['embeddedsOne'] as $name => $embedded) {
                 if ($this->isEmbeddedOneChanged($name)) {
                     $embeddedsOneChanged[$name] = $this->getOriginalEmbeddedOneValue($name);
                 }
@@ -277,8 +277,8 @@ abstract class AbstractDocument
      */
     public function clearEmbeddedsOneChanged()
     {
-        if (isset($this->data['embeddeds_one'])) {
-            foreach ($this->data['embeddeds_one'] as $name => $embedded) {
+        if (isset($this->data['embeddedsOne'])) {
+            foreach ($this->data['embeddedsOne'] as $name => $embedded) {
                 Archive::remove($this, 'embedded_one.'.$name);
             }
         }

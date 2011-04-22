@@ -28,33 +28,33 @@ $configClasses = array(
             'date'     => 'date',
             'database' => array('dbName' => 'basatos', 'type' => 'string'),
         ),
-        'embeddeds_one' => array(
+        'embeddedsOne' => array(
             'source'          => array('class' => 'Model\Source'),
             'simpleEmbedded' => array('class' => 'Model\SimpleEmbedded'),
         ),
-        'embeddeds_many' => array(
+        'embeddedsMany' => array(
             'comments' => array('class' => 'Model\Comment'),
         ),
-        'references_one' => array(
+        'referencesOne' => array(
             'author'      => array('class' => 'Model\Author', 'field' => 'authorId'),
             'information' => array('class' => 'Model\ArticleInformation', 'field' => 'informationId'),
             'like'        => array('polymorphic' => true, 'field' => 'likeRef'),
-            'friend'      => array('polymorphic' => true, 'field' => 'friendRef', 'discriminator_field' => 'name', 'discriminator_map' => array(
+            'friend'      => array('polymorphic' => true, 'field' => 'friendRef', 'discriminatorField' => 'name', 'discriminatorMap' => array(
                 'au' => 'Model\Author',
                 'ct' => 'Model\Category',
                 'us' => 'Model\User',
             )),
         ),
-        'references_many' => array(
+        'referencesMany' => array(
             'categories' => array('class' => 'Model\Category', 'field' => 'categoryIds'),
             'related'    => array('polymorphic' => true, 'field' => 'relatedRef'),
-            'elements'   => array('polymorphic' => true, 'field' => 'elementsRef', 'discriminator_field' => 'type', 'discriminator_map' => array(
+            'elements'   => array('polymorphic' => true, 'field' => 'elementsRef', 'discriminatorField' => 'type', 'discriminatorMap' => array(
                 'element'  => 'Model\FormElement',
                 'textarea' => 'Model\TextareaFormElement',
                 'radio'    => 'Model\RadioFormElement',
             )),
         ),
-        'relations_many_through' => array(
+        'relationsManyThrough' => array(
             'votesUsers' => array('class' => 'Model\User', 'through' => 'Model\ArticleVote', 'local' => 'article', 'foreign' => 'user'),
         ),
         'indexes' => array(
@@ -71,14 +71,14 @@ $configClasses = array(
         'fields' => array(
             'name' => 'string',
         ),
-        'relations_one' => array(
+        'relationsOne' => array(
             'article' => array('class' => 'Model\Article', 'reference' => 'information'),
         ),
     ),
     'Model\ArticleVote' => array(
         'fields' => array(
         ),
-        'references_one' => array(
+        'referencesOne' => array(
             'article' => array('class' => 'Model\Article', 'field' => 'articleId'),
             'user'    => array('class' => 'Model\User', 'field' => 'userId'),
         ),
@@ -87,7 +87,7 @@ $configClasses = array(
         'fields' => array(
             'name' => 'string',
         ),
-        'relations_many_one' => array(
+        'relationsManyOne' => array(
             'articles' => array('class' => 'Model\Article', 'reference' => 'author'),
         ),
     ),
@@ -95,25 +95,25 @@ $configClasses = array(
         'fields' => array(
             'name' => 'string',
         ),
-        'relations_many_many' => array(
+        'relationsManyMany' => array(
             'articles' => array('class' => 'Model\Article', 'reference' => 'categories'),
         ),
     ),
     'Model\Comment' => array(
-        'is_embedded' => true,
+        'isEmbedded' => true,
         'fields' => array(
             'name' => 'string',
             'text' => 'string',
             'note' => 'string',
             'line' => 'string',
         ),
-        'references_one' => array(
+        'referencesOne' => array(
             'author' => array('class' => 'Model\Author', 'field' => 'authorId'),
         ),
-        'references_many' => array(
+        'referencesMany' => array(
             'categories' => array('class' => 'Model\Category', 'field' => 'categoryIds'),
         ),
-        'embeddeds_many' => array(
+        'embeddedsMany' => array(
             'infos' => array('class' => 'Model\Info'),
         ),
         'indexes' => array(
@@ -122,12 +122,12 @@ $configClasses = array(
                 'options' => array('unique' => true),
             ),
             array(
-                'keys' => array('author_id' => 1, 'note' => 1),
+                'keys' => array('authorId' => 1, 'note' => 1),
             ),
         ),
     ),
     'Model\Info' => array(
-        'is_embedded' => true,
+        'isEmbedded' => true,
         'fields' => array(
             'name' => 'string',
             'text' => 'string',
@@ -145,7 +145,7 @@ $configClasses = array(
         ),
     ),
     'Model\Source' => array(
-        'is_embedded' => true,
+        'isEmbedded' => true,
         'fields' => array(
             'name' => 'string',
             'text' => 'string',
@@ -153,13 +153,13 @@ $configClasses = array(
             'line' => 'string',
             'from' => array('dbName' => 'desde', 'type' => 'string'),
         ),
-        'references_one' => array(
+        'referencesOne' => array(
             'author' => array('class' => 'Model\Author', 'field' => 'authorId'),
         ),
-        'references_many' => array(
+        'referencesMany' => array(
             'categories' => array('class' => 'Model\Category', 'field' => 'categoryIds'),
         ),
-        'embeddeds_one' => array(
+        'embeddedsOne' => array(
             'info' => array('class' => 'Model\Info'),
         ),
         'indexes' => array(
@@ -168,7 +168,7 @@ $configClasses = array(
                 'options' => array('unique' => true),
             ),
             array(
-                'keys' => array('author_id' => 1, 'line' => 1),
+                'keys' => array('authorId' => 1, 'line' => 1),
             ),
         ),
     ),
@@ -178,7 +178,7 @@ $configClasses = array(
         ),
     ),
     'Model\SimpleEmbedded' => array(
-        'is_embedded' => true,
+        'isEmbedded' => true,
         'fields' => array(
             'name' => 'string',
         ),
@@ -188,7 +188,7 @@ $configClasses = array(
         'fields' => array(
             'author' => 'string',
         ),
-        'references_one' => array(
+        'referencesOne' => array(
             'replyTo' => array('class' => 'Model\Message', 'field' => 'replyToId'),
         ),
     ),
@@ -218,7 +218,7 @@ $configClasses = array(
         'fields' => array(
             'name' => 'string',
         ),
-        'embeddeds_one' => array(
+        'embeddedsOne' => array(
             'embedded' => array('class' => 'Model\EmbeddedEvents'),
         ),
     ),
@@ -226,12 +226,12 @@ $configClasses = array(
         'fields' => array(
             'name' => 'string',
         ),
-        'embeddeds_many' => array(
+        'embeddedsMany' => array(
             'embedded' => array('class' => 'Model\EmbeddedEvents'),
         ),
     ),
     'Model\EmbeddedEvents' => array(
-        'is_embedded' => true,
+        'isEmbedded' => true,
         'fields' => array(
             'name' => 'string',
         ),
@@ -265,16 +265,16 @@ $configClasses = array(
             'label'   => 'string',
             'default' => 'raw',
         ),
-        'references_one' => array(
+        'referencesOne' => array(
             'author' => array('class' => 'Model\Author'),
         ),
-        'references_many' => array(
+        'referencesMany' => array(
             'categories' => array('class' => 'Model\Category'),
         ),
-        'embeddeds_one' => array(
+        'embeddedsOne' => array(
             'source' => array('class' => 'Model\Source'),
         ),
-        'embeddeds_many' => array(
+        'embeddedsMany' => array(
             'comments' => array('class' => 'Model\Comment'),
         ),
         'events' => array(
@@ -305,16 +305,16 @@ $configClasses = array(
         'fields' => array(
             'options' => 'serialized',
         ),
-        'references_one' => array(
+        'referencesOne' => array(
             'authorLocal' => array('class' => 'Model\Author'),
         ),
-        'references_many' => array(
+        'referencesMany' => array(
             'categoriesLocal' => array('class' => 'Model\Category'),
         ),
-        'embeddeds_one' => array(
+        'embeddedsOne' => array(
             'sourceLocal' => array('class' => 'Model\Source'),
         ),
-        'embeddeds_many' => array(
+        'embeddedsMany' => array(
             'commentsLocal' => array('class' => 'Model\Comment'),
         ),
     ),

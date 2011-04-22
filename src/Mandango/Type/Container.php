@@ -35,8 +35,8 @@ class Container
         'float'          => 'Mandango\Type\FloatType',
         'integer'        => 'Mandango\Type\IntegerType',
         'raw'            => 'Mandango\Type\RawType',
-        'reference_one'  => 'Mandango\Type\ReferenceOneType',
-        'reference_many' => 'Mandango\Type\ReferenceManyType',
+        'referenceOne'  => 'Mandango\Type\ReferenceOneType',
+        'referenceMany' => 'Mandango\Type\ReferenceManyType',
         'serialized'     => 'Mandango\Type\SerializedType',
         'string'         => 'Mandango\Type\StringType',
     );
@@ -128,8 +128,8 @@ class Container
             'float'          => 'Mandango\Type\FloatType',
             'integer'        => 'Mandango\Type\IntegerType',
             'raw'            => 'Mandango\Type\RawType',
-            'reference_one'  => 'Mandango\Type\ReferenceOneType',
-            'reference_many' => 'Mandango\Type\ReferenceManyType',
+            'referenceOne'  => 'Mandango\Type\ReferenceOneType',
+            'referenceMany' => 'Mandango\Type\ReferenceManyType',
             'serialized'     => 'Mandango\Type\SerializedType',
             'string'         => 'Mandango\Type\StringType',
         );
