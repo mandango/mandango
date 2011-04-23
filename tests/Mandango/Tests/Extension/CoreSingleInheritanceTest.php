@@ -196,7 +196,7 @@ class CoreSingleInheritanceTest extends TestCase
         $this->assertSame(1, \Model\RadioFormElement::getRepository()->count());
     }
 
-    public function testRepositoryRemove($value='')
+    public function testRepositoryRemove()
     {
         $formElements = array();
         for ($i = 0; $i < 5; $i++) {

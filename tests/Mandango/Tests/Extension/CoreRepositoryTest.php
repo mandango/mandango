@@ -40,7 +40,7 @@ class CoreRepositoryTest extends TestCase
         $this->assertFalse($articles[1]->isNew());
     }
 
-    public function testSaveUpdatingNotModified($value='')
+    public function testSaveUpdatingNotModified()
     {
         $article = \Model\Article::create()->setTitle('foo')->save();
         \Model\Article::getRepository()->save($article);
