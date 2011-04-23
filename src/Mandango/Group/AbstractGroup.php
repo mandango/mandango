@@ -112,11 +112,25 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
     }
 
     /**
+     * Returns the saved + add - removed elements.
+     */
+    public function all()
+    {
+        $documents = array_merge($this->saved(), $this->getAdd());
+
+        foreach ($this->getRemove() as $document) {
+            unset($documents[array_search($document, $documents)]);
+        }
+
+        return array_values($documents);
+    }
+
+    /**
      * Implements the \IteratorAggregate interface.
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->saved());
+        return new \ArrayIterator($this->all());
     }
 
     /**
@@ -167,11 +181,11 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
     }
 
     /**
-     * Returns the number of saved documents.
+     * Returns the number of all documents.
      */
     public function count()
     {
-        return count($this->saved());
+        return count($this->all());
     }
 
     /**

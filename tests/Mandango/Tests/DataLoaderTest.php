@@ -93,7 +93,7 @@ class DataLoaderTest extends TestCase
         $this->assertNotNull($article);
         $this->assertSame('Contuent', $article->getContent());
         $this->assertSame('Francisco', $article->getAuthor()->getName());
-        $this->assertSame(2, $article->getCategories()->count());
+        $this->assertSame(2, count($article->getCategories()->saved()));
 
         $article = \Model\Article::getRepository()->createQuery(array('title' => 'My Article 2'))->one();
         $this->assertNotNull($article);
@@ -151,7 +151,7 @@ class DataLoaderTest extends TestCase
         $this->assertSame(1, \Model\RadioFormElement::getRepository()->createQuery()->count());
         $radio = \Model\RadioFormElement::getRepository()->createQuery()->one();
         $this->assertSame(\Model\Author::getRepository()->createQuery(array('name' => 'pablodip'))->one(), $radio->getAuthor());
-        $this->assertSame(2, count($radio->getCategories()));
+        $this->assertSame(2, count($radio->getCategories()->saved()));
     }
 
     public function testLoadPrune()
