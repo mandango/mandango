@@ -593,6 +593,30 @@ class CoreDocumentTest extends TestCase
         $this->assertEquals($query->getCriteria(), $articles[5]->getVotesUsers()->getCriteria());
     }
 
+    public function testResetGroups()
+    {
+        $article = \Model\Article::create()
+            // referencesMany
+            ->addCategories(\Model\Category::create())
+            // embeddedsMany
+            ->addComments(\Model\Comment::create())
+            // embeddedsOne with groups
+            ->setSource(\Model\Source::create()
+                ->addCategories(\Model\Category::create())
+            )
+            // embeddedsMany with groups
+            ->addComments($comment = \Model\Comment::create()
+                ->addInfos(\Model\Info::create())
+            )
+        ;
+        $article->resetGroups();
+
+        $this->assertSame(0, count($article->getCategories()));
+        $this->assertSame(0, count($article->getComments()));
+        $this->assertSame(0, count($article->getSource()->getCategories()));
+        $this->assertSame(0, count($comment->getInfos()));
+    }
+
     public function testSetMethod()
     {
         $article = \Model\Article::create();

@@ -137,6 +137,9 @@ class Core extends Extension
             $this->documentRelationsManyManyProcess();
             $this->documentRelationsManyThroughProcess();
         }
+        if ($this->configClass['_has_groups']) {
+            $this->documentResetGroupsProcess();
+        }
         $this->documentSetMethodProcess();
         $this->documentGetMethodProcess();
         $this->documentFromArrayMethodProcess();
@@ -171,6 +174,7 @@ class Core extends Extension
     {
         $this->globalInheritableAndInheritanceProcess();
         $this->globalHasReferencesProcess();
+        $this->globalHasGroupsProcess();
         $this->globalIndexesProcess();
     }
 
@@ -1741,6 +1745,73 @@ EOF
         }
     }
 
+    protected function documentResetGroupsProcess()
+    {
+        $resetGroupsCode = array();
+
+        // referencesMany
+        foreach ($this->configClass['referencesMany'] as $name => $referenceMany) {
+            $resetGroupsCode[] = <<<EOF
+        if (isset(\$this->data['referencesMany']['$name'])) {
+            \$this->data['referencesMany']['$name']->reset();
+        }
+EOF;
+        }
+
+        // embeddedsOne
+        foreach ($this->configClass['embeddedsOne'] as $name => $embeddedMany) {
+            if (!$this->configClasses[$embeddedMany['class']]['_has_groups']) {
+                continue;
+            }
+
+            $resetGroupsCode[] = <<<EOF
+    if (isset(\$this->data['embeddedsOne']['$name'])) {
+        \$this->data['embeddedsOne']['$name']->resetGroups();
+    }
+EOF;
+        }
+
+        // embeddedsMany
+        foreach ($this->configClass['embeddedsMany'] as $name => $embeddedMany) {
+            if ($this->configClasses[$embeddedMany['class']]['_has_groups']) {
+                $resetGroupsCode[] = <<<EOF
+        if (isset(\$this->data['embeddedsMany']['$name'])) {
+            \$group = \$this->data['embeddedsMany']['$name'];
+            foreach (array_merge(\$group->getAdd(), \$group->getRemove()) as \$document) {
+                \$document->resetGroups();
+            }
+            if (\$group->isSavedInitialized()) {
+                foreach (\$group->saved() as \$document) {
+                    \$document->resetGroups();
+                }
+            }
+            \$group->reset();
+        }
+EOF;
+            } else {
+                $resetGroupsCode[] = <<<EOF
+        if (isset(\$this->data['embeddedsMany']['$name'])) {
+            \$this->data['embeddedsMany']['$name']->reset();
+        }
+EOF;
+            }
+        }
+
+        $resetGroupsCode = implode("\n", $resetGroupsCode);
+
+        $method = new Method('public', 'resetGroups', '', <<<EOF
+$resetGroupsCode
+EOF
+        );
+        $method->setDocComment(<<<EOF
+    /**
+     * Resets the groups of the document.
+     */
+EOF
+        );
+        $this->definitions['document_base']->addMethod($method);
+    }
+
     protected function documentSetMethodProcess()
     {
         // inheritance
@@ -2358,6 +2429,14 @@ EOF;
 EOF;
         }
 
+        // groups
+        $resetGroupsCode = '';
+        if ($this->configClass['_has_groups']) {
+            $resetGroupsCode = <<<EOF
+            \$document->resetGroups();
+EOF;
+        }
+
         // events
         $preInsert = '';
         if ($this->configClass['events']['preInsert'] || $this->configClass['_parent_events']['preInsert']) {
@@ -2413,7 +2492,7 @@ EOF;
 
                     \$document->setId(\$data['_id']);
                     \$document->clearModified();
-                    \$identityMap[\$data['_id']->__toString()] = \$document;$postInsert
+                    \$identityMap[\$data['_id']->__toString()] = \$document;$resetGroupsCode$postInsert
                 }
             }
         }
@@ -2422,7 +2501,7 @@ EOF;
         foreach (\$updates as \$document) {
             if (\$query = \$document->queryForSave()) {
                 $preUpdate\$collection->update(array('_id' => \$document->getId()), \$query);
-                \$document->clearModified();$postUpdate
+                \$document->clearModified();$resetGroupsCode$postUpdate
             }
         }
 EOF
@@ -2890,6 +2969,33 @@ EOF
                  $configClass['_has_references'] = $hasReferences;
              }
          } while ($continue);
+    }
+
+    protected function globalHasGroupsProcess()
+    {
+        do {
+            $continue = false;
+            foreach ($this->configClasses as $class => $configClass) {
+                if (isset($configClass['_has_groups'])) {
+                    continue;
+                }
+
+                $hasGroups = false;
+                if ($configClass['referencesMany'] || $configClass['embeddedsMany']) {
+                    $hasGroups = true;
+                }
+                foreach (array_merge($configClass['embeddedsOne'], $configClass['embeddedsMany']) as $name => $embedded) {
+                    if (!isset($this->configClasses[$embedded['class']]['_has_groups'])) {
+                        $continue = true;
+                        continue 2;
+                    }
+                    if ($this->configClasses[$embedded['class']]['_has_groups']) {
+                        $hasGroups = true;
+                    }
+                }
+                $configClass['_has_groups'] = $hasGroups;
+            }
+        } while($continue);
     }
 
     protected function globalIndexesProcess()

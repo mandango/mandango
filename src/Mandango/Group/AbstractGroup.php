@@ -201,4 +201,16 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
         $this->remove($this->saved());
         $this->add($documents);
     }
+
+    /**
+     * Resets the group (clear adds and removed, and saved if there are adds or removed).
+     */
+    public function reset()
+    {
+        if ($this->getAdd() || $this->getRemove()) {
+            $this->clearSaved();
+        }
+        $this->clearAdd();
+        $this->clearRemove();
+    }
 }

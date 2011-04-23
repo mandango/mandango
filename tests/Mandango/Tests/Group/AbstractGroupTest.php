@@ -145,4 +145,62 @@ class AbstractGroupTest extends TestCase
             \Model\Comment::create()->fromArray($savedData[1])
         ), $group->getRemove());
     }
+
+    public function testResetWithAdd()
+    {
+        $group = new AbstractGroup();
+        $group->add('foo');
+        $group->reset();
+        $this->assertSame(array(), $group->getAdd());
+        $this->assertSame(array(), $group->getRemove());
+        $this->assertSame(array(), $group->saved());
+    }
+
+    public function testResetWithRemove()
+    {
+        $group = new AbstractGroup();
+        $group->remove('foo');
+        $group->reset();
+        $this->assertSame(array(), $group->getAdd());
+        $this->assertSame(array(), $group->getRemove());
+        $this->assertSame(array(), $group->saved());
+    }
+
+    public function testResetSavedWithAdd()
+    {
+        $group = new AbstractGroup();
+        $group->forSaved = array('foo');
+        $group->saved();
+        $group->forSaved = array('foobar');
+        $group->add('bar');
+        $group->reset();
+        $this->assertSame(array(), $group->getAdd());
+        $this->assertSame(array(), $group->getRemove());
+        $this->assertSame(array('foobar'), $group->saved());
+    }
+
+    public function testResetSavedWithRemove()
+    {
+        $group = new AbstractGroup();
+        $group->forSaved = array('foo');
+        $group->saved();
+        $group->forSaved = array('foobar');
+        $group->remove('bar');
+        $group->reset();
+        $this->assertSame(array(), $group->getAdd());
+        $this->assertSame(array(), $group->getRemove());
+        $this->assertSame(array('foobar'), $group->saved());
+    }
+
+    public function testResetNoSavedWithoutAddNorRemove()
+    {
+        $group = new AbstractGroup();
+        $group->forSaved = array('foo');
+        $group->saved();
+        $group->forSaved = array('foobar');
+        $group->reset();
+        $this->assertSame(array(), $group->getAdd());
+        $this->assertSame(array(), $group->getRemove());
+        $this->assertSame(array('foo'), $group->saved());
+    }
 }

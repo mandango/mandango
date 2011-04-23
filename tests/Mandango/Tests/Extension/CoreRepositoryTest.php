@@ -194,6 +194,27 @@ class CoreRepositoryTest extends TestCase
         ), $documents[1]->getEvents());
     }
 
+    public function testSaveResetGroups()
+    {
+        // insert
+        $article = \Model\Article::create()
+            ->addCategories($category = \Model\Category::create()
+                ->setName('foo')
+            )
+            ->save()
+        ;
+        $this->assertSame(0, count($article->getCategories()->getAdd()));
+
+        // update
+        $article
+             ->addCategories($category = \Model\Category::create()
+                ->setName('foo')
+            )
+            ->save()
+        ;
+        $this->assertSame(0, count($article->getCategories()->getAdd()));
+    }
+
     public function testDeleteSingleDocument()
     {
         $articles = array();
