@@ -2136,14 +2136,6 @@ $fieldsUpdateCode
 EOF;
         }
 
-        // references
-        $referencesCode = '';
-        if ($this->configClass['_has_references'] && !$this->configClass['isEmbedded']) {
-            $referencesCode = <<<EOF
-        \$this->updateReferenceFields();
-EOF;
-        }
-
         // embeddeds one
         $embeddedsOneCode = '';
         if ($this->configClass['embeddedsOne']) {
@@ -2259,7 +2251,6 @@ EOF;
         $method = new Method('public', 'queryForSave', $arguments, <<<EOF
 $codeHeader
 
-$referencesCode
 $fieldsCode
         if (true === \$reset) {
             \$reset = 'deep';

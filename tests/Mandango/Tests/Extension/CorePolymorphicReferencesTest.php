@@ -313,6 +313,7 @@ class CorePolymorphicReferencesTest extends TestCase
         $author = \Model\Author::create()->setName('foo')->save();
         $category = \Model\Category::create()->setName('bar')->save();
         $related->add(array($author, $category));
+        $article->updateReferenceFields();
 
         $this->assertSame(array(
             'related' => array(

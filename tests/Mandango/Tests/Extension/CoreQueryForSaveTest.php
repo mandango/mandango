@@ -103,6 +103,7 @@ class CoreQueryForSaveTest extends TestCase
 
         $article = \Model\Article::create();
         $article->getCategories()->add($categories);
+        $article->updateReferenceFields();
 
         $this->assertSame(array(
             'categories' => $ids,
