@@ -27,6 +27,8 @@ use Mandango\Repository;
  * Query.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 abstract class Query implements \Countable, \IteratorAggregate
 {
@@ -48,6 +50,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Constructor.
      *
      * @param string Mandango\Repository The repository of the document class to query.
+     *
+     * @api
      */
     public function __construct(Repository $repository)
     {
@@ -77,6 +81,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns the repository.
      *
      * @return Mandango\Repository The repository.
+     *
+     * @api
      */
     public function getRepository()
     {
@@ -111,6 +117,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @param array $criteria The criteria.
      *
      * @return Mandango\Query The query instance (fluent interface).
+     *
+     * @api
      */
     public function criteria(array $criteria)
     {
@@ -125,6 +133,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @param array $criteria The criteria.
      *
      * @return Mandango\Query The query instance (fluent interface).
+     *
+     * @api
      */
     public function mergeCriteria(array $criteria)
     {
@@ -137,6 +147,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns the criteria.
      *
      * @return array The criteria.
+     *
+     * @api
      */
     public function getCriteria()
     {
@@ -149,6 +161,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @param array $fields The fields.
      *
      * @return Mandango\Query The query instance (fluent interface).
+     *
+     * @api
      */
     public function fields($fields)
     {
@@ -161,6 +175,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns the fields.
      *
      * @return array The fields.
+     *
+     * @api
      */
     public function getFields()
     {
@@ -175,6 +191,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @return Mandango\Query The query instance (fluent interface).
      *
      * @throws \InvalidArgumentException If the references are not an array or null.
+     *
+     * @api
      */
     public function references($references)
     {
@@ -191,6 +209,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns the references.
      *
      * @return array The references.
+     *
+     * @api
      */
     public function getReferences()
     {
@@ -205,6 +225,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @return Mandango\Query The query instance (fluent interface).
      *
      * @throws \InvalidArgumentException If the sort is not an array or null.
+     *
+     * @api
      */
     public function sort($sort)
     {
@@ -221,6 +243,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns the sort.
      *
      * @return array The sort.
+     *
+     * @api
      */
     public function getSort()
     {
@@ -235,6 +259,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @return Mandango\Query The query instance (fluent interface).
      *
      * @throws \InvalidArgumentException If the limit is not a valid integer or null.
+     *
+     * @api
      */
     public function limit($limit)
     {
@@ -254,6 +280,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns the limit.
      *
      * @return int|null The limit.
+     *
+     * @api
      */
     public function getLimit()
     {
@@ -268,6 +296,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @return Mandango\Query The query instance (fluent interface).
      *
      * @throws \InvalidArgumentException If the skip is not a valid integer, or null.
+     *
+     * @api
      */
     public function skip($skip)
     {
@@ -287,6 +317,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns the skip.
      *
      * @return int|null The skip.
+     *
+     * @api
      */
     public function getSkip()
     {
@@ -299,6 +331,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @param int|null $batchSize The batch size.
      *
      * @return Mandango\Query The query instance (fluent interface).
+     *
+     * @api
      */
     public function batchSize($batchSize)
     {
@@ -318,6 +352,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns the batch size.
      *
      * @return int|null The batch size.
+     *
+     * @api
      */
     public function getBatchSize()
     {
@@ -330,6 +366,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @param array|null The hint.
      *
      * @return Mandango\Query The query instance (fluent interface).
+     *
+     * @api
      */
     public function hint($hint)
     {
@@ -346,6 +384,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns the hint.
      *
      * @return array|null The hint.
+     *
+     * @api
      */
     public function getHint()
     {
@@ -358,6 +398,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @param bool $snapshot If the snapshot mode is used.
      *
      * @return Mandango\Query The query instance (fluent interface).
+     *
+     * @api
      */
     public function snapshot($snapshot)
     {
@@ -374,6 +416,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns if the snapshot mode is used.
      *
      * @return bool If the snapshot mode is used.
+     *
+     * @api
      */
     public function getSnapshot()
     {
@@ -386,6 +430,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * @param int|null $timeout The timeout of the cursor.
      *
      * @return Mandango\Query The query instance (fluent interface).
+     *
+     * @api
      */
     public function timeout($timeout)
     {
@@ -405,6 +451,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns the timeout.
      *
      * @return int|null The timeout.
+     *
+     * @api
      */
     public function getTimeout()
     {
@@ -415,6 +463,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns all the results.
      *
      * @return array An array with all the results.
+     *
+     * @api
      */
     abstract public function all();
 
@@ -516,6 +566,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns an \ArrayIterator with all results (implements \IteratorAggregate interface).
      *
      * @return \ArrayIterator An \ArrayIterator with all results.
+     *
+     * @api
      */
     public function getIterator()
     {
@@ -526,6 +578,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Returns one result.
      *
      * @return Mandango\Document\Document|null A document or null if there is no any result.
+     *
+     * @api
      */
     public function one()
     {
@@ -540,6 +594,8 @@ abstract class Query implements \Countable, \IteratorAggregate
      * Count the number of results of the query.
      *
      * @return int The number of results of the query.
+     *
+     * @api
      */
     public function count()
     {

@@ -27,6 +27,8 @@ use Mandango\Document\Document;
  * UnitOfWork.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class UnitOfWork implements UnitOfWorkInterface
 {
@@ -38,6 +40,8 @@ class UnitOfWork implements UnitOfWorkInterface
      * Constructor.
      *
      * @param Mandango\Mandango $mandango The mandango.
+     *
+     * @api
      */
     public function __construct(Mandango $mandango)
     {
@@ -50,6 +54,8 @@ class UnitOfWork implements UnitOfWorkInterface
      * Returns the mandango.
      *
      * @return Mandango\Mandango The mandango.
+     *
+     * @api
      */
     public function getMandango()
     {
@@ -83,6 +89,8 @@ class UnitOfWork implements UnitOfWorkInterface
      * @param Mandango\Document\Document A document.
      *
      * @return bool If the document is pending for persist.
+     *
+     * @api
      */
     public function isPendingForPersist(Document $document)
     {
@@ -93,6 +101,8 @@ class UnitOfWork implements UnitOfWorkInterface
      * Returns if there are pending persist operations.
      *
      * @return boolean If there are pending persist operations.
+     *
+     * @api
      */
     public function hasPendingForPersist()
     {
@@ -126,6 +136,8 @@ class UnitOfWork implements UnitOfWorkInterface
      * @param \Mandango\Document\Document A document.
      *
      * @return bool If the document is pending for remove.
+     *
+     * @api
      */
     public function isPendingForRemove(Document $document)
     {
@@ -136,6 +148,8 @@ class UnitOfWork implements UnitOfWorkInterface
      * Returns if there are pending remove operations.
      *
      * @return boolean If there are pending remove operations.
+     *
+     * @api
      */
     public function hasPendingForRemove()
     {
@@ -146,6 +160,8 @@ class UnitOfWork implements UnitOfWorkInterface
      * Returns if there are pending operations.
      *
      * @return boolean If there are pending operations.
+     *
+     * @api
      */
     public function hasPending()
     {

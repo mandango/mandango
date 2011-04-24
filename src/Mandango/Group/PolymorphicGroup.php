@@ -27,6 +27,8 @@ use Mandango\Archive;
  * PolymorphicGroup.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 abstract class PolymorphicGroup extends AbstractGroup
 {
@@ -34,6 +36,8 @@ abstract class PolymorphicGroup extends AbstractGroup
      * Constructor.
      *
      * @param string $discriminatorField The discriminator field.
+     *
+     * @api
      */
     public function __construct($discriminatorField)
     {
@@ -44,6 +48,8 @@ abstract class PolymorphicGroup extends AbstractGroup
      * Returns the discriminator field.
      *
      * @return string The discriminator field.
+     *
+     * @api
      */
     public function getDiscriminatorField()
     {

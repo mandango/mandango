@@ -25,6 +25,8 @@ namespace Mandango;
  * MandangoInterface.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 interface MandangoInterface
 {
@@ -32,6 +34,8 @@ interface MandangoInterface
      * Returns the metadata.
      *
      * @return Metadata The metadata.
+     *
+     * @api
      */
     function getMetadata();
 
@@ -39,6 +43,8 @@ interface MandangoInterface
      * Returns the query cache.
      *
      * @return CacheInterface The query cache.
+     *
+     * @api
      */
     function getQueryCache();
 
@@ -46,6 +52,8 @@ interface MandangoInterface
      * Returns the logger callable.
      *
      * @return mixed The logger callable.
+     *
+     * @api
      */
     function getLoggerCallable();
 
@@ -53,6 +61,8 @@ interface MandangoInterface
      * Returns the UnitOfWork.
      *
      * @return UnitOfWork The UnitOfWork.
+     *
+     * @api
      */
     function getUnitOfWork();
 
@@ -61,6 +71,8 @@ interface MandangoInterface
      *
      * @param string              $name       The connection name.
      * @param ConnectionInterface $connection The connection.
+     *
+     * @api
      */
     function setConnection($name, ConnectionInterface $connection);
 
@@ -68,6 +80,8 @@ interface MandangoInterface
      * Set the connections.
      *
      * @param array $connections An array of connections.
+     *
+     * @api
      */
     function setConnections(array $connections);
 
@@ -77,11 +91,15 @@ interface MandangoInterface
      * @param string $name The connection name.
      *
      * @throws \InvalidArgumentException If the connection does not exists.
+     *
+     * @api
      */
     function removeConnection($name);
 
     /**
      * Clear the connections.
+     *
+     * @api
      */
     function clearConnections();
 
@@ -91,6 +109,8 @@ interface MandangoInterface
      * @param string $name The connection name.
      *
      * @return boolean Returns if a connection exists.
+     *
+     * @api
      */
     function hasConnection($name);
 
@@ -102,6 +122,8 @@ interface MandangoInterface
      * @return ConnectionInterface The connection.
      *
      * @throws \InvalidArgumentException If the connection does not exists.
+     *
+     * @api
      */
     function getConnection($name);
 
@@ -109,6 +131,8 @@ interface MandangoInterface
      * Returns the connections.
      *
      * @return array The array of connections.
+     *
+     * @api
      */
     function getConnections();
 
@@ -116,6 +140,8 @@ interface MandangoInterface
      * Set the default connection name.
      *
      * @param string $name The connection name.
+     *
+     * @api
      */
     function setDefaultConnectionName($name);
 
@@ -123,6 +149,8 @@ interface MandangoInterface
      * Returns the default connection name.
      *
      * @return string The default connection name.
+     *
+     * @api
      */
     function getDefaultConnectionName();
 
@@ -133,6 +161,8 @@ interface MandangoInterface
      *
      * @throws \RuntimeException If there is not default connection name.
      * @throws \RuntimeException If the default connection does not exists.
+     *
+     * @api
      */
     function getDefaultConnection();
 
@@ -145,6 +175,8 @@ interface MandangoInterface
      *
      * @throws \InvalidArgumentException If the document class is not a valid document class.
      * @throws \RuntimeException         If the repository class build does not exist.
+     *
+     * @api
      */
     function getRepository($documentClass);
 
@@ -152,11 +184,15 @@ interface MandangoInterface
      * Returns all repositories.
      *
      * @return array All repositories.
+     *
+     * @api
      */
     function getAllRepositories();
 
     /**
      * Ensure the indexes of all repositories.
+     *
+     * @api
      */
     function ensureAllIndexes();
 
@@ -164,6 +200,8 @@ interface MandangoInterface
      * Access to UnitOfWork ->persist() method.
      *
      * @see UnitOfWork::persist()
+     *
+     * @api
      */
     function persist($documents);
 
@@ -171,6 +209,8 @@ interface MandangoInterface
      * Access to UnitOfWork ->remove() method.
      *
      * @see Mandango\UnitOfWork::remove()
+     *
+     * @api
      */
     function remove($documents);
 
@@ -178,6 +218,8 @@ interface MandangoInterface
      * Access to UnitOfWork ->commit() method.
      *
      * @see Mandango\UnitOfWork::commit()
+     *
+     * @api
      */
     function flush();
 }

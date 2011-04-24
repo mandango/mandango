@@ -25,6 +25,8 @@ namespace Mandango\Type;
  * FloatType.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class FloatType extends Type
 {

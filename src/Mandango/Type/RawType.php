@@ -25,6 +25,8 @@ namespace Mandango\Type;
  * RawType.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class RawType extends Type
 {

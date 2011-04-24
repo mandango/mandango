@@ -25,6 +25,8 @@ namespace Mandango\Type;
  * IntegerType.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class IntegerType extends Type
 {

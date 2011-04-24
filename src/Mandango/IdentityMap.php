@@ -27,6 +27,8 @@ use Mandango\Document\Document;
  * The identity map class.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class IdentityMap implements IdentityMapInterface
 {
@@ -34,6 +36,8 @@ class IdentityMap implements IdentityMapInterface
 
     /**
      * Constructor.
+     *
+     * @api
      */
     public function __construct()
     {

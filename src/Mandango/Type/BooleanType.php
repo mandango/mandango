@@ -25,6 +25,8 @@ namespace Mandango\Type;
  * BooleanType.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class BooleanType extends Type
 {

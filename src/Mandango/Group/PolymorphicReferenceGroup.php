@@ -27,6 +27,8 @@ use Mandango\Archive;
  * PolymorphicReferenceGroup.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class PolymorphicReferenceGroup extends PolymorphicGroup
 {
@@ -37,6 +39,8 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
      * @param Mandango\Document\AbstractDocument $parent             The parent document.
      * @param string                             $field              The reference field.
      * @param array|false                        $discriminatorMap   The discriminator map if exists, otherwise false.
+     *
+     * @api
      */
     public function __construct($discriminatorField, $parent, $field, $discriminatorMap = false)
     {
@@ -51,6 +55,8 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
      * Returns the parent document.
      *
      * @return Mandango\Document\AbstractDocument The parent document.
+     *
+     * @api
      */
     public function getParent()
     {
@@ -61,6 +67,8 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
      * Returns the reference field.
      *
      * @return string The reference field.
+     *
+     * @api
      */
     public function getField()
     {
@@ -71,6 +79,8 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
      * Returns the discriminator map.
      *
      * @return array|false The discriminator map.
+     *
+     * @api
      */
     public function getDiscriminatorMap()
     {

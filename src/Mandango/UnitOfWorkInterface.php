@@ -25,6 +25,8 @@ namespace Mandango;
  * UnitOfWorkInterface.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 interface UnitOfWorkInterface
 {
@@ -32,6 +34,8 @@ interface UnitOfWorkInterface
      * Persist a document.
      *
      * @param Mandango\Document\Document|array $documents A document or an array of documents.
+     *
+     * @api
      */
     function persist($documents);
 
@@ -39,16 +43,22 @@ interface UnitOfWorkInterface
      * Remove a document.
      *
      * @param \Mandango\Document\Document|array $documents A document or an array of documents.
+     *
+     * @api
      */
     function remove($documents);
 
     /**
      * Commit pending persist and remove operations.
+     *
+     * @api
      */
     function commit();
 
     /**
      * Clear the pending operations
+     *
+     * @api
      */
     function clear();
 }

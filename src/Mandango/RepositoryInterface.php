@@ -25,6 +25,8 @@ namespace Mandango;
  * RepositoryInterface.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 interface RepositoryInterface
 {
@@ -32,6 +34,8 @@ interface RepositoryInterface
      * Returns the Mandango.
      *
      * @return Mandango The Mandango.
+     *
+     * @api
      */
     function getMandango();
 
@@ -39,6 +43,8 @@ interface RepositoryInterface
      * Returns the identity map.
      *
      * @return IdentityMapInterface The identity map.
+     *
+     * @api
      */
     function getIdentityMap();
 
@@ -46,6 +52,8 @@ interface RepositoryInterface
      * Returns the document class.
      *
      * @return string The document class.
+     *
+     * @api
      */
     function getDocumentClass();
 
@@ -53,6 +61,8 @@ interface RepositoryInterface
      * Returns if the document is a file (if it uses GridFS).
      *
      * @return boolean If the document is a file.
+     *
+     * @api
      */
     function isFile();
 
@@ -60,6 +70,8 @@ interface RepositoryInterface
      * Returns the connection name, or null if it is the default.
      *
      * @return string|null The connection name.
+     *
+     * @api
      */
     function getConnectionName();
 
@@ -67,6 +79,8 @@ interface RepositoryInterface
      * Returns the collection name.
      *
      * @return string The collection name.
+     *
+     * @api
      */
     function getCollectionName();
 
@@ -74,6 +88,8 @@ interface RepositoryInterface
      * Returns the connection.
      *
      * @return ConnectionInterface The connection.
+     *
+     * @api
      */
     function getConnection();
 
@@ -81,6 +97,8 @@ interface RepositoryInterface
      * Returns the collection.
      *
      * @return \MongoCollection The collection.
+     *
+     * @api
      */
     function getCollection();
 
@@ -90,6 +108,8 @@ interface RepositoryInterface
      * @param array $criteria The criteria for the query (optional).
      *
      * @return Query The query.
+     *
+     * @api
      */
     function createQuery(array $criteria = array());
 
@@ -99,6 +119,8 @@ interface RepositoryInterface
      * @param array $ids An array of ids.
      *
      * @return array An array of documents.
+     *
+     * @api
      */
     function findById(array $ids);
 
@@ -108,6 +130,8 @@ interface RepositoryInterface
      * @param mixed $id An id.
      *
      * @return Document|null The document or null if it does not exist.
+     *
+     * @api
      */
     function findOneById($id);
 
@@ -117,6 +141,8 @@ interface RepositoryInterface
      * @param array $query The query (opcional, by default an empty array).
      *
      * @return integer The number of documents.
+     *
+     * @api
      */
     function count(array $query = array());
 
@@ -126,6 +152,8 @@ interface RepositoryInterface
      * @param array $query The query (optional, by default an empty array).
      *
      * @return mixed The result of the remove collection method.
+     *
+     * @api
      */
     function remove(array $query = array());
 }

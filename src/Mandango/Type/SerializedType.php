@@ -25,6 +25,8 @@ namespace Mandango\Type;
  * SerializedType.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class SerializedType extends Type
 {

@@ -25,6 +25,8 @@ namespace Mandango;
  * Connection.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class Connection implements ConnectionInterface
 {
@@ -44,6 +46,8 @@ class Connection implements ConnectionInterface
      * @param string $server  The server.
      * @param string $dbName  The database name.
      * @param array  $options The \Mongo options (optional).
+     *
+     * @api
      */
     public function __construct($server, $dbName, array $options = array())
     {
@@ -56,6 +60,8 @@ class Connection implements ConnectionInterface
      * Returns the server.
      *
      * @return string $server The server.
+     *
+     * @api
      */
     public function getServer()
     {
@@ -66,6 +72,8 @@ class Connection implements ConnectionInterface
      * Returns the database name.
      *
      * @return string The database name.
+     *
+     * @api
      */
     public function getDbName()
     {
@@ -76,6 +84,8 @@ class Connection implements ConnectionInterface
      * Returns the options.
      *
      * @return array The options.
+     *
+     * @api
      */
     public function getOptions()
     {

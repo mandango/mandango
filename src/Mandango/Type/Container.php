@@ -25,6 +25,8 @@ namespace Mandango\Type;
  * Container of types.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class Container
 {
@@ -49,6 +51,8 @@ class Container
      * @param string $name The type name.
      *
      * @return bool Returns if the type exists.
+     *
+     * @api
      */
     static public function has($name)
     {
@@ -63,6 +67,8 @@ class Container
      *
      * @throws \InvalidArgumentException If the type already exists.
      * @throws \InvalidArgumentException If the class is not a subclass of Mandango\Type\Type.
+     *
+     * @api
      */
     static public function add($name, $class)
     {
@@ -86,6 +92,8 @@ class Container
      * @return Mandango\Type\Type The type.
      *
      * @throws \InvalidArgumentException If the type does not exists.
+     *
+     * @api
      */
     static public function get($name)
     {
@@ -106,6 +114,8 @@ class Container
      * @param string $name The type name.
      *
      * @throws \InvalidArgumentException If the type does not exists.
+     *
+     * @api
      */
     static public function remove($name)
     {
@@ -118,6 +128,8 @@ class Container
 
     /**
      * Reset the types.
+     *
+     * @api
      */
     static public function reset()
     {

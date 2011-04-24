@@ -25,6 +25,8 @@ namespace Mandango;
  * Container of mandangos.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class Container
 {
@@ -37,6 +39,8 @@ class Container
      *
      * @param string             $string   The name.
      * @param \Mandango\Mandango $mandango The mandango.
+     *
+     * @api
      */
     static public function set($name, Mandango $mandango)
     {
@@ -55,6 +59,8 @@ class Container
      * @throws \RuntimeException If there is not name either default name.
      * @throws \RuntimeException If there is loader and the loader does not return an instance of \Mandango\Mandango.
      * @throws \RuntimeException If there is not Mandango.
+     *
+     * @api
      */
     static public function get($name = null)
     {
@@ -90,6 +96,8 @@ class Container
      * Returns if a mandango exists.
      *
      * @param string $name The name.
+     *
+     * @api
      */
     static public function has($name)
     {
@@ -102,6 +110,8 @@ class Container
      * @param string $name The name.
      *
      * @throws \InvalidArgumentException If the mandango does not exist.
+     *
+     * @api
      */
     static public function remove($name)
     {
@@ -116,6 +126,8 @@ class Container
      * Set the default name.
      *
      * @param string|null $name The default name.
+     *
+     * @api
      */
     static public function setDefaultName($name)
     {
@@ -126,6 +138,8 @@ class Container
      * Returns the default name.
      *
      * @return string|null The default name.
+     *
+     * @api
      */
     static public function getDefaultName()
     {
@@ -134,6 +148,8 @@ class Container
 
     /**
      * Returns if there is default name.
+     *
+     * @api
      */
     static public function hasDefaultName()
     {
@@ -145,6 +161,8 @@ class Container
      *
      * @param string $name   The name.
      * @param mixed  $loader The loader.
+     *
+     * @api
      */
     static public function setLoader($name, $loader)
     {
@@ -159,6 +177,8 @@ class Container
      * @return mixed The loader.
      *
      * @throws \InvalidArgumentException If the loader does not exist.
+     *
+     * @api
      */
     static public function getLoader($name)
     {
@@ -173,6 +193,8 @@ class Container
      * Returns if a loader exists.
      *
      * @param string $name The name.
+     *
+     * @api
      */
     static public function hasLoader($name)
     {
@@ -185,6 +207,8 @@ class Container
      * @param string $name The name.
      *
      * @throws \InvalidArgumentException If the loader does not exist
+     *
+     * @api
      */
     static public function removeLoader($name)
     {
@@ -197,6 +221,8 @@ class Container
 
     /**
      * Clear the mandangos, default name and loaders.
+     *
+     * @api
      */
     static public function clear()
     {

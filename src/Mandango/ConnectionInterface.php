@@ -25,6 +25,8 @@ namespace Mandango;
  * ConnectionInterface.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 interface ConnectionInterface
 {
@@ -34,6 +36,8 @@ interface ConnectionInterface
      * @param mixed $loggerCallable The logger callable.
      *
      * @throws \RuntimeException When the connection has the Mongo already.
+     *
+     * @api
      */
     function setLoggerCallable($loggerCallable = null);
 
@@ -41,6 +45,8 @@ interface ConnectionInterface
      * Returns the logger callable.
      *
      * @return mixed The logger callable.
+     *
+     * @api
      */
     function getLoggerCallable();
 
@@ -50,6 +56,8 @@ interface ConnectionInterface
      * @param array $logDefault The log default.
      *
      * @throws \RuntimeException When the connection has the Mongo already.
+     *
+     * @api
      */
     function setLogDefault(array $logDefault);
 
@@ -57,6 +65,8 @@ interface ConnectionInterface
      * Returns the log default.
      *
      * @return array|null The log default.
+     *
+     * @api
      */
     function getLogDefault();
 
@@ -64,6 +74,8 @@ interface ConnectionInterface
      * Returns the mongo connection object.
      *
      * @return \Mongo The mongo collection object.
+     *
+     * @api
      */
     function getMongo();
 
@@ -71,6 +83,8 @@ interface ConnectionInterface
      * Returns the database object.
      *
      * @return \MongoDB The database object.
+     *
+     * @api
      */
     function getMongoDB();
 }

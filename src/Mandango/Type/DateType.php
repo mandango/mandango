@@ -25,6 +25,8 @@ namespace Mandango\Type;
  * DateType.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class DateType extends Type
 {

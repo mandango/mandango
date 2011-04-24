@@ -25,6 +25,8 @@ namespace Mandango;
  * The base class for repositories.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 abstract class Repository implements RepositoryInterface
 {
@@ -61,6 +63,8 @@ abstract class Repository implements RepositoryInterface
      * Constructor.
      *
      * @param Mandango $mandango The mandango.
+     *
+     * @api
      */
     public function __construct(Mandango $mandango)
     {

@@ -27,6 +27,8 @@ use Mandango\Archive;
  * The abstract class for documents.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 abstract class AbstractDocument
 {
@@ -37,6 +39,8 @@ abstract class AbstractDocument
      * Creates an instance of the document and returns it to have a fluent interface.
      *
      * @return Mandango\AbstractDocument The instance.
+     *
+     * @api
      */
     static public function create()
     {
@@ -55,6 +59,8 @@ abstract class AbstractDocument
       * Returns the metadata info of the class.
       *
       * @return array The metadata info of the class.
+      *
+      * @api
       */
      static public function getMetadata()
      {
@@ -75,6 +81,8 @@ abstract class AbstractDocument
      * Returns if the document is modified.
      *
      * @return bool If the document is modified.
+     *
+     * @api
      */
     public function isModified()
     {
@@ -138,6 +146,8 @@ abstract class AbstractDocument
 
     /**
      * Clear the document modifications, that is, they will not be modifications apart from here.
+     *
+     * @api
      */
     public function clearModified()
     {
@@ -169,6 +179,8 @@ abstract class AbstractDocument
      * @param string $name The field name.
      *
      * @return bool If the field is modified.
+     *
+     * @api
      */
     public function isFieldModified($name)
     {
@@ -181,6 +193,8 @@ abstract class AbstractDocument
      * @param string $name The field name.
      *
      * @return mixed The original value of the field.
+     *
+     * @api
      */
     public function getOriginalFieldValue($name)
     {
@@ -199,6 +213,8 @@ abstract class AbstractDocument
      * Returns an array with the fields modified, the field name as key and the original value as value.
      *
      * @return array An array with the fields modified.
+     *
+     * @api
      */
     public function getFieldsModified()
     {
@@ -207,6 +223,8 @@ abstract class AbstractDocument
 
     /**
      * Clear the modifications of fields, that is, they will not be modifications apart from here.
+     *
+     * @api
      */
     public function clearFieldsModified()
     {
@@ -219,6 +237,8 @@ abstract class AbstractDocument
      * @param string $name The embedded one name.
      *
      * @return bool If the embedded one is modified.
+     *
+     * @api
      */
     public function isEmbeddedOneChanged($name)
     {
@@ -239,6 +259,8 @@ abstract class AbstractDocument
      * @param string $name The embedded one name.
      *
      * @return mixed The embedded one original value.
+     *
+     * @api
      */
     public function getOriginalEmbeddedOneValue($name)
     {
@@ -257,6 +279,8 @@ abstract class AbstractDocument
      * Returns an array with the embedded ones changed, with the embedded name as key and the original embedded value as value.
      *
      * @return array An array with the embedded ones changed.
+     *
+     * @api
      */
     public function getEmbeddedsOneChanged()
     {
@@ -274,6 +298,8 @@ abstract class AbstractDocument
 
     /**
      * Clear the embedded ones changed, that is, they will not be changed apart from here.
+     *
+     * @api
      */
     public function clearEmbeddedsOneChanged()
     {

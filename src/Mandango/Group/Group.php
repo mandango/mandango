@@ -28,6 +28,8 @@ use Mandango\Document\Document;
  * Group.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 abstract class Group extends AbstractGroup
 {
@@ -35,6 +37,8 @@ abstract class Group extends AbstractGroup
      * Constructor.
      *
      * @param string $documentClass The document class.
+     *
+     * @api
      */
     public function __construct($documentClass)
     {
@@ -43,6 +47,8 @@ abstract class Group extends AbstractGroup
 
     /**
      * Returns the document class.
+     *
+     * @api
      */
     public function getDocumentClass()
     {

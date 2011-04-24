@@ -28,6 +28,8 @@ use Mandango\Document\Document;
  * AbstractGroup.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 abstract class AbstractGroup implements \Countable, \IteratorAggregate
 {
@@ -37,6 +39,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
      * Adds document/s to the add queue of the group.
      *
      * @param Mandango\Document\AbstractDocument|array $documents One or more documents.
+     *
+     * @api
      */
     public function add($documents)
     {
@@ -52,6 +56,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
 
     /**
      * Returns the add queue of the group.
+     *
+     * @api
      */
     public function getAdd()
     {
@@ -60,6 +66,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
 
     /**
      * Clears the add queue of the group.
+     *
+     * @api
      */
     public function clearAdd()
     {
@@ -70,6 +78,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
      * Adds document/s to the remove queue of the group.
      *
      * @param Mandango\Document\AbstractDocument|array $documents One of more documents.
+     *
+     * @api
      */
     public function remove($documents)
     {
@@ -85,6 +95,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
 
     /**
      * Returns the remove queue of the group.
+     *
+     * @api
      */
     public function getRemove()
     {
@@ -93,6 +105,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
 
     /**
      * Clears the remove queue of the group.
+     *
+     * @api
      */
     public function clearRemove()
     {
@@ -113,6 +127,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
 
     /**
      * Returns the saved + add - removed elements.
+     *
+     * @api
      */
     public function all()
     {
@@ -127,6 +143,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
 
     /**
      * Implements the \IteratorAggregate interface.
+     *
+     * @api
      */
     public function getIterator()
     {
@@ -135,6 +153,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
 
     /**
      * Refresh the saved documents.
+     *
+     * @api
      */
     public function refreshSaved()
     {
@@ -144,13 +164,15 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
     /**
      * Initializes the saved documents.
      */
-    protected function initializeSaved()
+    private function initializeSaved()
     {
         $this->saved = $this->doInitializeSaved($this->doInitializeSavedData());
     }
 
     /**
      * Clears the saved documents.
+     *
+     * @api
      */
     public function clearSaved()
     {
@@ -161,6 +183,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
      * Returns if the saved documents are initialized.
      *
      * @return bool If the saved documents are initialized.
+     *
+     * @api
      */
     public function isSavedInitialized()
     {
@@ -169,11 +193,15 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
 
     /**
      * Do the initialization of the saved documents data.
+     *
+     * @api
      */
     abstract protected function doInitializeSavedData();
 
     /**
      * Do the initialization of the saved documents.
+     *
+     * @api
      */
     protected function doInitializeSaved(array $data)
     {
@@ -182,6 +210,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
 
     /**
      * Returns the number of all documents.
+     *
+     * @api
      */
     public function count()
     {
@@ -192,6 +222,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
      * Replace all documents.
      *
      * @param array $documents An array of documents.
+     *
+     * @api
      */
     public function replace(array $documents)
     {
@@ -204,6 +236,8 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
 
     /**
      * Resets the group (clear adds and removed, and saved if there are adds or removed).
+     *
+     * @api
      */
     public function reset()
     {

@@ -27,6 +27,8 @@ use Mandango\Archive;
  * ReferenceGroup.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class ReferenceGroup extends Group
 {
@@ -36,6 +38,8 @@ class ReferenceGroup extends Group
      * @param string                             $documentClass The document class.
      * @param Mandango\Document\AbstractDocument $parent The parent document.
      * @param string                             $field  The reference field.
+     *
+     * @api
      */
     public function __construct($documentClass, $parent, $field)
     {
@@ -49,6 +53,8 @@ class ReferenceGroup extends Group
      * Returns the parent document.
      *
      * @return Mandango\Document\AbstractDocument The parent document.
+     *
+     * @api
      */
     public function getParent()
     {
@@ -59,6 +65,8 @@ class ReferenceGroup extends Group
      * Returns the reference field.
      *
      * @return string The reference field.
+     *
+     * @api
      */
     public function getField()
     {
@@ -83,6 +91,8 @@ class ReferenceGroup extends Group
 
     /**
      * Creates and returns a query to query the referenced elements.
+     *
+     * @api
      */
     public function createQuery()
     {

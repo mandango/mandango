@@ -27,6 +27,8 @@ use Mandango\Archive;
  * The base class for documents.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 abstract class Document extends AbstractDocument
 {
@@ -36,6 +38,8 @@ abstract class Document extends AbstractDocument
      * Returns the repository.
      *
      * @return Mandango\Repository The repository of the document.
+     *
+     * @api
      */
     static public function getRepository()
     {
@@ -48,6 +52,8 @@ abstract class Document extends AbstractDocument
      * @param \MongoId $id The id.
      *
      * @return Mandango\Document\Document The document (fluent interface).
+     *
+     * @api
      */
     public function setId(\MongoId $id)
     {
@@ -60,6 +66,8 @@ abstract class Document extends AbstractDocument
      * Returns the id of document.
      *
      * @return \MongoId|null The id of the document or null if it is new.
+     *
+     * @api
      */
     public function getId()
     {
@@ -67,7 +75,7 @@ abstract class Document extends AbstractDocument
     }
 
     /**
-     * INTERNAL. Returns and remove the id.
+     * Returns and remove the id.
      *
      * @return \MongoId|null The id of the document or null if it is new.
      */
@@ -83,6 +91,8 @@ abstract class Document extends AbstractDocument
      * Returns if the document is new.
      *
      * @return bool Returns if the document is new.
+     *
+     * @api
      */
     public function isNew()
     {
@@ -93,6 +103,8 @@ abstract class Document extends AbstractDocument
      * Refresh the document data from the database.
      *
      * @return Mandango\Document\Document The document (fluent interface).
+     *
+     * @api
      */
     public function refresh()
     {
@@ -109,6 +121,8 @@ abstract class Document extends AbstractDocument
      * Save the document.
      *
      * @return Mandango\Document\Document The document (fluent interface).
+     *
+     * @api
      */
     public function save()
     {
@@ -119,6 +133,8 @@ abstract class Document extends AbstractDocument
 
     /**
      * Delete the document.
+     *
+     * @api
      */
     public function delete()
     {
@@ -126,7 +142,7 @@ abstract class Document extends AbstractDocument
     }
 
     /**
-     * INTERNAL. Adds a query hash.
+     * Adds a query hash.
      *
      * @param string $hash The query hash.
      */
@@ -137,7 +153,7 @@ abstract class Document extends AbstractDocument
     }
 
     /**
-     * INTERNAL. Returns the query hashes.
+     * Returns the query hashes.
      *
      * @return array The query hashes.
      */
@@ -147,7 +163,7 @@ abstract class Document extends AbstractDocument
     }
 
     /**
-     * INTERNAL. Removes a query hash.
+     * Removes a query hash.
      *
      * @param string $hash The query hash.
      */
@@ -159,7 +175,7 @@ abstract class Document extends AbstractDocument
     }
 
     /**
-     * INTERNAL. Clear the query hashes.
+     * Clear the query hashes.
      */
     public function clearQueryHashes()
     {
@@ -167,7 +183,7 @@ abstract class Document extends AbstractDocument
     }
 
     /**
-     * INTERNAL. Add a field cache.
+     * Add a field cache.
      */
     public function addFieldCache($field)
     {

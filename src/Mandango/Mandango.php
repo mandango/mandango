@@ -27,6 +27,8 @@ use Mandango\Cache\CacheInterface;
  * Mandango.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class Mandango implements MandangoInterface
 {
@@ -46,6 +48,8 @@ class Mandango implements MandangoInterface
      * @param Mandango\Metadata             $metadata       The metadata.
      * @param Mandango\Cache\CacheInterface $queryCache     The query cache.
      * @param mixed                         $loggerCallable The logger callable (optional, null by default).
+     *
+     * @api
      */
     public function __construct(Metadata $metadata, CacheInterface $queryCache, $loggerCallable = null)
     {

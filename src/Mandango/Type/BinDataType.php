@@ -25,6 +25,8 @@ namespace Mandango\Type;
  * BinDataType.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class BinDataType extends Type
 {

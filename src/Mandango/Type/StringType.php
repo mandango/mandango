@@ -25,6 +25,8 @@ namespace Mandango\Type;
  * StringType.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class StringType extends Type
 {

@@ -28,6 +28,8 @@ use Mandango\Document\Document;
  * EmbeddedGroup.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 class EmbeddedGroup extends Group
 {
@@ -36,6 +38,8 @@ class EmbeddedGroup extends Group
      *
      * @param Mandango\Document\Docuemnt $root The root document.
      * @param string                     $path The path.
+     *
+     * @api
      */
     public function setRootAndPath(Document $root, $path)
     {
@@ -48,6 +52,8 @@ class EmbeddedGroup extends Group
 
     /**
      * Returns the root and the path.
+     *
+     * @api
      */
     public function getRootAndPath()
     {

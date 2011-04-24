@@ -28,6 +28,8 @@ use Mandango\Group\EmbeddedGroup;
  * The base class for embedded documents.
  *
  * @author Pablo Díez <pablodip@gmail.com>
+ *
+ * @api
  */
 abstract class EmbeddedDocument extends AbstractDocument
 {
@@ -36,6 +38,8 @@ abstract class EmbeddedDocument extends AbstractDocument
      *
      * @param Mandango\Document\Document $root The root document.
      * @param string                     $path The path.
+     *
+     * @api
      */
     public function setRootAndPath(Document $root, $path)
     {
@@ -58,6 +62,8 @@ abstract class EmbeddedDocument extends AbstractDocument
      * Returns the root and path of the embedded document.
      *
      * @return array An array with the root and path (root and path keys) or null if they do not exist.
+     *
+     * @api
      */
     public function getRootAndPath()
     {
