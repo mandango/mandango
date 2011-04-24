@@ -1365,7 +1365,7 @@ EOF;
             $embeddedsCode[] = <<<EOF
         if (isset(\$this->data['embeddedsMany']['$name'])) {
             \$group = \$this->data['embeddedsMany']['$name'];
-            foreach (\$group->saved() as \$document) {
+            foreach (\$group->getSaved() as \$document) {
                 \$document->updateReferenceFields();
             }
         }
@@ -1428,7 +1428,7 @@ EOF;
                 \$documents[] = \$document;
             }
             if (\$group->isSavedInitialized()) {
-                foreach (\$group->saved() as \$document) {
+                foreach (\$group->getSaved() as \$document) {
                     \$documents[] = \$document;
                 }
             }
@@ -1781,7 +1781,7 @@ EOF;
                 \$document->resetGroups();
             }
             if (\$group->isSavedInitialized()) {
-                foreach (\$group->saved() as \$document) {
+                foreach (\$group->getSaved() as \$document) {
                     \$document->resetGroups();
                 }
             }
@@ -2258,7 +2258,7 @@ EOF;
                 $embeddedsManyUpdateCode[] = <<<EOF
                 if (isset(\$this->data['embeddedsMany']['$name'])) {
                     \$group = \$this->data['embeddedsMany']['$name'];
-                    foreach (\$group->saved() as \$document) {
+                    foreach (\$group->getSaved() as \$document) {
                         \$query = \$document->queryForSave(\$query, \$isNew);
                     }
                     \$groupRap = \$group->getRootAndPath();

@@ -361,9 +361,9 @@ class CoreQueryForSaveTest extends TestCase
             ),
         ));
         $article->setTitle('foobar');
-        $comments = $article->getComments()->saved();
+        $comments = $article->getComments()->getSaved();
         $comments[0]->setName(234)->setText(null)->setLine(345)->setNote(null);
-        $infos = $comments[0]->getInfos()->saved();
+        $infos = $comments[0]->getInfos()->getSaved();
         $infos[0]->setName(456)->setText(567)->setNote(null)->setLine(null);
         $comments[0]->getInfos()->remove($infos[1]);
         $comments[1]->setName('mon')->setText('go');

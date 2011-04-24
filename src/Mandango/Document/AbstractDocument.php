@@ -124,7 +124,7 @@ abstract class AbstractDocument
                     }
                 }
                 if ($group->isSavedInitialized()) {
-                    foreach ($group->saved() as $document) {
+                    foreach ($group->getSaved() as $document) {
                         if ($document->isModified()) {
                             return true;
                         }

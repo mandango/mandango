@@ -274,7 +274,7 @@ class CorePolymorphicReferencesTest extends TestCase
             $authors[5],
             $categories[1],
             $users[8],
-        ), $article->getRelated()->saved());
+        ), $article->getRelated()->getSaved());
     }
 
     public function testReferencesManyQueryDiscriminatorMap()
@@ -303,7 +303,7 @@ class CorePolymorphicReferencesTest extends TestCase
             $elements[5],
             $textareaElements[1],
             $radioElements[8],
-        ), $article->getElements()->saved());
+        ), $article->getElements()->getSaved());
     }
 
     public function testDocumentQueryForSaveReferencesMany()

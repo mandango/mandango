@@ -37,7 +37,7 @@ class EmbeddedGroupTest extends TestCase
         $group->setRootAndPath($article = new \Model\Article(), 'comments');
         $group->setSavedData($data);
         $this->assertSame(2, $group->count());
-        $saved = $group->saved();
+        $saved = $group->getSaved();
         $this->assertEquals(\Model\Comment::create()->setDocumentData($data[0]), $saved[0]);
         $this->assertSame(array('root' => $article, 'path' => 'comments.0'), $saved[0]->getRootAndPath());
         $this->assertEquals(\Model\Comment::create()->setDocumentData($data[0]), $saved[0]);

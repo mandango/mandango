@@ -78,12 +78,12 @@ class AbstractGroupTest extends TestCase
         $group = new AbstractGroup('Model\Comment');
         $this->assertFalse($group->isSavedInitialized());
         $group->forSaved = $forSaved1;
-        $this->assertSame($forSaved1, $group->saved());
+        $this->assertSame($forSaved1, $group->getSaved());
         $this->assertTrue($group->isSavedInitialized());
         $group->forSaved = $forSaved2;
-        $this->assertSame($forSaved1, $group->saved());
+        $this->assertSame($forSaved1, $group->getSaved());
         $group->refreshSaved();
-        $this->assertSame($forSaved2, $group->saved());
+        $this->assertSame($forSaved2, $group->getSaved());
         $group->clearSaved();
         $this->assertFalse($group->isSavedInitialized());
     }
@@ -153,7 +153,7 @@ class AbstractGroupTest extends TestCase
         $group->reset();
         $this->assertSame(array(), $group->getAdd());
         $this->assertSame(array(), $group->getRemove());
-        $this->assertSame(array(), $group->saved());
+        $this->assertSame(array(), $group->getSaved());
     }
 
     public function testResetWithRemove()
@@ -163,44 +163,44 @@ class AbstractGroupTest extends TestCase
         $group->reset();
         $this->assertSame(array(), $group->getAdd());
         $this->assertSame(array(), $group->getRemove());
-        $this->assertSame(array(), $group->saved());
+        $this->assertSame(array(), $group->getSaved());
     }
 
     public function testResetSavedWithAdd()
     {
         $group = new AbstractGroup();
         $group->forSaved = array('foo');
-        $group->saved();
+        $group->getSaved();
         $group->forSaved = array('foobar');
         $group->add('bar');
         $group->reset();
         $this->assertSame(array(), $group->getAdd());
         $this->assertSame(array(), $group->getRemove());
-        $this->assertSame(array('foobar'), $group->saved());
+        $this->assertSame(array('foobar'), $group->getSaved());
     }
 
     public function testResetSavedWithRemove()
     {
         $group = new AbstractGroup();
         $group->forSaved = array('foo');
-        $group->saved();
+        $group->getSaved();
         $group->forSaved = array('foobar');
         $group->remove('bar');
         $group->reset();
         $this->assertSame(array(), $group->getAdd());
         $this->assertSame(array(), $group->getRemove());
-        $this->assertSame(array('foobar'), $group->saved());
+        $this->assertSame(array('foobar'), $group->getSaved());
     }
 
     public function testResetNoSavedWithoutAddNorRemove()
     {
         $group = new AbstractGroup();
         $group->forSaved = array('foo');
-        $group->saved();
+        $group->getSaved();
         $group->forSaved = array('foobar');
         $group->reset();
         $this->assertSame(array(), $group->getAdd());
         $this->assertSame(array(), $group->getRemove());
-        $this->assertSame(array('foo'), $group->saved());
+        $this->assertSame(array('foo'), $group->getSaved());
     }
 }

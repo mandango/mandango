@@ -220,7 +220,7 @@ class CoreDocumentTest extends TestCase
         }
         $categories->remove(\Model\Category::create()->setId($sourceBaseIds[1]));
 
-        $comments = $article->getComments()->saved();
+        $comments = $article->getComments()->getSaved();
         $categories = $comments[0]->getCategories();
         $commentAddIds = array();
         for ($i = 1; $i <= 3; $i++) {
@@ -282,7 +282,7 @@ class CoreDocumentTest extends TestCase
             'categories' => array($articleCategories[0]->getId(), $articleCategories[1]->getId()),
         ));
         $categories = $article->getCategories();
-        $categories->saved();
+        $categories->getSaved();
         $categories->add(array($articleCategories[2], $articleCategories[3]));
 
         $article->saveReferences();
@@ -730,12 +730,12 @@ class CoreDocumentTest extends TestCase
         $this->assertSame('upsfoo', $info->getLine());
 
         // embeddeds many
-        $comments = $article->getComments()->saved();
+        $comments = $article->getComments()->getSaved();
         $this->assertSame(0, count($comments));
         $commentsAdd = $article->getComments()->getAdd();
         $this->assertSame('foo', $commentsAdd[0]->getName());
         $this->assertSame('bar', $commentsAdd[0]->getText());
-        $infos = $commentsAdd[0]->getInfos()->saved();
+        $infos = $commentsAdd[0]->getInfos()->getSaved();
         $this->assertSame(2, count($infos));
         $infosAdd = $commentsAdd[0]->getInfos()->getAdd();
     }
@@ -771,7 +771,7 @@ class CoreDocumentTest extends TestCase
         }
 
         $article = \Model\Article::create()->setCategoryIds($ids);
-        $this->assertSame($categories, $article->getCategories()->saved());
+        $this->assertSame($categories, $article->getCategories()->getSaved());
 
         $query = $article->getCategories()->createQuery();
         $this->assertInstanceOf('Model\CategoryQuery', $query);
@@ -810,18 +810,18 @@ class CoreDocumentTest extends TestCase
         $article = new \Model\Article();
         $article->setId($articleRaw['_id']);
 
-        $comments = $article->getComments()->saved();
+        $comments = $article->getComments()->getSaved();
 
         $this->assertSame(2, count($comments));
         $this->assertSame('foo', $comments[0]->getName());
         $this->assertSame('bar', $comments[0]->getText());
         $this->assertNull($comments[0]->getNote());
-        $infos = $comments[0]->getInfos()->saved();
+        $infos = $comments[0]->getInfos()->getSaved();
         $this->assertSame(2, count($infos));
         $this->assertSame('foobar', $infos[0]->getName());
         $this->assertNull($infos[0]->getText());
         $this->assertSame('barfoo', $infos[0]->getLine());
-        $this->assertSame(array(), $comments[1]->getInfos()->saved());
+        $this->assertSame(array(), $comments[1]->getInfos()->getSaved());
     }
 
     public function testEmbeddedsManySaveFieldsCacheQuering()
@@ -855,15 +855,15 @@ class CoreDocumentTest extends TestCase
         $this->assertNull($query->getFieldsCache());
         $comments = $article->getComments();
         $this->assertNull($query->getFieldsCache());
-        $savedComments = $comments->saved();
+        $savedComments = $comments->getSaved();
         $this->assertSame(array('comments' => 1), $query->getFieldsCache());
-        $savedInfos = $savedComments[0]->getInfos()->saved();
+        $savedInfos = $savedComments[0]->getInfos()->getSaved();
         $this->assertSame(array('comments' => 1), $query->getFieldsCache());
     }
 
     public function testEmbeddedsManyNoQueryNewDocument()
     {
-        $this->assertSame(array(), \Model\Article::create()->getComments()->saved());
+        $this->assertSame(array(), \Model\Article::create()->getComments()->getSaved());
     }
 
     public function testEmbeddedsManyCount()
@@ -1087,7 +1087,7 @@ class CoreDocumentTest extends TestCase
         $comments = $article->getComments();
         $this->assertEquals(new EmbeddedGroup('Model\Comment', $commentsData), $comments);
         $this->assertSame(array('root' => $article, 'path' => 'comments'), $comments->getRootAndPath());
-        $savedComments = $comments->saved();
+        $savedComments = $comments->getSaved();
         $this->assertSame(2, count($savedComments));
         $this->assertEquals(\Model\Comment::create()->setDocumentData($commentsData[0]), $savedComments[0]);
         $this->assertEquals(\Model\Comment::create()->setDocumentData($commentsData[1]), $savedComments[1]);
@@ -1096,7 +1096,7 @@ class CoreDocumentTest extends TestCase
         $infos = $savedComments[1]->getInfos();
         $this->assertEquals(new EmbeddedGroup('Model\Info', $infosData), $infos);
         $this->assertSame(array('root' => $article, 'path' => 'comments.1.infos'), $infos->getRootAndPath());
-        $savedInfos = $infos->saved();
+        $savedInfos = $infos->getSaved();
         $this->assertSame(2, count($savedComments));
         $this->assertEquals(\Model\Info::create()->setDocumentData($infosData[0]), $savedInfos[0]);
         $this->assertEquals(\Model\Info::create()->setDocumentData($infosData[1]), $savedInfos[1]);
@@ -1269,7 +1269,7 @@ class CoreDocumentTest extends TestCase
         ));
         $comments = $article->getComments();
         $this->assertFalse($article->isModified());
-        $savedComments = $comments->saved();
+        $savedComments = $comments->getSaved();
         $this->assertFalse($article->isModified());
         // add
         $addComment = \Model\Comment::create();
@@ -1347,7 +1347,7 @@ class CoreDocumentTest extends TestCase
             ),
         ));
         $comments = $article->getComments();
-        $savedComments = $comments->saved();
+        $savedComments = $comments->getSaved();
         $comments->add(\Model\Comment::create()->setName('foobar'));
         $article->clearModified();
         $this->assertSame(array(), $comments->getAdd());
@@ -1362,7 +1362,7 @@ class CoreDocumentTest extends TestCase
             ),
         ));
         $comments = $article->getComments();
-        $savedComments = $comments->saved();
+        $savedComments = $comments->getSaved();
         $comments->remove($savedComments[0]);
         $article->clearModified();
         $this->assertSame(array(), $comments->getRemove());
@@ -1377,7 +1377,7 @@ class CoreDocumentTest extends TestCase
             ),
         ));
         $comments = $article->getComments();
-        $savedComments = $comments->saved();
+        $savedComments = $comments->getSaved();
         $savedComments[1]->setName('foobar');
         $article->clearModified();
         $this->assertFalse($comments->isSavedInitialized());
