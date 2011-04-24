@@ -80,4 +80,14 @@ class ReferenceGroup extends Group
     {
         return call_user_func(array($this->getDocumentClass(), 'getRepository'))->findById($data);
     }
+
+    /**
+     * Creates and returns a query to query the referenced elements.
+     */
+    public function createQuery()
+    {
+        $documentClass = $this->getDocumentClass();
+
+        return $documentClass::getRepository()->createQuery(array('_id' => array('$in' => $this->doInitializeSavedData())));
+    }
 }

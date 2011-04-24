@@ -772,6 +772,10 @@ class CoreDocumentTest extends TestCase
 
         $article = \Model\Article::create()->setCategoryIds($ids);
         $this->assertSame($categories, $article->getCategories()->saved());
+
+        $query = $article->getCategories()->createQuery();
+        $this->assertInstanceOf('Model\CategoryQuery', $query);
+        $this->assertSame(array('_id' => array('$in' => $ids)), $query->getCriteria());
     }
 
     /*
