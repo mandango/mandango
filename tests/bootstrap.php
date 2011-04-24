@@ -246,7 +246,7 @@ $configClasses = array(
     ),
     // gridfs
     'Model\Image' => array(
-        'is_file' => true,
+        'isFile' => true,
         'fields' => array(
             'name' => 'string',
         ),

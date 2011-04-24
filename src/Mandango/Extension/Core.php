@@ -311,12 +311,12 @@ class Core extends Extension
 
     protected function initIsFileProcess()
     {
-        if (isset($this->configClass['is_file'])) {
-            if (!is_bool($this->configClass['is_file'])) {
-                throw new \RuntimeException(sprintf('The "is_file" of the class "%s" is not a boolean.', $this->class));
+        if (isset($this->configClass['isFile'])) {
+            if (!is_bool($this->configClass['isFile'])) {
+                throw new \RuntimeException(sprintf('The "isFile" of the class "%s" is not a boolean.', $this->class));
             }
         } else {
-            $this->configClass['is_file'] = false;
+            $this->configClass['isFile'] = false;
         }
     }
 
@@ -2343,7 +2343,7 @@ EOF
 
     protected function repositoryIsFilePropertyProcess()
     {
-        $property = new Property('protected', 'isFile', $this->configClass['is_file']);
+        $property = new Property('protected', 'isFile', $this->configClass['isFile']);
         $this->definitions['repository_base']->addProperty($property);
     }
 
