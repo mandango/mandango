@@ -30,7 +30,7 @@ namespace Mandango\Type;
  */
 class Container
 {
-    static protected $map = array(
+    static private $map = array(
         'bin_data'       => 'Mandango\Type\BinDataType',
         'boolean'        => 'Mandango\Type\BooleanType',
         'date'           => 'Mandango\Type\DateType',
@@ -43,7 +43,7 @@ class Container
         'string'         => 'Mandango\Type\StringType',
     );
 
-    static protected $types = array();
+    static private $types = array();
 
     /**
      * Returns if exists a type by name.

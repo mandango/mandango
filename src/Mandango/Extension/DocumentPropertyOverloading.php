@@ -43,7 +43,7 @@ class DocumentPropertyOverloading extends Extension
     /*
      * "__set" method
      */
-    protected function __setMethodProcess()
+    private function __setMethodProcess()
     {
         $method = new Method('public', '__set', '$name, $value', <<<EOF
         \$this->set(\$name, \$value);
@@ -69,7 +69,7 @@ EOF
     /*
      * "__get" method
      */
-    protected function __getMethodProcess()
+    private function __getMethodProcess()
     {
         $method = new Method('public', '__get', '$name', <<<EOF
         return \$this->get(\$name);

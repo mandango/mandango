@@ -189,7 +189,7 @@ class Core extends Extension
     /*
      * configClass
      */
-    protected function initInheritableProcess()
+    private function initInheritableProcess()
     {
         if (!isset($this->configClass['inheritable'])) {
             $this->configClass['inheritable'] = false;
@@ -198,7 +198,7 @@ class Core extends Extension
         }
     }
 
-    protected function initInheritanceProcess()
+    private function initInheritanceProcess()
     {
         if (!isset($this->configClass['inheritance'])) {
             $this->configClass['inheritance'] = false;
@@ -207,7 +207,7 @@ class Core extends Extension
         }
     }
 
-    protected function initIsEmbeddedProcess()
+    private function initIsEmbeddedProcess()
     {
         if (isset($this->configClass['isEmbedded'])) {
             if (!is_bool($this->configClass['isEmbedded'])) {
@@ -218,35 +218,35 @@ class Core extends Extension
         }
     }
 
-    protected function initMandangoProcess()
+    private function initMandangoProcess()
     {
         if (!isset($this->configClass['mandango'])) {
             $this->configClass['mandango'] = null;
         }
     }
 
-    protected function initConnectionNameProcess()
+    private function initConnectionNameProcess()
     {
         if (!isset($this->configClass['connection'])) {
             $this->configClass['connection'] = null;
         }
     }
 
-    protected function initCollectionNameProcess()
+    private function initCollectionNameProcess()
     {
         if (!isset($this->configClass['collection'])) {
             $this->configClass['collection'] = strtolower(str_replace('\\', '_', $this->class));
         }
     }
 
-    protected function initFieldsProcess()
+    private function initFieldsProcess()
     {
         if (!isset($this->configClass['fields'])) {
             $this->configClass['fields'] = array();
         }
     }
 
-    protected function initReferencesProcess()
+    private function initReferencesProcess()
     {
         if (!isset($this->configClass['referencesOne'])) {
             $this->configClass['referencesOne'] = array();
@@ -256,7 +256,7 @@ class Core extends Extension
         }
     }
 
-    protected function initEmbeddedsProcess()
+    private function initEmbeddedsProcess()
     {
         if (!isset($this->configClass['embeddedsOne'])) {
             $this->configClass['embeddedsOne'] = array();
@@ -266,7 +266,7 @@ class Core extends Extension
         }
     }
 
-    protected function initRelationsProcess()
+    private function initRelationsProcess()
     {
         if (!isset($this->configClass['relationsOne'])) {
             $this->configClass['relationsOne'] = array();
@@ -282,14 +282,14 @@ class Core extends Extension
         }
     }
 
-    protected function initIndexesProcess()
+    private function initIndexesProcess()
     {
         if (!isset($this->configClass['indexes'])) {
             $this->configClass['indexes'] = array();
         }
     }
 
-    protected function initEventsProcess()
+    private function initEventsProcess()
     {
         foreach (array(
             'preInsert',
@@ -309,7 +309,7 @@ class Core extends Extension
         }
     }
 
-    protected function initIsFileProcess()
+    private function initIsFileProcess()
     {
         if (isset($this->configClass['isFile'])) {
             if (!is_bool($this->configClass['isFile'])) {
@@ -323,7 +323,7 @@ class Core extends Extension
     /*
      * class
      */
-    protected function parseAndCheckFieldsProcess()
+    private function parseAndCheckFieldsProcess()
     {
         foreach ($this->configClass['fields'] as $name => &$field) {
             if (is_string($field)) {
@@ -357,7 +357,7 @@ class Core extends Extension
         unset($field);
     }
 
-    protected function parseAndCheckReferencesProcess()
+    private function parseAndCheckReferencesProcess()
     {
         // one
         foreach ($this->configClass['referencesOne'] as $name => &$reference) {
@@ -396,7 +396,7 @@ class Core extends Extension
         }
     }
 
-    protected function parseAndCheckEmbeddedsProcess()
+    private function parseAndCheckEmbeddedsProcess()
     {
         // one
         foreach ($this->configClass['embeddedsOne'] as $name => &$embedded) {
@@ -417,7 +417,7 @@ class Core extends Extension
         }
     }
 
-    protected function parseAndCheckRelationsProcess()
+    private function parseAndCheckRelationsProcess()
     {
         // one
         foreach ($this->configClass['relationsOne'] as $name => &$relation) {
@@ -467,7 +467,7 @@ class Core extends Extension
         }
     }
 
-    protected function checkDataNamesProcess()
+    private function checkDataNamesProcess()
     {
         foreach (array_merge(
             array_keys($this->configClass['fields']),
@@ -486,7 +486,7 @@ class Core extends Extension
         }
     }
 
-    protected function initDefinitionsProcess()
+    private function initDefinitionsProcess()
     {
         $classes = array('document' => $this->class);
         if (false !== $pos = strrpos($classes['document'], '\\')) {
@@ -612,7 +612,7 @@ EOF
         }
     }
 
-    protected function documentConstructorMethodProcess()
+    private function documentConstructorMethodProcess()
     {
         $code = '';
         foreach ($this->configClass['fields'] as $name => $field) {
@@ -638,7 +638,7 @@ EOF
         }
     }
 
-    protected function documentGetMandangoMethodProcess()
+    private function documentGetMandangoMethodProcess()
     {
         $mandango = '';
         if ($this->configClass['mandango']) {
@@ -662,7 +662,7 @@ EOF
         $this->definitions['document_base']->addMethod($method);
     }
 
-    protected function documentSetDocumentDataMethodProcess()
+    private function documentSetDocumentDataMethodProcess()
     {
         // _id
         $idCode = <<<EOF
@@ -819,7 +819,7 @@ EOF
         $this->definitions['document_base']->addMethod($method);
     }
 
-    protected function documentFieldsProcess()
+    private function documentFieldsProcess()
     {
         foreach ($this->configClass['fields'] as $name => $field) {
             if (!empty($field['inherited'])) {
@@ -945,7 +945,7 @@ EOF
         }
     }
 
-    protected function documentReferencesOneProcess()
+    private function documentReferencesOneProcess()
     {
         foreach ($this->configClass['referencesOne'] as $name => $reference) {
             if (!empty($reference['inherited'])) {
@@ -1095,7 +1095,7 @@ EOF;
         }
     }
 
-    protected function documentReferencesManyProcess()
+    private function documentReferencesManyProcess()
     {
         foreach ($this->configClass['referencesMany'] as $name => $reference) {
             if (!empty($reference['inherited'])) {
@@ -1192,7 +1192,7 @@ EOF
         }
     }
 
-    protected function documentUpdateReferenceFieldsMethodProcess()
+    private function documentUpdateReferenceFieldsMethodProcess()
     {
         // inheritance
         $inheritance = '';
@@ -1386,7 +1386,7 @@ EOF
         $this->definitions['document_base']->addMethod($method);
     }
 
-    protected function documentSaveReferencesMethodProcess()
+    private function documentSaveReferencesMethodProcess()
     {
         // references one
         $referencesOneCode = array();
@@ -1471,7 +1471,7 @@ EOF
         $this->definitions['document_base']->addMethod($method);
     }
 
-    protected function documentEmbeddedsOneProcess()
+    private function documentEmbeddedsOneProcess()
     {
         foreach ($this->configClass['embeddedsOne'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
@@ -1580,7 +1580,7 @@ EOF
         }
     }
 
-    protected function documentEmbeddedsManyProcess()
+    private function documentEmbeddedsManyProcess()
     {
         foreach ($this->configClass['embeddedsMany'] as $name => $embedded) {
             if (!empty($embedded['inherited'])) {
@@ -1660,7 +1660,7 @@ EOF
         }
     }
 
-    protected function documentRelationsOneProcess()
+    private function documentRelationsOneProcess()
     {
         foreach ($this->configClass['relationsOne'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
@@ -1679,7 +1679,7 @@ EOF
         }
     }
 
-    protected function documentRelationsManyOneProcess()
+    private function documentRelationsManyOneProcess()
     {
         foreach ($this->configClass['relationsManyOne'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
@@ -1698,7 +1698,7 @@ EOF
         }
     }
 
-    protected function documentRelationsManyManyProcess()
+    private function documentRelationsManyManyProcess()
     {
         foreach ($this->configClass['relationsManyMany'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
@@ -1717,7 +1717,7 @@ EOF
         }
     }
 
-    protected function documentRelationsManyThroughProcess()
+    private function documentRelationsManyThroughProcess()
     {
         foreach ($this->configClass['relationsManyThrough'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
@@ -1743,7 +1743,7 @@ EOF
         }
     }
 
-    protected function documentResetGroupsProcess()
+    private function documentResetGroupsProcess()
     {
         $resetGroupsCode = array();
 
@@ -1810,7 +1810,7 @@ EOF
         $this->definitions['document_base']->addMethod($method);
     }
 
-    protected function documentSetMethodProcess()
+    private function documentSetMethodProcess()
     {
         // inheritance
         $inheritance = '';
@@ -1870,7 +1870,7 @@ EOF
         $this->definitions['document_base']->addMethod($method);
     }
 
-    protected function documentGetMethodProcess()
+    private function documentGetMethodProcess()
     {
         // inheritance
         $inheritance = '';
@@ -1930,7 +1930,7 @@ EOF
         $this->definitions['document_base']->addMethod($method);
     }
 
-    protected function documentFromArrayMethodProcess()
+    private function documentFromArrayMethodProcess()
     {
         // inheritance
         $inheritance = '';
@@ -2017,7 +2017,7 @@ EOF
         $this->definitions['document_base']->addMethod($method);
     }
 
-    protected function documentToArrayMethodProcess()
+    private function documentToArrayMethodProcess()
     {
         // inheritance
         $inheritance = <<<EOF
@@ -2062,7 +2062,7 @@ EOF
         $this->definitions['document_base']->addMethod($method);
     }
 
-    protected function documentEventsMethodsProcess()
+    private function documentEventsMethodsProcess()
     {
         foreach ($this->configClass['events'] as $event => $methods) {
             if (!$methods) {
@@ -2100,7 +2100,7 @@ EOF
         }
     }
 
-    protected function documentQueryForSaveMethodProcess()
+    private function documentQueryForSaveMethodProcess()
     {
         // fields
         $fieldsCode = '';
@@ -2333,31 +2333,31 @@ EOF
         $this->definitions['document_base']->addMethod($method);
     }
 
-    protected function repositoryDocumentClassPropertyProcess()
+    private function repositoryDocumentClassPropertyProcess()
     {
         $property = new Property('protected', 'documentClass', $this->class);
         $this->definitions['repository_base']->addProperty($property);
     }
 
-    protected function repositoryIsFilePropertyProcess()
+    private function repositoryIsFilePropertyProcess()
     {
         $property = new Property('protected', 'isFile', $this->configClass['isFile']);
         $this->definitions['repository_base']->addProperty($property);
     }
 
-    protected function repositoryConnectionNamePropertyProcess()
+    private function repositoryConnectionNamePropertyProcess()
     {
         $property = new Property('protected', 'connectionName', $this->configClass['connection']);
         $this->definitions['repository_base']->addProperty($property);
     }
 
-    protected function repositoryCollectionNamePropertyProcess()
+    private function repositoryCollectionNamePropertyProcess()
     {
         $property = new Property('protected', 'collectionName', $this->configClass['collection']);
         $this->definitions['repository_base']->addProperty($property);
     }
 
-    protected function repositoryCountMethodProcess()
+    private function repositoryCountMethodProcess()
     {
         if (!$this->configClass['inheritance'] || 'single' != $this->configClass['inheritance']['type']) {
             return;
@@ -2381,7 +2381,7 @@ EOF
         $this->definitions['repository_base']->addMethod($method);
     }
 
-    protected function repositoryRemoveMethodProcess()
+    private function repositoryRemoveMethodProcess()
     {
         if (!$this->configClass['inheritance'] || 'single' != $this->configClass['inheritance']['type']) {
             return;
@@ -2405,7 +2405,7 @@ EOF
         $this->definitions['repository_base']->addMethod($method);
     }
 
-    protected function repositorySaveMethodProcess()
+    private function repositorySaveMethodProcess()
     {
         // references
         $updateReferencesCode = '';
@@ -2515,7 +2515,7 @@ EOF
         $this->definitions['repository_base']->addMethod($method);
     }
 
-    protected function repositoryDeleteMethodProcess()
+    private function repositoryDeleteMethodProcess()
     {
         // events
         $preDelete = '';
@@ -2562,7 +2562,7 @@ EOF
         $this->definitions['repository_base']->addMethod($method);
     }
 
-    protected function repositoryEnsureIndexesMethodProcess()
+    private function repositoryEnsureIndexesMethodProcess()
     {
         $indexesCode = array();
         foreach ($this->configClass['_indexes'] as $name => $index) {
@@ -2585,7 +2585,7 @@ EOF
         $this->definitions['repository_base']->addMethod($method);
     }
 
-    protected function queryAllMethodProcess()
+    private function queryAllMethodProcess()
     {
         $variables = <<<EOF
         \$repository = \$this->getRepository();
@@ -2748,7 +2748,7 @@ EOF
         $this->definitions['query_base']->addMethod($method);
     }
 
-    protected function queryCreateCursorMethodProcess()
+    private function queryCreateCursorMethodProcess()
     {
         if (!$this->configClass['inheritance']) {
             return;
@@ -2781,7 +2781,7 @@ EOF
     /*
      * preGlobal
      */
-    protected function globalInheritableAndInheritanceProcess()
+    private function globalInheritableAndInheritanceProcess()
     {
         // inheritable
         foreach ($this->configClasses as $class => &$configClass) {
@@ -2945,7 +2945,7 @@ EOF
         }
     }
 
-    protected function globalHasReferencesProcess()
+    private function globalHasReferencesProcess()
     {
         do {
              $continue = false;
@@ -2972,7 +2972,7 @@ EOF
          } while ($continue);
     }
 
-    protected function globalHasGroupsProcess()
+    private function globalHasGroupsProcess()
     {
         do {
             $continue = false;
@@ -2999,7 +2999,7 @@ EOF
         } while($continue);
     }
 
-    protected function globalIndexesProcess()
+    private function globalIndexesProcess()
     {
         do {
             $continue = false;
@@ -3033,7 +3033,7 @@ EOF
     /*
      * postGlobal
      */
-    protected function globalMetadataProcess()
+    private function globalMetadataProcess()
     {
         $output = new Output($this->getOption('metadata_output'), true);
         $definition = new Definition($this->getOption('metadata_class'), $output);
@@ -3093,7 +3093,7 @@ EOF
         $this->definitions['metadata']->addProperty($property);
     }
 
-    protected function parseAndCheckAssociationClass(&$association, $name)
+    private function parseAndCheckAssociationClass(&$association, $name)
     {
         if (!is_array($association)) {
             throw new \RuntimeException(sprintf('The association "%s" of the class "%s" is not an array or string.', $name, $this->class));

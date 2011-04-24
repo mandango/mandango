@@ -47,7 +47,7 @@ class DocumentArrayAccess extends Extension
     /*
      * "offsetExists" method
      */
-    protected function offsetExistsMethodProcess()
+    private function offsetExistsMethodProcess()
     {
         $method = new Method('public', 'offsetExists', '$name', <<<EOF
         throw new \LogicException('You cannot check if data exists.');
@@ -68,7 +68,7 @@ EOF
     /*
      * "offsetSet" method
      */
-    protected function offsetSetMethodProcess()
+    private function offsetSetMethodProcess()
     {
         $method = new Method('public', 'offsetSet', '$name, $value', <<<EOF
         \$this->set(\$name, \$value);
@@ -92,7 +92,7 @@ EOF
     /*
      * "offsetGet" method
      */
-    protected function offsetGetMethodProcess()
+    private function offsetGetMethodProcess()
     {
         $method = new Method('public', 'offsetGet', '$name', <<<EOF
         return \$this->get(\$name);
@@ -117,7 +117,7 @@ EOF
     /*
      * "offsetUnset" method
      */
-    protected function offsetUnsetMethodProcess()
+    private function offsetUnsetMethodProcess()
     {
         $method = new Method('public', 'offsetUnset', '$name', <<<EOF
         throw new \LogicException('You cannot unset data.');
