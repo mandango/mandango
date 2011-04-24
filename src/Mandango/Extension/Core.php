@@ -370,8 +370,7 @@ class Core extends Extension
             if (!isset($reference['field'])) {
                 $reference['field'] = $name.'_reference_field';
             }
-            $type = isset($reference['class']) ? 'referenceOne' : 'raw';
-            $field = array('type' => $type, 'dbName' => $name);
+            $field = array('type' => 'raw', 'dbName' => $name);
             if (!empty($reference['inherited'])) {
                 $field['inherited'] = true;
             }
@@ -389,8 +388,7 @@ class Core extends Extension
             if (!isset($reference['field'])) {
                 $reference['field'] = $name.'_reference_field';
             }
-            $type = isset($reference['class']) ? 'referenceMany' : 'raw';
-            $field = array('type' => $type, 'dbName' => $name);
+            $field = array('type' => 'raw', 'dbName' => $name);
             if (!empty($reference['inherited'])) {
                 $field['inherited'] = true;
             }
