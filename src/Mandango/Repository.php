@@ -52,10 +52,10 @@ abstract class Repository
      * protected $collectionName;
      */
 
-    protected $mandango;
-    protected $identityMap;
-    protected $connection;
-    protected $collection;
+    private $mandango;
+    private $identityMap;
+    private $connection;
+    private $collection;
 
     /**
      * Constructor.

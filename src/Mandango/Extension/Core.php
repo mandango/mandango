@@ -2464,7 +2464,7 @@ EOF;
             \$documents = array(\$documents);
         }
 
-        \$identityMap =& \$this->identityMap->allByReference();
+        \$identityMap =& \$this->getIdentityMap()->allByReference();
         \$collection = \$this->getCollection();
 
         \$inserts = array();
@@ -2542,7 +2542,7 @@ EOF;
             \$documents = array(\$documents);
         }
 
-        \$identityMap =& \$this->identityMap->allByReference();
+        \$identityMap =& \$this->getIdentityMap()->allByReference();
 
         \$ids = array();
         foreach (\$documents as \$document) {
@@ -2590,23 +2590,24 @@ EOF
     protected function queryAllMethodProcess()
     {
         $variables = <<<EOF
-        \$documentClass = \$this->repository->getDocumentClass();
-        \$identityMap =& \$this->repository->getIdentityMap()->allByReference();
-        \$isFile = \$this->repository->isFile();
+        \$repository = \$this->getRepository();
+        \$documentClass = \$repository->getDocumentClass();
+        \$identityMap =& \$repository->getIdentityMap()->allByReference();
+        \$isFile = \$repository->isFile();
 EOF;
         $queryFields = <<<EOF
 EOF;
         $createObjects = <<<EOF
             if (isset(\$identityMap[\$id])) {
                 \$document = \$identityMap[\$id];
-                \$document->addQueryHash(\$this->hash);
+                \$document->addQueryHash(\$this->getHash());
             } else {
                 if (\$isFile) {
                     \$file = \$data;
                     \$data = \$file->file;
                     \$data['file'] = \$file;
                 }
-                \$data['_query_hash'] = \$this->hash;
+                \$data['_query_hash'] = \$this->getHash();
                 \$data['_fields'] = \$fields;
 
                 \$document = new \$documentClass();
@@ -2623,12 +2624,13 @@ EOF;
 
             $variables = <<<EOF
         \$identityMaps = array();
-        \$isFile = \$this->repository->isFile();
+        \$isFile = \$this->getRepository()->isFile();
 EOF;
 
             $queryFields = <<<EOF
-        if (\$this->fields) {
-            \$this->fields['$field'] = 1;
+        if (\$fields = \$this->getFields()) {
+            \$fields['$field'] = 1;
+            \$this->fields(\$fields);
         }
 EOF;
 
@@ -2653,7 +2655,7 @@ $createObjectsValues
             }
             if (null === \$documentClass) {
                 if (!isset(\$identityMaps['_root'])) {
-                    \$identityMaps['_root'] = \$this->repository->getIdentityMap()->allByReference();
+                    \$identityMaps['_root'] = \$this->getRepository()->getIdentityMap()->allByReference();
                 }
                 \$documentClass = '{$this->class}';
                 \$identityMap = \$identityMaps['_root'];
@@ -2669,7 +2671,7 @@ $variables
 $queryFields
 
         \$fields = array();
-        foreach (array_keys(\$this->fields) as \$field) {
+        foreach (array_keys(\$this->getFields()) as \$field) {
             if (false === strpos(\$field, '.')) {
                 \$fields[\$field] = 1;
                 continue;
@@ -2689,10 +2691,10 @@ $queryFields
 $createObjects
         }
 
-        if (\$this->references) {
-            \$mandango = \$this->repository->getMandango();
-            \$metadata = \$mandango->getMetadata()->getClassInfo(\$this->repository->getDocumentClass());
-            foreach (\$this->references as \$referenceName) {
+        if (\$references = \$this->getReferences()) {
+            \$mandango = \$this->getRepository()->getMandango();
+            \$metadata = \$mandango->getMetadata()->getClassInfo(\$this->getRepository()->getDocumentClass());
+            foreach (\$references as \$referenceName) {
                 // one
                 if (isset(\$metadata['referencesOne'][\$referenceName])) {
                     \$reference = \$metadata['referencesOne'][\$referenceName];
@@ -2758,12 +2760,13 @@ EOF
         $value = $this->configClass['inheritance']['value'];
 
         $method = new Method('public', 'createCursor', '', <<<EOF
-        \$criteria = \$this->criteria;
-        \$this->criteria['$field'] = '$value';
+        \$criteria = \$savedCriteria = \$this->getCriteria();
+        \$criteria['$field'] = '$value';
+        \$this->criteria(\$criteria);
 
         \$cursor = parent::createCursor();
 
-        \$this->criteria = \$criteria;
+        \$this->criteria(\$savedCriteria);
 
         return \$cursor;
 EOF

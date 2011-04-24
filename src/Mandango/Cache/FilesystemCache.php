@@ -28,7 +28,7 @@ namespace Mandango\Cache;
  */
 class FilesystemCache implements CacheInterface
 {
-    protected $dir;
+    private $dir;
 
     /**
      * Constructor.

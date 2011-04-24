@@ -28,9 +28,8 @@ namespace Mandango\Logger;
  */
 class LoggableMongoGridFS extends \MongoGridFS
 {
-    protected $db;
-
-    protected $time;
+    private $db;
+    private $time;
 
     /**
      * Constructor.

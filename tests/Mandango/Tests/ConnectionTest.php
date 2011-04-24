@@ -40,6 +40,15 @@ class ConnectionTest extends TestCase
         $this->assertSame($mongoDB, $connection->getMongoDB());
     }
 
+    public function testGetters()
+    {
+        $connection = new Connection('mongodb://127.0.0.1:27017', 'databaseName', array('connect' => true));
+
+        $this->assertSame('mongodb://127.0.0.1:27017', $connection->getServer());
+        $this->assertSame('databaseName', $connection->getDbName());
+        $this->assertSame(array('connect' => true), $connection->getOptions());
+    }
+
     public function testLoggerCallable()
     {
         $connection = new Connection($this->server, $this->dbName);

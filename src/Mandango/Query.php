@@ -30,19 +30,19 @@ use Mandango\Repository;
  */
 abstract class Query implements \Countable, \IteratorAggregate
 {
-    protected $repository;
-    protected $hash;
+    private $repository;
+    private $hash;
 
-    protected $criteria = array();
-    protected $fields = array('_id' => 1);
-    protected $references = array();
-    protected $sort;
-    protected $limit;
-    protected $skip;
-    protected $batchSize;
-    protected $hint;
-    protected $snapshot = false;
-    protected $timeout;
+    private $criteria;
+    private $fields;
+    private $references;
+    private $sort;
+    private $limit;
+    private $skip;
+    private $batchSize;
+    private $hint;
+    private $snapshot;
+    private $timeout;
 
     /**
      * Constructor.
@@ -62,6 +62,11 @@ abstract class Query implements \Countable, \IteratorAggregate
             }
         }
         $this->hash = md5($hash);
+
+        $this->criteria = array();
+        $this->fields = array('_id' => 1);
+        $this->references = array();
+        $this->snapshot = false;
 
         if ($fields = $this->getFieldsCache()) {
             $this->fields = $fields;

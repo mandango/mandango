@@ -28,28 +28,58 @@ namespace Mandango;
  */
 class Connection
 {
-    protected $server;
-    protected $dbName;
-    protected $options;
+    private $server;
+    private $dbName;
+    private $options;
 
-    protected $loggerCallable;
-    protected $logDefault;
+    private $loggerCallable;
+    private $logDefault;
 
-    protected $mongo;
-    protected $mongoDB;
+    private $mongo;
+    private $mongoDB;
 
     /**
      * Constructor.
      *
      * @param string $server  The server.
      * @param string $dbName  The database name.
-     * @param string $options The \Mongo options.
+     * @param array  $options The \Mongo options (optional).
      */
     public function __construct($server, $dbName, array $options = array())
     {
         $this->server = $server;
         $this->dbName = $dbName;
         $this->options = $options;
+    }
+
+    /**
+     * Returns the server.
+     *
+     * @return string $server The server.
+     */
+    public function getServer()
+    {
+        return $this->server;
+    }
+
+    /**
+     * Returns the database name.
+     *
+     * @return string The database name.
+     */
+    public function getDbName()
+    {
+        return $this->dbName;
+    }
+
+    /**
+     * Returns the options.
+     *
+     * @return array The options.
+     */
+    public function getOptions()
+    {
+        return $this->options;
     }
 
     /**

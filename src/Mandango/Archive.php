@@ -28,7 +28,7 @@ namespace Mandango;
  */
 class Archive
 {
-    static protected $archive = array();
+    static private $archive = array();
 
     /**
      * Returns if an object has a key in the archive.

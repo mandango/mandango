@@ -28,9 +28,9 @@ namespace Mandango;
  */
 class Container
 {
-    static protected $mandangos = array();
-    static protected $defaultName;
-    static protected $loaders = array();
+    static private $mandangos = array();
+    static private $defaultName;
+    static private $loaders = array();
 
     /**
      * Set a mandango by name.

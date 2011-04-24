@@ -36,9 +36,16 @@ class Repository extends BaseRepository
 
 class RepositoryMock extends Repository
 {
+    private $collection;
+
     public function setCollection($collection)
     {
         $this->collection = $collection;
+    }
+
+    public function getCollection()
+    {
+        return $this->collection;
     }
 }
 

@@ -28,7 +28,7 @@ namespace Mandango\Logger;
  */
 class Time
 {
-    protected $time;
+    private $time;
 
     /**
      * Start to count the time.

@@ -30,7 +30,7 @@ use Mandango\Document\Document;
  */
 class IdentityMap
 {
-    protected $documents = array();
+    private $documents = array();
 
     /**
      * Set a document.

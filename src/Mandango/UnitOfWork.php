@@ -30,10 +30,9 @@ use Mandango\Document\Document;
  */
 class UnitOfWork
 {
-    protected $mandango;
-
-    protected $persist = array();
-    protected $remove  = array();
+    private $mandango;
+    private $persist;
+    private $remove;
 
     /**
      * Constructor.
@@ -43,6 +42,8 @@ class UnitOfWork
     public function __construct(Mandango $mandango)
     {
         $this->mandango = $mandango;
+        $this->persist = array();
+        $this->remove = array();
     }
 
     /**

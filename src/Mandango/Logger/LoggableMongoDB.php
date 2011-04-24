@@ -28,9 +28,8 @@ namespace Mandango\Logger;
  */
 class LoggableMongoDB extends \MongoDB
 {
-    protected $mongo;
-
-    protected $time;
+    private $mongo;
+    private $time;
 
     /**
      * Constructor.

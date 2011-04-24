@@ -28,9 +28,8 @@ namespace Mandango\Logger;
  */
 class LoggableMongo extends \Mongo
 {
-    protected $loggerCallable;
-
-    protected $logDefault = array();
+    private $loggerCallable;
+    private $logDefault = array();
 
     /**
      * Set the logger callable.

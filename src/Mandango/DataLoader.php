@@ -28,8 +28,7 @@ namespace Mandango;
  */
 class DataLoader
 {
-    protected $mandango;
-    protected $data;
+    private $mandango;
 
     /**
      * Constructor.

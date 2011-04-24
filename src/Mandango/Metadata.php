@@ -35,7 +35,7 @@ abstract class Metadata
      * Array of document classes. The class as key and if is embedded as value.
      */
 
-    protected $infoClass;
+    private $infoClass;
 
     /**
      * Returns the classes.

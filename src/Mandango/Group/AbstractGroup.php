@@ -31,7 +31,7 @@ use Mandango\Document\Document;
  */
 abstract class AbstractGroup implements \Countable, \IteratorAggregate
 {
-    protected $saved;
+    private $saved;
 
     /**
      * Adds document/s to the add queue of the group.

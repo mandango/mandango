@@ -28,11 +28,10 @@ namespace Mandango\Logger;
  */
 class LoggableMongoGridFSCursor extends \MongoGridFSCursor
 {
-    protected $grid;
-
-    protected $type;
-    protected $explainCursor;
-    protected $time;
+    private $grid;
+    private $type;
+    private $explainCursor;
+    private $time;
 
     /**
      * Constructor.

@@ -28,11 +28,10 @@ namespace Mandango\Logger;
  */
 class LoggableMongoCursor extends \MongoCursor
 {
-    protected $collection;
-
-    protected $type;
-    protected $explainCursor;
-    protected $time;
+    private $collection;
+    private $type;
+    private $explainCursor;
+    private $time;
 
     /**
      * Constructor.

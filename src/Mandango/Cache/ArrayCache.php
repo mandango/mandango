@@ -28,7 +28,7 @@ namespace Mandango\Cache;
  */
 class ArrayCache implements CacheInterface
 {
-    protected $data = array();
+    private $data = array();
 
     /**
      * {@inheritdoc}

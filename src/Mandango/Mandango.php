@@ -32,13 +32,13 @@ class Mandango
 {
     const VERSION = '1.0.0-DEV';
 
-    protected $metadata;
-    protected $queryCache;
-    protected $loggerCallable;
-    protected $unitOfWork;
-    protected $connections = array();
-    protected $defaultConnectionName;
-    protected $repositories = array();
+    private $metadata;
+    private $queryCache;
+    private $loggerCallable;
+    private $unitOfWork;
+    private $connections;
+    private $defaultConnectionName;
+    private $repositories;
 
     /**
      * Constructor.
@@ -53,6 +53,8 @@ class Mandango
         $this->queryCache = $queryCache;
         $this->loggerCallable = $loggerCallable;
         $this->unitOfWork = new UnitOfWork($this);
+        $this->connections = array();
+        $this->repositories = array();
     }
 
     /**
