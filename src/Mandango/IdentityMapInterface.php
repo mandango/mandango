@@ -24,75 +24,61 @@ namespace Mandango;
 use Mandango\Document\Document;
 
 /**
- * The identity map class.
+ * IdentityMapInterface.
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-class IdentityMap implements IdentityMapInterface
+interface IdentityMapInterface
 {
-    private $documents;
+    /**
+     * Set a document.
+     *
+     * @param mixed    $id       The document Id.
+     * @param Document $document The document.
+     */
+    function set($id, Document $document);
 
     /**
-     * Constructor.
+     * Returns if exists a document.
+     *
+     * @param mixed $id The document id.
+     *
+     * @return boolean If exists or not the document.
      */
-    public function __construct()
-    {
-        $this->documents = array();
-    }
+    function has($id);
 
     /**
-     * {@inheritdoc}
+     * Returns a document.
+     *
+     * @param mixed $id The document Id.
+     *
+     * @return Document The document.
      */
-    public function set($id, Document $document)
-    {
-        $this->documents[(string) $id] = $document;
-    }
+    function get($id);
 
     /**
-     * {@inheritdoc}
+     * Returns all documents.
+     *
+     * @return array The documents.
      */
-    public function has($id)
-    {
-        return isset($this->documents[(string) $id]);
-    }
+    function all();
 
     /**
-     * {@inheritdoc}
+     * Returns all the documents by reference.
+     *
+     * @return array The documents by reference.
      */
-    public function get($id)
-    {
-        return $this->documents[(string) $id];
-    }
+    function &allByReference();
 
     /**
-     * {@inheritdoc}
+     * Remove a document.
+     *
+     * @param mixed $id The document Id.
      */
-    public function all()
-    {
-        return $this->documents;
-    }
+    function remove($id);
 
     /**
-     * {@inheritdoc}
+     * Clear the documents.
      */
-    public function &allByReference()
-    {
-        return $this->documents;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function remove($id)
-    {
-        unset($this->documents[(string) $id]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function clear()
-    {
-        $this->documents = array();
-    }
+    function clear();
 }

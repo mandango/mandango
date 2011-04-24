@@ -26,7 +26,7 @@ namespace Mandango;
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-abstract class Repository
+abstract class Repository implements RepositoryInterface
 {
     /*
      * abstract string The document class.
@@ -60,7 +60,7 @@ abstract class Repository
     /**
      * Constructor.
      *
-     * @param Mandango\Mandango $mandango The mandango.
+     * @param Mandango $mandango The mandango.
      */
     public function __construct(Mandango $mandango)
     {
@@ -69,9 +69,7 @@ abstract class Repository
     }
 
     /**
-     * Returns the Mandango.
-     *
-     * @return Mandango\Mandango The Mandango.
+     * {@inheritdoc}
      */
     public function getMandango()
     {
@@ -79,9 +77,7 @@ abstract class Repository
     }
 
     /**
-     * Returns the identity map.
-     *
-     * @return Mandango\IdentityMap The identity map.
+     * {@inheritdoc}
      */
     public function getIdentityMap()
     {
@@ -89,9 +85,7 @@ abstract class Repository
     }
 
     /**
-     * Returns the document class.
-     *
-     * @return string The document class.
+     * {@inheritdoc}
      */
     public function getDocumentClass()
     {
@@ -99,9 +93,7 @@ abstract class Repository
     }
 
     /**
-     * Returns if the document is a file (if it uses GridFS).
-     *
-     * @return boolean If the document is a file.
+     * {@inheritdoc}
      */
     public function isFile()
     {
@@ -109,9 +101,7 @@ abstract class Repository
     }
 
     /**
-     * Returns the connection name, or null if it is the default.
-     *
-     * @return string|null The connection name.
+     * {@inheritdoc}
      */
     public function getConnectionName()
     {
@@ -119,9 +109,7 @@ abstract class Repository
     }
 
     /**
-     * Returns the collection name.
-     *
-     * @return string The collection name.
+     * {@inheritdoc}
      */
     public function getCollectionName()
     {
@@ -129,9 +117,7 @@ abstract class Repository
     }
 
     /**
-     * Returns the connection.
-     *
-     * @return Mandango\Connection The connection.
+     * {@inheritdoc}
      */
     public function getConnection()
     {
@@ -147,9 +133,7 @@ abstract class Repository
     }
 
     /**
-     * Returns the collection.
-     *
-     * @return \MongoCollection The collection.
+     * {@inheritdoc}
      */
     public function getCollection()
     {
@@ -167,11 +151,7 @@ abstract class Repository
     }
 
     /**
-     * Create a query for the repository document class.
-     *
-     * @param array $criteria The criteria for the query (optional).
-     *
-     * @return Mandango\Query The query.
+     * {@inheritdoc}
      */
     public function createQuery(array $criteria = array())
     {
@@ -183,11 +163,7 @@ abstract class Repository
     }
 
     /**
-     * Find documents by id.
-     *
-     * @param array $ids An array of ids.
-     *
-     * @return array An array of documents.
+     * {@inheritdoc}
      */
     public function findById(array $ids)
     {
@@ -213,11 +189,7 @@ abstract class Repository
     }
 
     /**
-     * Returns one document by id.
-     *
-     * @param mixed $id An id.
-     *
-     * @return Mandango\Docment\Document|null The document or null if it does not exist.
+     * {@inheritdoc}
      */
     public function findOneById($id)
     {
@@ -233,11 +205,7 @@ abstract class Repository
     }
 
     /**
-     * Count documents.
-     *
-     * @param array $query The query (opcional, by default an empty array).
-     *
-     * @return integer The number of documents.
+     * {@inheritdoc}
      */
     public function count(array $query = array())
     {
@@ -245,11 +213,7 @@ abstract class Repository
     }
 
     /**
-     * Remove documents.
-     *
-     * @param array $query The query (optional, by default an empty array).
-     *
-     * @return mixed The result of the remove collection method.
+     * {@inheritdoc}
      */
     public function remove(array $query = array())
     {

@@ -28,7 +28,7 @@ use Mandango\Cache\CacheInterface;
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-class Mandango
+class Mandango implements MandangoInterface
 {
     const VERSION = '1.0.0-DEV';
 
@@ -58,9 +58,7 @@ class Mandango
     }
 
     /**
-     * Returns the metadata.
-     *
-     * @return Mandango\Metadata The metadata.
+     * {@inheritdoc}
      */
     public function getMetadata()
     {
@@ -68,9 +66,7 @@ class Mandango
     }
 
     /**
-     * Returns the query cache.
-     *
-     * @return Mandango\Cache\CacheInterface The query cache.
+     * {@inheritdoc}
      */
     public function getQueryCache()
     {
@@ -78,9 +74,7 @@ class Mandango
     }
 
     /**
-     * Returns the logger callable.
-     *
-     * @return mixed The logger callable.
+     * {@inheritdoc}
      */
     public function getLoggerCallable()
     {
@@ -88,9 +82,7 @@ class Mandango
     }
 
     /**
-     * Returns the UnitOfWork.
-     *
-     * @return Mandango\UnitOfWork The UnitOfWork.
+     * {@inheritdoc}
      */
     public function getUnitOfWork()
     {
@@ -98,12 +90,9 @@ class Mandango
     }
 
     /**
-     * Set a connection.
-     *
-     * @param string              $name       The connection name.
-     * @param Mandango\Connection $connection The connection.
+     * {@inheritdoc}
      */
-    public function setConnection($name, Connection $connection)
+    public function setConnection($name, ConnectionInterface $connection)
     {
         if (null !== $this->loggerCallable) {
             $connection->setLoggerCallable($this->loggerCallable);
@@ -116,9 +105,7 @@ class Mandango
     }
 
     /**
-     * Set the connections.
-     *
-     * @param array $connections An array of connections.
+     * {@inheritdoc}
      */
     public function setConnections(array $connections)
     {
@@ -129,11 +116,7 @@ class Mandango
     }
 
     /**
-     * Remove a connection.
-     *
-     * @param string $name The connection name.
-     *
-     * @throws \InvalidArgumentException If the connection does not exists.
+     * {@inheritdoc}
      */
     public function removeConnection($name)
     {
@@ -145,7 +128,7 @@ class Mandango
     }
 
     /**
-     * Clear the connections.
+     * {@inheritdoc}
      */
     public function clearConnections()
     {
@@ -153,11 +136,7 @@ class Mandango
     }
 
     /**
-     * Returns if a connection exists.
-     *
-     * @param string $name The connection name.
-     *
-     * @return boolean Returns if a connection exists.
+     * {@inheritdoc}
      */
     public function hasConnection($name)
     {
@@ -165,13 +144,7 @@ class Mandango
     }
 
     /**
-     * Return a connection.
-     *
-     * @param string $name The connection name.
-     *
-     * @return Mandango\Connection The connection.
-     *
-     * @throws \InvalidArgumentException If the connection does not exists.
+     * {@inheritdoc}
      */
     public function getConnection($name)
     {
@@ -183,9 +156,7 @@ class Mandango
     }
 
     /**
-     * Returns the connections.
-     *
-     * @return array The array of connections.
+     * {@inheritdoc}
      */
     public function getConnections()
     {
@@ -193,9 +164,7 @@ class Mandango
     }
 
     /**
-     * Set the default connection name.
-     *
-     * @param string $name The connection name.
+     * {@inheritdoc}
      */
     public function setDefaultConnectionName($name)
     {
@@ -203,9 +172,7 @@ class Mandango
     }
 
     /**
-     * Returns the default connection name.
-     *
-     * @return string The default connection name.
+     * {@inheritdoc}
      */
     public function getDefaultConnectionName()
     {
@@ -213,12 +180,7 @@ class Mandango
     }
 
     /**
-     * Returns the default connection.
-     *
-     * @return Mandango\Connection The default connection.
-     *
-     * @throws \RuntimeException If there is not default connection name.
-     * @throws \RuntimeException If the default connection does not exists.
+     * {@inheritdoc}
      */
     public function getDefaultConnection()
     {
@@ -234,14 +196,7 @@ class Mandango
     }
 
     /**
-     * Returns repositories by document class.
-     *
-     * @param string $documentClass The document class.
-     *
-     * @return Mandango\Repository The repository.
-     *
-     * @throws \InvalidArgumentException If the document class is not a valid document class.
-     * @throws \RuntimeException         If the repository class build does not exist.
+     * {@inheritdoc}
      */
     public function getRepository($documentClass)
     {
@@ -262,9 +217,7 @@ class Mandango
     }
 
     /**
-     * Returns all repositories.
-     *
-     * @return array All repositories.
+     * {@inheritdoc}
      */
     public function getAllRepositories()
     {
@@ -276,7 +229,7 @@ class Mandango
     }
 
     /**
-     * Ensure the indexes of all repositories.
+     * {@inheritdoc}
      */
     public function ensureAllIndexes()
     {
@@ -286,43 +239,15 @@ class Mandango
     }
 
     /**
-     * Access to repository ->find() method.
-     *
-     * The first argument is the documentClass of repository.
-     *
-     * @see Mandango\Repository::getRepository()->find()
+     * {@inheritdoc}
      */
-    public function find($documentClass, array $query = array(), array $options = array())
+    public function persist($documents)
     {
-        return $this->getRepository($documentClass)->find($query, $options);
+        $this->unitOfWork->persist($documents);
     }
 
     /**
-     * Access to repository ->count() method.
-     *
-     * The first argument is the documentClass of repository.
-     *
-     * @see Mandango\Repository::count()
-     */
-    public function count($documentClass, array $query = array())
-    {
-        return $this->getRepository($documentClass)->count($query);
-    }
-
-    /**
-     * Access to UnitOfWork ->persist() method.
-     *
-     * @see Mandango\UnitOfWork::persist()
-     */
-    public function persist($document)
-    {
-        $this->unitOfWork->persist($document);
-    }
-
-    /**
-     * Access to UnitOfWork ->remove() method.
-     *
-     * @see Mandango\UnitOfWork::remove()
+     * {@inheritdoc}
      */
     public function remove($document)
     {
@@ -330,9 +255,7 @@ class Mandango
     }
 
     /**
-     * Access to UnitOfWork ->commit() method.
-     *
-     * @see Mandango\UnitOfWork::commit()
+     * {@inheritdoc}
      */
     public function flush()
     {

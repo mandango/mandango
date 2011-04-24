@@ -26,7 +26,7 @@ namespace Mandango;
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-class Connection
+class Connection implements ConnectionInterface
 {
     private $server;
     private $dbName;
@@ -83,11 +83,7 @@ class Connection
     }
 
     /**
-     * Set the logger callable.
-     *
-     * @param mixed $loggerCallable The logger callable.
-     *
-     * @throws \RuntimeException When the connection has the Mongo already.
+     * {@inheritdoc}
      */
     public function setLoggerCallable($loggerCallable = null)
     {
@@ -99,9 +95,7 @@ class Connection
     }
 
     /**
-     * Returns the logger callable.
-     *
-     * @return mixed The logger callable.
+     * {@inheritdoc}
      */
     public function getLoggerCallable()
     {
@@ -109,11 +103,7 @@ class Connection
     }
 
     /**
-     * Set the log default.
-     *
-     * @param array $logDefault The log default.
-     *
-     * @throws \RuntimeException When the connection has the Mongo already.
+     * {@inheritdoc}
      */
     public function setLogDefault(array $logDefault)
     {
@@ -125,9 +115,7 @@ class Connection
     }
 
     /**
-     * Returns the log default.
-     *
-     * @return array|null The log default.
+     * {@inheritdoc}
      */
     public function getLogDefault()
     {
@@ -135,9 +123,7 @@ class Connection
     }
 
     /**
-     * Returns the mongo connection object.
-     *
-     * @return \Mongo The mongo collection object.
+     * {@inheritdoc}
      */
     public function getMongo()
     {
@@ -157,9 +143,7 @@ class Connection
     }
 
     /**
-     * Returns the database object.
-     *
-     * @return \MongoDB The database object.
+     * {@inheritdoc}
      */
     public function getMongoDB()
     {
