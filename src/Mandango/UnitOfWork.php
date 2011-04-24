@@ -59,18 +59,24 @@ class UnitOfWork
     /**
      * Persist a document.
      *
-     * @param Mandango\Document\Document $document A document.
+     * @param Mandango\Document\Document|array $documents A document or an array of documents.
      */
-    public function persist(Document $document)
+    public function persist($documents)
     {
-        $class = get_class($document);
-        $oid = spl_object_hash($document);
-
-        if (isset($this->remove[$class][$oid])) {
-            unset($this->remove[$class][$oid]);
+        if (!is_array($documents)) {
+            $documents = array($documents);
         }
 
-        $this->persist[$class][$oid] = $document;
+        foreach ($documents as $document) {
+            $class = get_class($document);
+            $oid = spl_object_hash($document);
+
+            if (isset($this->remove[$class][$oid])) {
+                unset($this->remove[$class][$oid]);
+            }
+
+            $this->persist[$class][$oid] = $document;
+        }
     }
 
     /**
@@ -98,18 +104,24 @@ class UnitOfWork
     /**
      * Remove a document.
      *
-     * @param \Mandango\Document\Document $document A document.
+     * @param \Mandango\Document\Document|array $documents A document or an array of documents.
      */
-    public function remove($document)
+    public function remove($documents)
     {
-        $class = get_class($document);
-        $oid = spl_object_hash($document);
-
-        if (isset($this->persist[$class][$oid])) {
-            unset($this->persist[$class][$oid]);
+        if (!is_array($documents)) {
+            $documents = array($documents);
         }
 
-        $this->remove[$class][$oid] = $document;
+        foreach ($documents as $document) {
+            $class = get_class($document);
+            $oid = spl_object_hash($document);
+
+            if (isset($this->persist[$class][$oid])) {
+                unset($this->persist[$class][$oid]);
+            }
+
+            $this->remove[$class][$oid] = $document;
+        }
     }
 
     /**

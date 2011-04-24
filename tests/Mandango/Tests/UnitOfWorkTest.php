@@ -36,13 +36,15 @@ class UnitOfWorkTest extends TestCase
         $article = new \Model\Article();
         $category1 = new \Model\Category();
         $category2 = new \Model\Category();
+        $category3 = new \Model\Category();
 
-        $unitOfWork->persist($article);
         $unitOfWork->persist($category1);
+        $unitOfWork->persist(array($category3, $article));
 
         $this->assertTrue($unitOfWork->isPendingForPersist($article));
         $this->assertTrue($unitOfWork->isPendingForPersist($category1));
         $this->assertFalse($unitOfWork->isPendingForPersist($category2));
+        $this->assertTrue($unitOfWork->isPendingForPersist($category3));
 
         $this->assertTrue($unitOfWork->hasPendingForPersist());
         $this->assertTrue($unitOfWork->hasPending());
@@ -61,13 +63,15 @@ class UnitOfWorkTest extends TestCase
         $article = new \Model\Article();
         $category1 = new \Model\Category();
         $category2 = new \Model\Category();
+        $category3 = new \Model\Category();
 
-        $unitOfWork->remove($article);
         $unitOfWork->remove($category1);
+        $unitOfWork->remove(array($category3, $article));
 
         $this->assertTrue($unitOfWork->isPendingForRemove($article));
         $this->assertTrue($unitOfWork->isPendingForRemove($category1));
         $this->assertFalse($unitOfWork->isPendingForRemove($category2));
+        $this->assertTrue($unitOfWork->isPendingForRemove($category3));
 
         $this->assertTrue($unitOfWork->hasPendingForRemove());
         $this->assertTrue($unitOfWork->hasPending());
