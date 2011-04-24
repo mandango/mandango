@@ -28,7 +28,7 @@ use Mandango\Document\Document;
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-class UnitOfWork
+class UnitOfWork implements UnitOfWorkInterface
 {
     private $mandango;
     private $persist;
@@ -57,9 +57,7 @@ class UnitOfWork
     }
 
     /**
-     * Persist a document.
-     *
-     * @param Mandango\Document\Document|array $documents A document or an array of documents.
+     * {@inheritdoc}
      */
     public function persist($documents)
     {
@@ -102,9 +100,7 @@ class UnitOfWork
     }
 
     /**
-     * Remove a document.
-     *
-     * @param \Mandango\Document\Document|array $documents A document or an array of documents.
+     * {@inheritdoc}
      */
     public function remove($documents)
     {
@@ -157,16 +153,7 @@ class UnitOfWork
     }
 
     /**
-     * Clear the pending operations
-     */
-    public function clear()
-    {
-        $this->persist = array();
-        $this->remove = array();
-    }
-
-    /**
-     * Commit pending persist and remove operations.
+     * {@inheritdoc}
      */
     public function commit()
     {
@@ -180,5 +167,14 @@ class UnitOfWork
 
         // clear
         $this->clear();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function clear()
+    {
+        $this->persist = array();
+        $this->remove = array();
     }
 }
