@@ -518,7 +518,7 @@ EOF
         $output = new Output($this->definitions['document']->getOutput()->getDir().'/Base', true);
 
         $this->definitions['document_base'] = $definition = new Definition($classes['document_base'], $output);
-        $definition->setIsAbstract(true);
+        $definition->setAbstract(true);
         if ($this->configClass['isEmbedded']) {
             $definition->setParentClass('\Mandango\Document\EmbeddedDocument');
         } else {
@@ -559,7 +559,7 @@ EOF
             $output = new Output($this->definitions['repository']->getOutput()->getDir().'/Base', true);
 
             $this->definitions['repository_base'] = $definition = new Definition($classes['repository_base'], $output);
-            $definition->setIsAbstract(true);
+            $definition->setAbstract(true);
             $definition->setParentClass('\\Mandango\\Repository');
             $definition->setDocComment(<<<EOF
 /**
@@ -591,7 +591,7 @@ EOF
             $output = new Output($this->definitions['query']->getOutput()->getDir().'/Base', true);
 
             $this->definitions['query_base'] = $definition = new Definition($classes['query_base'], $output);
-            $definition->setIsAbstract(true);
+            $definition->setAbstract(true);
             $definition->setParentClass('\\Mandango\\Query');
             $definition->setDocComment(<<<EOF
 /**
@@ -639,7 +639,7 @@ EOF
         return \Mandango\Container::get($mandango);
 EOF
         );
-        $method->setIsStatic(true);
+        $method->setStatic(true);
         $method->setDocComment(<<<EOF
     /**
      * Returns the mandango of the document.
