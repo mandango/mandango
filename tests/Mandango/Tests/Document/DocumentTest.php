@@ -70,6 +70,26 @@ class DocumentTest extends TestCase
         $this->assertSame(array('note' => 1, 'comments.infos' => 1), $query2->getFieldsCache());
     }
 
+    public function testAddReferenceCache()
+    {
+        $query1 = \Model\Article::getRepository()->createQuery();
+        $query2 = \Model\Article::getRepository()->createQuery();
+
+        $article = new \Model\Article();
+        $article->addQueryHash($query1->getHash());
+        $article->addReferenceCache('author');
+        $this->assertSame(array('author'), $query1->getReferencesCache());
+        $article->addReferenceCache('categories');
+        $this->assertSame(array('author', 'categories'), $query1->getReferencesCache());
+        $article->addQueryHash($query2->getHash());
+        $article->addReferenceCache('note');
+        $this->assertSame(array('author', 'categories', 'note'), $query1->getReferencesCache());
+        $this->assertSame(array('note'), $query2->getReferencesCache());
+        $article->addReferenceCache('comments');
+        $this->assertSame(array('author', 'categories', 'note', 'comments'), $query1->getReferencesCache());
+        $this->assertSame(array('note', 'comments'), $query2->getReferencesCache());
+    }
+
     public function testIsnew()
     {
         $document = new Document();

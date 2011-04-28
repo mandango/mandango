@@ -109,6 +109,22 @@ class CoreDocumentTest extends TestCase
         $this->assertNull($article->getAuthorId());
     }
 
+    public function testReferencesOneGetterSaveReferenceCache()
+    {
+        $articleRaw = array(
+            'title'   => 'foo',
+            'content' => 123,
+        );
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
+
+        $query = \Model\Article::getRepository()->createQuery();
+        $article = $query->one();
+
+        $this->assertNull($query->getReferencesCache());
+        $article->getAuthor();
+        $this->assertSame(array('author'), $query->getReferencesCache());
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      */
@@ -142,6 +158,22 @@ class CoreDocumentTest extends TestCase
         $this->assertSame($article, $categories->getParent());
         $this->assertSame('categoryIds', $categories->getField());
         $this->assertSame($categories, $article->getCategories());
+    }
+
+    public function testReferencesManyGetterSaveReferenceCache()
+    {
+        $articleRaw = array(
+            'title'   => 'foo',
+            'content' => 123,
+        );
+        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
+
+        $query = \Model\Article::getRepository()->createQuery();
+        $article = $query->one();
+
+        $this->assertNull($query->getReferencesCache());
+        $article->getCategories();
+        $this->assertSame(array('categories'), $query->getReferencesCache());
     }
 
     public function testReferencesManyAdd()

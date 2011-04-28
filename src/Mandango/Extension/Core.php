@@ -971,8 +971,18 @@ EOF;
      */
 EOF;
                 // get
+                $addReferenceCache = '';
+                if (!$this->configClass['isEmbedded']) {
+                    $addReferenceCache = <<<EOF
+            if (!\$this->isNew()) {
+                \$this->addReferenceCache('$name');
+            }
+EOF;
+                }
+
                 $getCode = <<<EOF
         if (!isset(\$this->data['referencesOne']['$name'])) {
+            $addReferenceCache
             if (!\$id = \$this->$fieldGetter()) {
                 return null;
             }
@@ -1092,10 +1102,20 @@ EOF;
                 continue;
             }
 
+            $addReferenceCache = '';
+            if (!$this->configClass['isEmbedded']) {
+                $addReferenceCache = <<<EOF
+            if (!\$this->isNew()) {
+                \$this->addReferenceCache('$name');
+            }
+EOF;
+            }
+
             // normal
             if (isset($reference['class'])) {
                 $getCode = <<<EOF
         if (!isset(\$this->data['referencesMany']['$name'])) {
+            $addReferenceCache
             \$this->data['referencesMany']['$name'] = new \Mandango\Group\ReferenceGroup('{$reference['class']}', \$this, '{$reference['field']}');
         }
 

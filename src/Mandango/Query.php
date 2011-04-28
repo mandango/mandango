@@ -65,6 +65,9 @@ abstract class Query implements \Countable, \IteratorAggregate
         if ($fields = $this->getFieldsCache()) {
             $this->fields = $fields;
         }
+        if ($references = $this->getReferencesCache()) {
+            $this->references = $references;
+        }
     }
 
     /**
@@ -99,6 +102,18 @@ abstract class Query implements \Countable, \IteratorAggregate
         $cache = $this->repository->getMandango()->getQueryCache()->get($this->hash);
 
         return ($cache && isset($cache['fields'])) ? $cache['fields'] : null;
+    }
+
+    /**
+     * Returns the references in cache.
+     *
+     * @return array|null The references in cache, or null if there is not.
+     */
+    public function getReferencesCache()
+    {
+        $cache = $this->repository->getMandango()->getQueryCache()->get($this->hash);
+
+        return ($cache && isset($cache['references'])) ? $cache['references'] : null;
     }
 
     /**

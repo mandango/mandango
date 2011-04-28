@@ -185,4 +185,18 @@ abstract class Document extends AbstractDocument
             $queryCache->set($hash, $cache);
         }
     }
+
+    /**
+     * Adds a reference cache
+     */
+    public function addReferenceCache($reference)
+    {
+        $queryCache = static::getMandango()->getQueryCache();
+
+        foreach ($this->getQueryHashes() as $hash) {
+            $cache = $queryCache->has($hash) ? $queryCache->get($hash) : array();
+            $cache['references'][] = $reference;
+            $queryCache->set($hash, $cache);
+        }
+    }
 }
