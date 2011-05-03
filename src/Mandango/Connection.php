@@ -47,6 +47,24 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Sets the server.
+     *
+     * @param string $server The server.
+     *
+     * @throws \LogicException If the mongo is initialized.
+     *
+     * @api
+     */
+    public function setServer($server)
+    {
+        if (null !== $this->mongo) {
+            throw new \LogicException('The mongo is initialized.');
+        }
+
+        $this->server = $server;
+    }
+
+    /**
      * Returns the server.
      *
      * @return string $server The server.
@@ -59,6 +77,24 @@ class Connection implements ConnectionInterface
     }
 
     /**
+     * Sets the db name.
+     *
+     * @param string $dbName The db name.
+     *
+     * @throws \LogicException If the mongoDb is initialized.
+     *
+     * @api
+     */
+    public function setDbName($dbName)
+    {
+        if (null !== $this->mongoDB) {
+            throw new \LogicException('The mongoDb is initialized.');
+        }
+
+        $this->dbName = $dbName;
+    }
+
+    /**
      * Returns the database name.
      *
      * @return string The database name.
@@ -68,6 +104,24 @@ class Connection implements ConnectionInterface
     public function getDbName()
     {
         return $this->dbName;
+    }
+
+    /**
+     * Sets the options.
+     *
+     * @param array $options An array of options.
+     *
+     * @throws \LogicException If the mongo is initialized.
+     *
+     * @api
+     */
+    public function setOptions(array $options)
+    {
+        if (null !== $this->mongo) {
+            throw new \LogicException('The mongo is initialized.');
+        }
+
+        $this->options = $options;
     }
 
     /**

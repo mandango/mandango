@@ -39,6 +39,51 @@ class ConnectionTest extends TestCase
         $this->assertSame(array('connect' => true), $connection->getOptions());
     }
 
+    public function testSetServer()
+    {
+        $connection = new Connection($this->server, $this->dbName);
+        $connection->setServer($server = 'mongodb://localhost:27017');
+        $this->assertSame($server, $connection->getServer());
+
+        $connection->getMongo();
+        try {
+            $connection->setServer($this->server);
+            $this->fail();
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('LogicException', $e);
+        }
+    }
+
+    public function testSetDbName()
+    {
+        $connection = new Connection($this->server, $this->dbName);
+        $connection->setDbName($dbName = 'mandango_testing');
+        $this->assertSame($dbName, $connection->getDbName());
+
+        $connection->getMongoDB();
+        try {
+            $connection->setDbName($this->dbName);
+            $this->fail();
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('LogicException', $e);
+        }
+    }
+
+    public function testSetOptions()
+    {
+        $connection = new Connection($this->server, $this->dbName);
+        $connection->setOptions($options = array('connect' => true));
+        $this->assertSame($options, $connection->getOptions());
+
+        $connection->getMongo();
+        try {
+            $connection->setOptions(array());
+            $this->fail();
+        } catch (\Exception $e) {
+            $this->assertInstanceOf('LogicException', $e);
+        }
+    }
+
     public function testLoggerCallable()
     {
         $connection = new Connection($this->server, $this->dbName);
