@@ -49,8 +49,11 @@ abstract class Query implements \Countable, \IteratorAggregate
 
         $hash = $this->repository->getDocumentClass();
         foreach (debug_backtrace() as $value) {
-            if (!isset($value['file'])) {
-                $hash .= $value['function'].$value['class'].$value['type'];
+            if (isset($value['function'])) {
+                $hash .= $value['function'];
+                if (isset($value['class']) && $value['type']) {
+                    $hash .= $value['class'].$value['type'];
+                }
             } else {
                 $hash .= $value['file'].$value['line'];
             }
