@@ -2040,22 +2040,33 @@ EOF;
         }
 
         // fields
+        $referenceFields = array();
+        foreach (array_merge($this->configClass['referencesOne'], $this->configClass['referencesMany']) as $reference) {
+            $referenceFields[] = $reference['field'];
+        }
+
         $fieldsCode = array();
         foreach ($this->configClass['fields'] as $name => $field) {
             if (!empty($field['inherited'])) {
                 continue;
             }
 
+            if (in_array($name, $referenceFields)) {
             $fieldsCode[] = <<<EOF
-        if (isset(\$this->data['fields']['$name'])) {
-            \$array['$name'] = \$this->data['fields']['$name'];
+        if (\$withReferenceFields) {
+            \$array['$name'] = \$this->get('$name');
         }
 EOF;
+            } else {
+            $fieldsCode[] = <<<EOF
+        \$array['$name'] = \$this->get('$name');
+EOF;
+            }
         }
         $fieldsCode = "\n".implode("\n", $fieldsCode)."\n";
 
         // method
-        $method = new Method('public', 'toArray', '', <<<EOF
+        $method = new Method('public', 'toArray', '$withReferenceFields = false', <<<EOF
 $inheritance
 $fieldsCode
         return \$array;
@@ -2064,6 +2075,8 @@ EOF
         $method->setDocComment(<<<EOF
     /**
      * Export the document data to an array.
+     *
+     * @param Boolean \$withReferenceFields Whether include the fields of references or not (false by default).
      *
      * @return array An array with the document data.
      */

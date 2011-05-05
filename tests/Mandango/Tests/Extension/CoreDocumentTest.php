@@ -773,7 +773,35 @@ class CoreDocumentTest extends TestCase
         $this->assertSame(array(
             'title'    => 'foo',
             'content'  => 'bar',
+            'note'     => null,
+            'line'     => null,
+            'text'     => null,
             'isActive' => false,
+            'date'     => null,
+            'database' => null,
+        ), $article->toArray());
+    }
+
+    public function testToArrayInitializeFields()
+    {
+        $article = \Model\Article::create()
+            ->setTitle('foo')
+            ->setContent('bar')
+            ->setIsActive(false)
+            ->save()
+        ;
+
+        $article = \Model\Article::create()->setId($article->getId());
+
+        $this->assertSame(array(
+            'title'    => 'foo',
+            'content'  => 'bar',
+            'note'     => null,
+            'line'     => null,
+            'text'     => null,
+            'isActive' => false,
+            'date'     => null,
+            'database' => null,
         ), $article->toArray());
     }
 

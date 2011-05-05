@@ -113,6 +113,7 @@ class CoreSingleInheritanceTest extends TestCase
         $document = \Model\TextareaFormElement::create()->setLabel('foo')->setDefault('bar');
         $this->assertSame(array(
             'label'   => 'foo',
+            'default' => null,
             'default' => 'bar',
         ), $document->toArray());
 
@@ -120,6 +121,7 @@ class CoreSingleInheritanceTest extends TestCase
         $document = \Model\RadioFormElement::create()->setLabel('foo')->setOptions($options);
         $this->assertSame(array(
             'label'   => 'foo',
+            'default' => null,
             'options' => $options,
         ), $document->toArray());
     }
