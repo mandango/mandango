@@ -12,7 +12,6 @@
 namespace Mandango\Tests;
 
 use Mandango\Cache\ArrayCache;
-use Mandango\Container;
 use Mandango\Connection;
 use Mandango\Mandango;
 use Mandango\Archive;
@@ -57,6 +56,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
         $this->mandango = static::$staticMandango;
         $this->unitOfWork = $this->mandango->getUnitOfWork();
+        $this->unitOfWork->clear();
+        $this->unitOfWork->clear();
         $this->metadata = $this->mandango->getMetadata();
         $this->queryCache = $this->mandango->getQueryCache();
 
@@ -71,14 +72,10 @@ class TestCase extends \PHPUnit_Framework_TestCase
             $collection->deleteIndexes();
             $collection->drop();
         }
-
-        Container::set('default', $this->mandango);
-        Container::setDefaultName('default');
     }
 
     protected function tearDown()
     {
-        Container::clear();
         Archive::clear();
         TypeContainer::reset();
     }
@@ -87,7 +84,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     {
         $articles = array();
         foreach ($this->createArticlesRaw($nb) as $articleRaw) {
-            $article = \Model\Article::create()->setId($articleRaw['_id']);
+            $article = $this->mandango->createDocument('Model\Article')->setId($articleRaw['_id']);
             if ($idAsKey) {
                 $articles[$article->getId()->__toString()] = $article;
             } else {
@@ -107,7 +104,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
                 'content' => 'Content'.$i,
             );
         }
-        \Model\Article::getRepository()->getCollection()->batchInsert($articles);
+        $this->mandango->getRepository('Model\Article')->getCollection()->batchInsert($articles);
 
         return $articles;
     }

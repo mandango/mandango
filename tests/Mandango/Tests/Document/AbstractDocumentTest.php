@@ -26,7 +26,7 @@ class AbstractDocumentTest extends TestCase
 {
     public function testCreate()
     {
-        $this->assertEquals(new \Model\Article(), \Model\Article::create());
+        $this->assertEquals($this->mandango->createDocument('Model\Article'), $this->mandango->createDocument('Model\Article'));
     }
 
     public function testDocumentData()

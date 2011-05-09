@@ -17,73 +17,73 @@ class CoreRepositoryTest extends TestCase
 {
     public function testSaveInsertingNotModified()
     {
-        $article = \Model\Article::create();
-        \Model\Article::getRepository()->save($article);
+        $article = $this->mandango->createDocument('Model\Article');
+        $this->mandango->getRepository('Model\Article')->save($article);
         $this->assertTrue($article->isNew());
 
         $articles = array(
-            \Model\Article::create(),
-            \Model\Article::create()->setTitle('foo'),
+            $this->mandango->createDocument('Model\Article'),
+            $this->mandango->createDocument('Model\Article')->setTitle('foo'),
         );
-        \Model\Article::getRepository()->save($articles);
+        $this->mandango->getRepository('Model\Article')->save($articles);
         $this->assertTrue($articles[0]->isNew());
         $this->assertFalse($articles[1]->isNew());
     }
 
     public function testSaveUpdatingNotModified()
     {
-        $article = \Model\Article::create()->setTitle('foo')->save();
-        \Model\Article::getRepository()->save($article);
+        $article = $this->mandango->createDocument('Model\Article')->setTitle('foo')->save();
+        $this->mandango->getRepository('Model\Article')->save($article);
 
         $articles = array(
-            \Model\Article::create()->setTitle('a1')->save(),
-            \Model\Article::create()->setTitle('a2')->save()->setTitle('a2u'),
+            $this->mandango->createDocument('Model\Article')->setTitle('a1')->save(),
+            $this->mandango->createDocument('Model\Article')->setTitle('a2')->save()->setTitle('a2u'),
         );
-        \Model\Article::getRepository()->save($articles);
+        $this->mandango->getRepository('Model\Article')->save($articles);
     }
 
     public function testSaveInsertSingleDocument()
     {
-        $article = \Model\Article::create()->fromArray(array(
+        $article = $this->mandango->createDocument('Model\Article')->fromArray(array(
             'title'   => 'foo',
             'content' => 12345,
         ));
 
-        \Model\Article::getRepository()->save($article);
-        $this->assertSame(1, \Model\Article::getRepository()->getCollection()->count());
+        $this->mandango->getRepository('Model\Article')->save($article);
+        $this->assertSame(1, $this->mandango->getRepository('Model\Article')->getCollection()->count());
 
         $this->assertFalse($article->isNew());
         $this->assertFalse($article->isModified());
-        $articleRaw = \Model\Article::getRepository()->getCollection()->findOne();
+        $articleRaw = $this->mandango->getRepository('Model\Article')->getCollection()->findOne();
         $this->assertSame(3, count($articleRaw));
         $this->assertEquals($article->getId(), $articleRaw['_id']);
         $this->assertSame('foo', $articleRaw['title']);
         $this->assertSame('12345', $articleRaw['content']);
-        $this->assertTrue(\Model\Article::getRepository()->getIdentityMap()->has($article->getId()));
+        $this->assertTrue($this->mandango->getRepository('Model\Article')->getIdentityMap()->has($article->getId()));
     }
 
     public function testSaveInsertMultipleDocuments()
     {
         $articles = array();
         for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = \Model\Article::create()->fromArray(array(
+            $articles[$i] = $this->mandango->createDocument('Model\Article')->fromArray(array(
                 'title'   => 'foo'.$i,
                 'content' => 12345 + $i,
             ));
         }
 
-        \Model\Article::getRepository()->save($articles);
-        $this->assertSame(5, \Model\Article::getRepository()->getCollection()->count());
+        $this->mandango->getRepository('Model\Article')->save($articles);
+        $this->assertSame(5, $this->mandango->getRepository('Model\Article')->getCollection()->count());
 
         foreach ($articles as $i => $article) {
             $this->assertFalse($article->isNew());
             $this->assertFalse($article->isModified());
-            $articleRaw = \Model\Article::getRepository()->getCollection()->findOne(array('_id' => $article->getId()));
+            $articleRaw = $this->mandango->getRepository('Model\Article')->getCollection()->findOne(array('_id' => $article->getId()));
             $this->assertSame(3, count($articleRaw));
             $this->assertEquals($article->getId(), $articleRaw['_id']);
             $this->assertSame('foo'.$i, $articleRaw['title']);
             $this->assertSame(strval(12345 + $i), $articleRaw['content']);
-            $this->assertTrue(\Model\Article::getRepository()->getIdentityMap()->has($article->getId()));
+            $this->assertTrue($this->mandango->getRepository('Model\Article')->getIdentityMap()->has($article->getId()));
         }
     }
 
@@ -91,41 +91,41 @@ class CoreRepositoryTest extends TestCase
     {
         $articles = array();
         for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = \Model\Article::create()->fromArray(array(
+            $articles[$i] = $this->mandango->createDocument('Model\Article')->fromArray(array(
                 'title'   => 'foo'.$i,
                 'content' => 12345 + $i,
             ));
         }
-        \Model\Article::getRepository()->save($articles);
+        $this->mandango->getRepository('Model\Article')->save($articles);
 
         $articles[2]->setTitle('updated!');
-        \Model\Article::getRepository()->save($articles[2]);
+        $this->mandango->getRepository('Model\Article')->save($articles[2]);
 
         $this->assertFalse($articles[2]->isModified());
-        $this->assertSame(4, \Model\Article::getRepository()->getCollection()->find(array('title' => new \MongoRegex('/^foo/')))->count());
+        $this->assertSame(4, $this->mandango->getRepository('Model\Article')->getCollection()->find(array('title' => new \MongoRegex('/^foo/')))->count());
     }
 
     public function testSaveUpdateMultipleDocument()
     {
         $articles = array();
         for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = \Model\Article::create()->setTitle('foo'.$i);
+            $articles[$i] = $this->mandango->createDocument('Model\Article')->setTitle('foo'.$i);
         }
-        \Model\Article::getRepository()->save($articles);
+        $this->mandango->getRepository('Model\Article')->save($articles);
 
         $articles[2]->setTitle('updated!');
         $articles[4]->setTitle('updated!');
-        \Model\Article::getRepository()->save(array($articles[2], $articles[4]));
+        $this->mandango->getRepository('Model\Article')->save(array($articles[2], $articles[4]));
 
         $this->assertFalse($articles[4]->isModified());
         $this->assertFalse($articles[4]->isModified());
-        $this->assertSame(3, \Model\Article::getRepository()->getCollection()->find(array('title' => new \MongoRegex('/^foo/')))->count());
+        $this->assertSame(3, $this->mandango->getRepository('Model\Article')->getCollection()->find(array('title' => new \MongoRegex('/^foo/')))->count());
     }
 
     public function testSaveSaveReferences()
     {
-        $article = \Model\Article::create()->setTitle('foo');
-        $author = \Model\Author::create()->setName('bar');
+        $article = $this->mandango->createDocument('Model\Article')->setTitle('foo');
+        $author = $this->mandango->createDocument('Model\Author')->setName('bar');
         $article->setAuthor($author);
         $article->save();
 
@@ -137,10 +137,10 @@ class CoreRepositoryTest extends TestCase
     public function testSaveSaveReferencesSameClass()
     {
         $messages = array();
-        $messages['barbelith'] = \Model\Message::create()->setAuthor('barbelith');
-        $messages['pablodip'] = \Model\Message::create()->setAuthor('pablodip')->setReplyTo($messages['barbelith']);
+        $messages['barbelith'] = $this->mandango->createDocument('Model\Message')->setAuthor('barbelith');
+        $messages['pablodip'] = $this->mandango->createDocument('Model\Message')->setAuthor('pablodip')->setReplyTo($messages['barbelith']);
 
-        \Model\Message::getRepository()->save($messages);
+        $this->mandango->getRepository('Model\Message')->save($messages);
 
         $this->assertFalse($messages['pablodip']->isNew());
         $this->assertFalse($messages['barbelith']->isNew());
@@ -150,10 +150,10 @@ class CoreRepositoryTest extends TestCase
     public function testSaveEventsInsert()
     {
         $documents = array(
-            \Model\Events::create()->setName('foo')->setMyEventPrefix('2'),
-            \Model\Events::create()->setName('bar')->setMyEventPrefix('1'),
+            $this->mandango->createDocument('Model\Events')->setName('foo')->setMyEventPrefix('2'),
+            $this->mandango->createDocument('Model\Events')->setName('bar')->setMyEventPrefix('1'),
         );
-        \Model\Events::getRepository()->save($documents);
+        $this->mandango->getRepository('Model\Events')->save($documents);
 
         $this->assertSame(array(
             '2PreInserting',
@@ -168,11 +168,11 @@ class CoreRepositoryTest extends TestCase
     public function testSaveEventsUpdate()
     {
         $documents = array(
-            \Model\Events::create()->setName('foo')->save()->clearEvents()->setName('bar')->setMyEventPrefix('2')->save(),
-            \Model\Events::create()->setName('bar')->save()->clearEvents()->setName('foo')->setMyEventPrefix('1')->save()
+            $this->mandango->createDocument('Model\Events')->setName('foo')->save()->clearEvents()->setName('bar')->setMyEventPrefix('2')->save(),
+            $this->mandango->createDocument('Model\Events')->setName('bar')->save()->clearEvents()->setName('foo')->setMyEventPrefix('1')->save()
         );
 
-        \Model\Events::getRepository()->save($documents);
+        $this->mandango->getRepository('Model\Events')->save($documents);
 
         $this->assertSame(array(
             '2PreUpdating',
@@ -187,8 +187,8 @@ class CoreRepositoryTest extends TestCase
     public function testSaveResetGroups()
     {
         // insert
-        $article = \Model\Article::create()
-            ->addCategories($category = \Model\Category::create()
+        $article = $this->mandango->createDocument('Model\Article')
+            ->addCategories($category = $this->mandango->createDocument('Model\Category')
                 ->setName('foo')
             )
             ->save()
@@ -197,7 +197,7 @@ class CoreRepositoryTest extends TestCase
 
         // update
         $article
-             ->addCategories($category = \Model\Category::create()
+             ->addCategories($category = $this->mandango->createDocument('Model\Category')
                 ->setName('foo')
             )
             ->save()
@@ -209,21 +209,21 @@ class CoreRepositoryTest extends TestCase
     {
         $articles = array();
         for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = \Model\Article::create()->setTitle('foo');
+            $articles[$i] = $this->mandango->createDocument('Model\Article')->setTitle('foo');
         }
-        \Model\Article::getRepository()->save($articles);
+        $this->mandango->getRepository('Model\Article')->save($articles);
 
         $id = $articles[2]->getId();
-        \Model\Article::getRepository()->delete($articles[2]);
+        $this->mandango->getRepository('Model\Article')->delete($articles[2]);
 
         $this->assertTrue($articles[2]->isNew());
-        $this->assertNull(\Model\Article::getRepository()->getCollection()->findOne(array('_id' => $id)));
-        $this->assertSame(4, \Model\Article::getRepository()->getCollection()->count());
-        $this->assertFalse(\Model\Article::getRepository()->getIdentityMap()->has($id));
+        $this->assertNull($this->mandango->getRepository('Model\Article')->getCollection()->findOne(array('_id' => $id)));
+        $this->assertSame(4, $this->mandango->getRepository('Model\Article')->getCollection()->count());
+        $this->assertFalse($this->mandango->getRepository('Model\Article')->getIdentityMap()->has($id));
         foreach (array(1, 3, 4, 5) as $key) {
             $this->assertFalse($articles[$key]->isNew());
-            $this->assertNotNull(\Model\Article::getRepository()->getCollection()->findOne(array('_id' => $articles[$key]->getId())));
-            $this->assertTrue(\Model\Article::getRepository()->getIdentityMap()->has($articles[$key]->getId()));
+            $this->assertNotNull($this->mandango->getRepository('Model\Article')->getCollection()->findOne(array('_id' => $articles[$key]->getId())));
+            $this->assertTrue($this->mandango->getRepository('Model\Article')->getIdentityMap()->has($articles[$key]->getId()));
         }
     }
 
@@ -231,28 +231,28 @@ class CoreRepositoryTest extends TestCase
     {
         $articles = array();
         for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = \Model\Article::create()->setTitle('foo');
+            $articles[$i] = $this->mandango->createDocument('Model\Article')->setTitle('foo');
         }
-        \Model\Article::getRepository()->save($articles);
+        $this->mandango->getRepository('Model\Article')->save($articles);
 
         $ids = array($articles[2]->getId(), $articles[3]->getId());
-        \Model\Article::getRepository()->delete(array($articles[2], $articles[3]));
+        $this->mandango->getRepository('Model\Article')->delete(array($articles[2], $articles[3]));
 
         $this->assertTrue($articles[2]->isNew());
         $this->assertTrue($articles[3]->isNew());
-        $this->assertSame(0, \Model\Article::getRepository()->getCollection()->find(array('_id' => array('$in' => $ids)))->count());
-        $this->assertFalse(\Model\Article::getRepository()->getIdentityMap()->has($ids[0]));
-        $this->assertFalse(\Model\Article::getRepository()->getIdentityMap()->has($ids[1]));
+        $this->assertSame(0, $this->mandango->getRepository('Model\Article')->getCollection()->find(array('_id' => array('$in' => $ids)))->count());
+        $this->assertFalse($this->mandango->getRepository('Model\Article')->getIdentityMap()->has($ids[0]));
+        $this->assertFalse($this->mandango->getRepository('Model\Article')->getIdentityMap()->has($ids[1]));
         foreach (array(1, 4, 5) as $key) {
             $this->assertFalse($articles[$key]->isNew());
-            $this->assertNotNull(\Model\Article::getRepository()->getCollection()->findOne(array('_id' => $articles[$key]->getId())));
-            $this->assertTrue(\Model\Article::getRepository()->getIdentityMap()->has($articles[$key]->getId()));
+            $this->assertNotNull($this->mandango->getRepository('Model\Article')->getCollection()->findOne(array('_id' => $articles[$key]->getId())));
+            $this->assertTrue($this->mandango->getRepository('Model\Article')->getIdentityMap()->has($articles[$key]->getId()));
         }
     }
 
     public function testDeleteEventsSingleDocument()
     {
-        $document = \Model\Events::create()->setName('foo')->save()->clearEvents()->setMyEventPrefix('ups')->setName('bar');
+        $document = $this->mandango->createDocument('Model\Events')->setName('foo')->save()->clearEvents()->setMyEventPrefix('ups')->setName('bar');
         $document->delete();
 
         $this->assertSame(array(
@@ -263,9 +263,9 @@ class CoreRepositoryTest extends TestCase
 
     public function testEnsureIndexesMethod()
     {
-        \Model\Article::getRepository()->ensureIndexes();
+        $this->mandango->getRepository('Model\Article')->ensureIndexes();
 
-        $indexInfo = \Model\Article::getRepository()->getCollection()->getIndexInfo();
+        $indexInfo = $this->mandango->getRepository('Model\Article')->getCollection()->getIndexInfo();
 
         // root
         $this->assertSame(array('slug' => 1), $indexInfo[1]['key']);
@@ -299,25 +299,25 @@ class CoreRepositoryTest extends TestCase
 
     public function testDocumentClass()
     {
-        $this->assertSame('Model\Article', \Model\Article::getRepository()->getDocumentClass());
-        $this->assertSame('Model\Category', \Model\Category::getRepository()->getDocumentClass());
+        $this->assertSame('Model\Article', $this->mandango->getRepository('Model\Article')->getDocumentClass());
+        $this->assertSame('Model\Category', $this->mandango->getRepository('Model\Category')->getDocumentClass());
     }
 
     public function testIsFile()
     {
-        $this->assertFalse(\Model\Article::getRepository()->isFile());
-        $this->assertTrue(\Model\Image::getRepository()->isFile());
+        $this->assertFalse($this->mandango->getRepository('Model\Article')->isFile());
+        $this->assertTrue($this->mandango->getRepository('Model\Image')->isFile());
     }
 
     public function testConnectionName()
     {
-        $this->assertNull(\Model\Article::getRepository()->getConnectionName());
-        $this->assertSame('global', \Model\ConnectionGlobal::getRepository()->getConnectionName());
+        $this->assertNull($this->mandango->getRepository('Model\Article')->getConnectionName());
+        $this->assertSame('global', $this->mandango->getRepository('Model\ConnectionGlobal')->getConnectionName());
     }
 
     public function testCollectionName()
     {
-        $this->assertSame('articles', \Model\Article::getRepository()->getCollectionName());
-        $this->assertSame('model_category', \Model\Category::getRepository()->getCollectionName());
+        $this->assertSame('articles', $this->mandango->getRepository('Model\Article')->getCollectionName());
+        $this->assertSame('model_category', $this->mandango->getRepository('Model\Category')->getCollectionName());
     }
 }

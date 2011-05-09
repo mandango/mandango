@@ -90,6 +90,9 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
      */
     protected function doInitializeSaved(array $data)
     {
+        $parent = $this->getParent();
+        $mandango = $parent->getMandango();
+
         $discriminatorField = $this->getDiscriminatorField();
         $discriminatorMap = $this->getDiscriminatorMap();
 
@@ -105,7 +108,7 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
 
         $documents = array();
         foreach ($ids as $documentClass => $documentClassIds) {
-            foreach ((array) call_user_func(array($documentClass, 'getRepository'))->findById($documentClassIds) as $document) {
+            foreach ((array) $mandango->getRepository($documentClass)->findById($documentClassIds) as $document) {
                 $documents[] = $document;
             }
         }

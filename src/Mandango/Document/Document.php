@@ -27,23 +27,21 @@ abstract class Document extends AbstractDocument
     /**
      * Returns the repository.
      *
-     * @return Mandango\Repository The repository of the document.
+     * @return Mandango\Repository The repository.
      *
      * @api
      */
-    static public function getRepository()
+    protected function getRepository()
     {
-        return static::getMandango()->getRepository(get_called_class());
+        return $this->getMandango()->getRepository();
     }
 
     /**
-     * INTERNAL. Set the id of the document.
+     * Set the id of the document.
      *
-     * @param \MongoId $id The id.
+     * @param MongoId $id The id.
      *
      * @return Mandango\Document\Document The document (fluent interface).
-     *
-     * @api
      */
     public function setId(\MongoId $id)
     {
@@ -102,7 +100,7 @@ abstract class Document extends AbstractDocument
             throw new \LogicException('The document is new.');
         }
 
-        $this->setDocumentData(static::getRepository()->getCollection()->findOne(array('_id' => $this->getId())), true);
+        $this->setDocumentData($this->getRepository()->getCollection()->findOne(array('_id' => $this->getId())), true);
 
         return $this;
     }
@@ -116,7 +114,7 @@ abstract class Document extends AbstractDocument
      */
     public function save()
     {
-        static::getRepository()->save($this);
+        $this->getRepository()->save($this);
 
         return $this;
     }
@@ -128,7 +126,7 @@ abstract class Document extends AbstractDocument
      */
     public function delete()
     {
-        static::getRepository()->delete($this);
+        $this->getRepository()->delete($this);
     }
 
     /**
@@ -177,7 +175,7 @@ abstract class Document extends AbstractDocument
      */
     public function addFieldCache($field)
     {
-        $queryCache = static::getMandango()->getQueryCache();
+        $queryCache = $this->getMandango()->getQueryCache();
 
         foreach ($this->getQueryHashes() as $hash) {
             $cache = $queryCache->has($hash) ? $queryCache->get($hash) : array();
@@ -191,7 +189,7 @@ abstract class Document extends AbstractDocument
      */
     public function addReferenceCache($reference)
     {
-        $queryCache = static::getMandango()->getQueryCache();
+        $queryCache = $this->getMandango()->getQueryCache();
 
         foreach ($this->getQueryHashes() as $hash) {
             $cache = $queryCache->has($hash) ? $queryCache->get($hash) : array();

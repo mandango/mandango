@@ -23,10 +23,10 @@ class UnitOfWorkTest extends TestCase
         $this->assertFalse($unitOfWork->hasPendingForPersist());
         $this->assertFalse($unitOfWork->hasPending());
 
-        $article = new \Model\Article();
-        $category1 = new \Model\Category();
-        $category2 = new \Model\Category();
-        $category3 = new \Model\Category();
+        $article = $this->mandango->createDocument('Model\Article');
+        $category1 = $this->mandango->createDocument('Model\Category');
+        $category2 = $this->mandango->createDocument('Model\Category');
+        $category3 = $this->mandango->createDocument('Model\Category');
 
         $unitOfWork->persist($category1);
         $unitOfWork->persist(array($category3, $article));
@@ -50,10 +50,10 @@ class UnitOfWorkTest extends TestCase
         $this->assertFalse($unitOfWork->hasPendingForRemove());
         $this->assertFalse($unitOfWork->hasPending());
 
-        $article = new \Model\Article();
-        $category1 = new \Model\Category();
-        $category2 = new \Model\Category();
-        $category3 = new \Model\Category();
+        $article = $this->mandango->createDocument('Model\Article');
+        $category1 = $this->mandango->createDocument('Model\Category');
+        $category2 = $this->mandango->createDocument('Model\Category');
+        $category3 = $this->mandango->createDocument('Model\Category');
 
         $unitOfWork->remove($category1);
         $unitOfWork->remove(array($category3, $article));
@@ -76,9 +76,9 @@ class UnitOfWorkTest extends TestCase
 
         $this->assertFalse($unitOfWork->hasPending());
 
-        $article = new \Model\Article();
-        $category1 = new \Model\Category();
-        $category2 = new \Model\Category();
+        $article = $this->mandango->createDocument('Model\Article');
+        $category1 = $this->mandango->createDocument('Model\Category');
+        $category2 = $this->mandango->createDocument('Model\Category');
 
         $unitOfWork->persist($article);
         $unitOfWork->persist($category1);
@@ -91,12 +91,12 @@ class UnitOfWorkTest extends TestCase
 
     public function testCommit()
     {
-        $article1 = new \Model\Article();
-        $article2 = new \Model\Article();
-        $author1 = new \Model\Author();
-        $author2 = new \Model\Author();
-        $category1 = new \Model\Category();
-        $category2 = new \Model\Category();
+        $article1 = $this->mandango->createDocument('Model\Article');
+        $article2 = $this->mandango->createDocument('Model\Article');
+        $author1 = $this->mandango->createDocument('Model\Author');
+        $author2 = $this->mandango->createDocument('Model\Author');
+        $category1 = $this->mandango->createDocument('Model\Category');
+        $category2 = $this->mandango->createDocument('Model\Category');
 
         $articleRepository = $this->getMockBuilder('Model\ArticleRepository')->disableOriginalConstructor()->getMock();
         $articleRepository->expects($this->any())->method('save')->with(array(

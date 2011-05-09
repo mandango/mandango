@@ -26,38 +26,6 @@ abstract class AbstractDocument
     protected $fieldsModified = array();
 
     /**
-     * Creates an instance of the document and returns it to have a fluent interface.
-     *
-     * @return Mandango\AbstractDocument The instance.
-     *
-     * @api
-     */
-    static public function create()
-    {
-        return new static();
-    }
-
-    /*
-     * Returns the mandango of the document.
-     *
-     * @return Mandango\Mandango The mandango of the document.
-     *
-     * abstract static public function getMandango();
-     */
-
-     /**
-      * Returns the metadata info of the class.
-      *
-      * @return array The metadata info of the class.
-      *
-      * @api
-      */
-     static public function getMetadata()
-     {
-         return static::getMandango()->getMetadata()->getClassInfo(get_called_class());
-     }
-
-    /**
      * Returns the document data.
      *
      * @return array The document data.

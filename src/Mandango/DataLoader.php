@@ -78,7 +78,7 @@ class DataLoader
 
         $maps = array();
         foreach ($data as $class => $datum) {
-            $maps[$class] = $class::getMetadata();
+            $maps[$class] = $mandango->getRepository($class)->getMetadata();
         }
 
         $referencesOne = array();
@@ -90,7 +90,7 @@ class DataLoader
             $map = $metadata;
             while ($map['inheritance']) {
                 $inheritanceClass = $map['inheritance']['class'];
-                $map = $inheritanceClass::getMetadata();
+                $map = $mandango->getRepository($inheritanceClass)->getMetadata();
                 $referencesOne[$class] = array_merge($map['referencesOne'], $referencesOne[$class]);
                 $referencesMany[$class] = array_merge($map['referencesMany'], $referencesMany[$class]);
             }
@@ -109,7 +109,7 @@ class DataLoader
             }
             $datum = $data[$class][$key];
 
-            $documents[$class][$key] = $document = new $class();
+            $documents[$class][$key] = $document = new $class($mandango);
 
             // referencesOne
             foreach ($referencesOne[$class] as $name => $reference) {

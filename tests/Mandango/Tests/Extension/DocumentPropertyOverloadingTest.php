@@ -17,7 +17,7 @@ class DocumentPropertyOverloadingTest extends TestCase
 {
     public function test__set()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->createDocument('Model\Article');
         $article->title = 'foo';
         $this->assertSame('foo', $article->getTitle());
     }
@@ -27,13 +27,13 @@ class DocumentPropertyOverloadingTest extends TestCase
      */
     public function test__setNameNotExists()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->createDocument('Model\Article');
         $article->no = 'foo';
     }
 
     public function test__get()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->createDocument('Model\Article');
         $article->setTitle('foo');
         $this->assertSame('foo', $article->title);
     }
@@ -43,7 +43,7 @@ class DocumentPropertyOverloadingTest extends TestCase
      */
     public function test__getNameNotExists()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->createDocument('Model\Article');
         $article->no;
     }
 }

@@ -48,6 +48,15 @@ interface RepositoryInterface
     function getDocumentClass();
 
     /**
+     * Returns the metadata.
+     *
+     * @return array The metadata.
+     *
+     * @api
+     */
+    function getMetadata();
+
+    /**
      * Returns if the document is a file (if it uses GridFS).
      *
      * @return boolean If the document is a file.

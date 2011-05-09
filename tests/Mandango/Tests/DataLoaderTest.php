@@ -77,32 +77,32 @@ class DataLoaderTest extends TestCase
         $dataLoader->load($data);
 
         // articles
-        $this->assertSame(2, \Model\Article::getRepository()->count());
+        $this->assertSame(2, $this->mandango->getRepository('Model\Article')->count());
 
-        $article = \Model\Article::getRepository()->createQuery(array('title' => 'Article 1'))->one();
+        $article = $this->mandango->getRepository('Model\Article')->createQuery(array('title' => 'Article 1'))->one();
         $this->assertNotNull($article);
         $this->assertSame('Contuent', $article->getContent());
         $this->assertSame('Francisco', $article->getAuthor()->getName());
         $this->assertSame(2, count($article->getCategories()->getSaved()));
 
-        $article = \Model\Article::getRepository()->createQuery(array('title' => 'My Article 2'))->one();
+        $article = $this->mandango->getRepository('Model\Article')->createQuery(array('title' => 'My Article 2'))->one();
         $this->assertNotNull($article);
         $this->assertNull($article->getAuthorId());
 
         // authors
-        $this->assertSame(3, \Model\Author::getRepository()->count());
+        $this->assertSame(3, $this->mandango->getRepository('Model\Author')->count());
 
-        $author = \Model\Author::getRepository()->createQuery(array('name' => 'PabloDip'))->one();
+        $author = $this->mandango->getRepository('Model\Author')->createQuery(array('name' => 'PabloDip'))->one();
         $this->assertNotNull($author);
 
-        $author = \Model\Author::getRepository()->createQuery(array('name' => 'Francisco'))->one();
+        $author = $this->mandango->getRepository('Model\Author')->createQuery(array('name' => 'Francisco'))->one();
         $this->assertNotNull($author);
 
-        $author = \Model\Author::getRepository()->createQuery(array('name' => 'Pedro'))->one();
+        $author = $this->mandango->getRepository('Model\Author')->createQuery(array('name' => 'Pedro'))->one();
         $this->assertNotNull($author);
 
         // categories
-        $this->assertSame(4, \Model\Category::getRepository()->count());
+        $this->assertSame(4, $this->mandango->getRepository('Model\Category')->count());
     }
 
     public function testLoadSingleInheritanceReferences()
@@ -138,9 +138,9 @@ class DataLoaderTest extends TestCase
         $dataLoader = new DataLoader($this->mandango);
         $dataLoader->load($data);
 
-        $this->assertSame(1, \Model\RadioFormElement::getRepository()->createQuery()->count());
-        $radio = \Model\RadioFormElement::getRepository()->createQuery()->one();
-        $this->assertSame(\Model\Author::getRepository()->createQuery(array('name' => 'pablodip'))->one(), $radio->getAuthor());
+        $this->assertSame(1, $this->mandango->getRepository('Model\RadioFormElement')->createQuery()->count());
+        $radio = $this->mandango->getRepository('Model\RadioFormElement')->createQuery()->one();
+        $this->assertSame($this->mandango->getRepository('Model\Author')->createQuery(array('name' => 'pablodip'))->one(), $radio->getAuthor());
         $this->assertSame(2, count($radio->getCategories()->getSaved()));
     }
 
@@ -161,16 +161,16 @@ class DataLoaderTest extends TestCase
         $dataLoader = new DataLoader($this->mandango);
 
         $dataLoader->load($data);
-        $this->assertSame(1, \Model\Author::getRepository()->count());
+        $this->assertSame(1, $this->mandango->getRepository('Model\Author')->count());
 
         $dataLoader->load($data);
-        $this->assertSame(2, \Model\Author::getRepository()->count());
+        $this->assertSame(2, $this->mandango->getRepository('Model\Author')->count());
 
         $dataLoader->load($data, false);
-        $this->assertSame(3, \Model\Author::getRepository()->count());
+        $this->assertSame(3, $this->mandango->getRepository('Model\Author')->count());
 
         $dataLoader->load($data, true);
-        $this->assertSame(1, \Model\Author::getRepository()->count());
+        $this->assertSame(1, $this->mandango->getRepository('Model\Author')->count());
     }
 
     /**
@@ -178,7 +178,7 @@ class DataLoaderTest extends TestCase
      */
     public function testLoadMandangoUnitOfWorkHasPending()
     {
-        $author = \Model\Author::create()->setName('Pablo');
+        $author = $this->mandango->createDocument('Model\Author');
         $this->mandango->persist($author);
 
         $dataLoader = new DataLoader($this->mandango);

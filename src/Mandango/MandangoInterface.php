@@ -157,6 +157,17 @@ interface MandangoInterface
     function getDefaultConnection();
 
     /**
+     * Creates a new document.
+     *
+     * @param string $documentClass The document class.
+     *
+     * @return Document The document.
+     *
+     * @api
+     */
+    function createDocument($documentClass);
+
+    /**
      * Returns repositories by document class.
      *
      * @param string $documentClass The document class.

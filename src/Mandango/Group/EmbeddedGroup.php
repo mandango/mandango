@@ -101,7 +101,8 @@ class EmbeddedGroup extends Group
 
         $rap['root']->addFieldCache($rap['path']);
 
-        $result = call_user_func(array(get_class($rap['root']), 'getRepository'))
+        $result = $rap['root']
+            ->getRepository()
             ->getCollection()
             ->findOne(array('_id' => $rap['root']->getId()), array($rap['path']))
         ;
@@ -116,10 +117,11 @@ class EmbeddedGroup extends Group
     {
         $documentClass = $this->getDocumentClass();
         $rap = $this->getRootAndPath();
+        $mandango = $rap['root']->getMandango();
 
         $saved = array();
         foreach ($data as $key => $datum) {
-            $saved[] = $document = new $documentClass();
+            $saved[] = $document = new $documentClass($mandango);
             $document->setDocumentData($datum);
             $document->setRootAndPath($rap['root'], $rap['path'].'.'.$key);
         }

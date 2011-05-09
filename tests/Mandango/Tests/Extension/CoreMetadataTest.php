@@ -17,8 +17,8 @@ class CoreMetadataTest extends TestCase
 {
     public function testMetadata()
     {
-        $this->assertSame($this->metadata->getClassInfo('Model\Article'), \Model\Article::getMetadata());
-        $this->assertSame($this->metadata->getClassInfo('Model\Source'), \Model\Source::getMetadata());
+        $this->assertSame($this->metadata->getClassInfo('Model\Article'), $this->mandango->getRepository('Model\Article')->getMetadata());
+        $this->assertSame($this->metadata->getClassInfo('Model\Source'), $this->mandango->getMetadata()->getClassInfo('Model\Source'));
     }
 
     public function testInherited()
