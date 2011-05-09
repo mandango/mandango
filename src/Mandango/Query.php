@@ -51,11 +51,18 @@ abstract class Query implements \Countable, \IteratorAggregate
         foreach (debug_backtrace() as $value) {
             if (isset($value['function'])) {
                 $hash .= $value['function'];
-                if (isset($value['class']) && $value['type']) {
-                    $hash .= $value['class'].$value['type'];
-                }
-            } else {
-                $hash .= $value['file'].$value['line'];
+            }
+            if (isset($value['class'])) {
+                $hash .= $value['class'];
+            }
+            if (isset($value['type'])) {
+                $hash .= $value['type'];
+            }
+            if (isset($value['file'])) {
+                $hash .= $value['file'];
+            }
+            if (isset($value['line'])) {
+                $hash .= $value['line'];
             }
         }
         $this->hash = md5($hash);
