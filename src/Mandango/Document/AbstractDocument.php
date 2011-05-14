@@ -26,6 +26,16 @@ abstract class AbstractDocument
     protected $fieldsModified = array();
 
     /**
+     * Returns the document metadata.
+     *
+     * @return array The document metadata.
+     */
+    public function getMetadata()
+    {
+        return $this->getMandango()->getMetadata()->getClassInfo(get_class($this));
+    }
+
+    /**
      * Returns the document data.
      *
      * @return array The document data.
@@ -266,5 +276,56 @@ abstract class AbstractDocument
                 Archive::remove($this, 'embedded_one.'.$name);
             }
         }
+    }
+
+    /**
+     * Returns an array with the document info to debug.
+     *
+     * @return array An array with the document info.
+     */
+    public function debug()
+    {
+        $info = array();
+
+        $metadata = $this->getMetadata();
+
+        $referenceFields = array();
+        foreach (array_merge($metadata['referencesOne'], $metadata['referencesMany']) as $name => $reference) {
+            $referenceFields[] = $reference['field'];
+        }
+
+        // fields
+        foreach ($metadata['fields'] as $name => $field) {
+            if (in_array($name, $referenceFields)) {
+                continue;
+            }
+            $info['fields'][$name] = $this->{'get'.ucfirst($name)}();
+        }
+
+        // referencesOne
+        foreach ($metadata['referencesOne'] as $name => $referenceOne) {
+            $info['referencesOne'][$name] = $this->{'get'.ucfirst($referenceOne['field'])}();
+        }
+
+        // referencesMany
+        foreach ($metadata['referencesMany'] as $name => $referenceMany) {
+            $info['referencesMany'][$name] = $this->{'get'.ucfirst($referenceMany['field'])}();
+        }
+
+        // embeddedsOne
+        foreach ($metadata['embeddedsOne'] as $name => $embeddedOne) {
+            $embedded = $this->{'get'.ucfirst($name)}();
+            $info['embeddedsOne'][$name] = $embedded ? $embedded->debug() : null;
+        }
+
+        // embeddedsMany
+        foreach ($metadata['embeddedsMany'] as $name => $embeddedMany) {
+            $info['embeddedsMany'][$name] = array();
+            foreach ($this->{'get'.ucfirst($name)}() as $key => $value) {
+                $info['embeddedsMany'][$name][$key] = $value->debug();
+            }
+        }
+
+        return $info;
     }
 }

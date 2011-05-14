@@ -982,6 +982,12 @@ class CoreDocumentTest extends TestCase
      * Related to Mandango\Document\AbstractDocument
      */
 
+    public function testGetMetadata()
+    {
+        $article = $this->mandango->createDocument('Model\Article');
+        $this->assertSame($this->mandango->getMetadata()->getClassInfo('Model\Article'), $article->getMetadata());
+    }
+
     public function testRootAndPath()
     {
         $article1 = $this->mandango->createDocument('Model\Article');
@@ -1022,6 +1028,13 @@ class CoreDocumentTest extends TestCase
         $rap = $info->getRootAndPath();
         $this->assertSame($article, $rap['root']);
         $this->assertSame('comments._add0.infos._add0', $rap['path']);
+    }
+
+    public function testDebug()
+    {
+        $article = $this->mandango->createDocument('Model\Article');
+
+        $this->assertTrue(is_array($article->debug()));
     }
 
     /*
