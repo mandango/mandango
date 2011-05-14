@@ -29,9 +29,9 @@ class AbstractGroupTest extends TestCase
     public function testAdd()
     {
         $add = array(
-            $this->mandango->createDocument('Model\Article'),
-            $this->mandango->createDocument('Model\Article'),
-            $this->mandango->createDocument('Model\Article'),
+            $this->mandango->create('Model\Article'),
+            $this->mandango->create('Model\Article'),
+            $this->mandango->create('Model\Article'),
         );
 
         $group = new AbstractGroup('Model\Comment');
@@ -46,9 +46,9 @@ class AbstractGroupTest extends TestCase
     public function testRemove()
     {
         $remove = array(
-            $this->mandango->createDocument('Model\Article'),
-            $this->mandango->createDocument('Model\Article'),
-            $this->mandango->createDocument('Model\Article'),
+            $this->mandango->create('Model\Article'),
+            $this->mandango->create('Model\Article'),
+            $this->mandango->create('Model\Article'),
         );
 
         $group = new AbstractGroup('Model\Comment');
@@ -122,8 +122,8 @@ class AbstractGroupTest extends TestCase
             array('name' => 'bar'),
         );
         $replace = array(
-            $this->mandango->createDocument('Model\Comment')->fromArray(array('name' => 'ups')),
-            $this->mandango->createDocument('Model\Comment')->fromArray(array('text' => 'foobar')),
+            $this->mandango->create('Model\Comment')->fromArray(array('name' => 'ups')),
+            $this->mandango->create('Model\Comment')->fromArray(array('text' => 'foobar')),
         );
 
         $group = new AbstractGroup('Model\Comment');
@@ -131,8 +131,8 @@ class AbstractGroupTest extends TestCase
         $group->replace($replace);
         $this->assertSame($replace, $group->getAdd());
         $this->assertEquals(array(
-            $this->mandango->createDocument('Model\Comment')->fromArray($savedData[0]),
-            $this->mandango->createDocument('Model\Comment')->fromArray($savedData[1])
+            $this->mandango->create('Model\Comment')->fromArray($savedData[0]),
+            $this->mandango->create('Model\Comment')->fromArray($savedData[1])
         ), $group->getRemove());
     }
 

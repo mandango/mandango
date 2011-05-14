@@ -334,11 +334,11 @@ class QueryTest extends TestCase
     {
         $articles = array();
         for ($i = 0; $i < 9; $i++) {
-            $articles[] = $this->mandango->createDocument('Model\Article')->setTitle('Article'.$i)->save();
+            $articles[] = $this->mandango->create('Model\Article')->setTitle('Article'.$i)->save();
         }
         $authors = array();
         for ($i = 0; $i < 9; $i++) {
-            $authors[] = $this->mandango->createDocument('Model\Author')->setName('Author'.$i)->save();
+            $authors[] = $this->mandango->create('Model\Author')->setName('Author'.$i)->save();
         }
 
         $articles[1]->setAuthor($authors[1])->save();
@@ -404,11 +404,11 @@ class QueryTest extends TestCase
     {
         $articles = array();
         for ($i = 0; $i < 9; $i++) {
-            $articles[] = $this->mandango->createDocument('Model\Article')->setTitle('Article'.$i)->save();
+            $articles[] = $this->mandango->create('Model\Article')->setTitle('Article'.$i)->save();
         }
         $categories = array();
         for ($i = 0; $i < 9; $i++) {
-            $categories[] = $this->mandango->createDocument('Model\Category')->setName('Category'.$i)->save();
+            $categories[] = $this->mandango->create('Model\Category')->setName('Category'.$i)->save();
         }
 
         $articles[1]->getCategories()->add(array($categories[1], $categories[2]));

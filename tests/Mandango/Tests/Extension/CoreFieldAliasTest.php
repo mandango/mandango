@@ -30,7 +30,7 @@ class CoreFieldAliasTest extends TestCase
         );
         $this->mandango->getRepository('Model\Article')->getCollection()->insert($articleRaw);
 
-        $article = $this->mandango->createDocument('Model\Article');
+        $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
         $this->assertSame('123', $article->getDatabase());
     }
@@ -44,7 +44,7 @@ class CoreFieldAliasTest extends TestCase
         );
         $this->mandango->getRepository('Model\Article')->getCollection()->insert($articleRaw);
 
-        $article = $this->mandango->createDocument('Model\Article');
+        $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
         $this->assertSame('123', $article->getSource()->getFrom());
     }
@@ -83,7 +83,7 @@ class CoreFieldAliasTest extends TestCase
 
     public function testDocumentSetDocumentData()
     {
-        $article = $this->mandango->createDocument('Model\Article');
+        $article = $this->mandango->create('Model\Article');
         $article->setDocumentData(array(
             'basatos' => 123,
         ));
@@ -92,7 +92,7 @@ class CoreFieldAliasTest extends TestCase
 
     public function testDocumentQueryForSaveNew()
     {
-        $article = $this->mandango->createDocument('Model\Article')->setDatabase(123);
+        $article = $this->mandango->create('Model\Article')->setDatabase(123);
         $this->assertSame(array(
             'basatos' => '123',
         ), $article->queryForSave());
@@ -100,7 +100,7 @@ class CoreFieldAliasTest extends TestCase
 
     public function testDocumentQueryForSaveUpdate()
     {
-        $article = $this->mandango->createDocument('Model\Article');
+        $article = $this->mandango->create('Model\Article');
         $article->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'basatos' => '234',
@@ -123,8 +123,8 @@ class CoreFieldAliasTest extends TestCase
 
     public function testDocumentQueryForSaveEmbeddedNew()
     {
-        $source = $this->mandango->createDocument('Model\Source')->setFrom(123);
-        $article = $this->mandango->createDocument('Model\Article')->setSource($source);
+        $source = $this->mandango->create('Model\Source')->setFrom(123);
+        $article = $this->mandango->create('Model\Article')->setSource($source);
         $this->assertSame(array(
             'source' => array(
                 'desde' => '123',
@@ -134,7 +134,7 @@ class CoreFieldAliasTest extends TestCase
 
     public function testDocumentQueryForSaveEmbeddedNotNew()
     {
-        $article = $this->mandango->createDocument('Model\Article');
+        $article = $this->mandango->create('Model\Article');
         $article->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'source' => array(

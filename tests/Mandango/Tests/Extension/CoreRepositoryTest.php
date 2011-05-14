@@ -17,13 +17,13 @@ class CoreRepositoryTest extends TestCase
 {
     public function testSaveInsertingNotModified()
     {
-        $article = $this->mandango->createDocument('Model\Article');
+        $article = $this->mandango->create('Model\Article');
         $this->mandango->getRepository('Model\Article')->save($article);
         $this->assertTrue($article->isNew());
 
         $articles = array(
-            $this->mandango->createDocument('Model\Article'),
-            $this->mandango->createDocument('Model\Article')->setTitle('foo'),
+            $this->mandango->create('Model\Article'),
+            $this->mandango->create('Model\Article')->setTitle('foo'),
         );
         $this->mandango->getRepository('Model\Article')->save($articles);
         $this->assertTrue($articles[0]->isNew());
@@ -32,19 +32,19 @@ class CoreRepositoryTest extends TestCase
 
     public function testSaveUpdatingNotModified()
     {
-        $article = $this->mandango->createDocument('Model\Article')->setTitle('foo')->save();
+        $article = $this->mandango->create('Model\Article')->setTitle('foo')->save();
         $this->mandango->getRepository('Model\Article')->save($article);
 
         $articles = array(
-            $this->mandango->createDocument('Model\Article')->setTitle('a1')->save(),
-            $this->mandango->createDocument('Model\Article')->setTitle('a2')->save()->setTitle('a2u'),
+            $this->mandango->create('Model\Article')->setTitle('a1')->save(),
+            $this->mandango->create('Model\Article')->setTitle('a2')->save()->setTitle('a2u'),
         );
         $this->mandango->getRepository('Model\Article')->save($articles);
     }
 
     public function testSaveInsertSingleDocument()
     {
-        $article = $this->mandango->createDocument('Model\Article')->fromArray(array(
+        $article = $this->mandango->create('Model\Article')->fromArray(array(
             'title'   => 'foo',
             'content' => 12345,
         ));
@@ -66,7 +66,7 @@ class CoreRepositoryTest extends TestCase
     {
         $articles = array();
         for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = $this->mandango->createDocument('Model\Article')->fromArray(array(
+            $articles[$i] = $this->mandango->create('Model\Article')->fromArray(array(
                 'title'   => 'foo'.$i,
                 'content' => 12345 + $i,
             ));
@@ -91,7 +91,7 @@ class CoreRepositoryTest extends TestCase
     {
         $articles = array();
         for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = $this->mandango->createDocument('Model\Article')->fromArray(array(
+            $articles[$i] = $this->mandango->create('Model\Article')->fromArray(array(
                 'title'   => 'foo'.$i,
                 'content' => 12345 + $i,
             ));
@@ -109,7 +109,7 @@ class CoreRepositoryTest extends TestCase
     {
         $articles = array();
         for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = $this->mandango->createDocument('Model\Article')->setTitle('foo'.$i);
+            $articles[$i] = $this->mandango->create('Model\Article')->setTitle('foo'.$i);
         }
         $this->mandango->getRepository('Model\Article')->save($articles);
 
@@ -124,8 +124,8 @@ class CoreRepositoryTest extends TestCase
 
     public function testSaveSaveReferences()
     {
-        $article = $this->mandango->createDocument('Model\Article')->setTitle('foo');
-        $author = $this->mandango->createDocument('Model\Author')->setName('bar');
+        $article = $this->mandango->create('Model\Article')->setTitle('foo');
+        $author = $this->mandango->create('Model\Author')->setName('bar');
         $article->setAuthor($author);
         $article->save();
 
@@ -137,8 +137,8 @@ class CoreRepositoryTest extends TestCase
     public function testSaveSaveReferencesSameClass()
     {
         $messages = array();
-        $messages['barbelith'] = $this->mandango->createDocument('Model\Message')->setAuthor('barbelith');
-        $messages['pablodip'] = $this->mandango->createDocument('Model\Message')->setAuthor('pablodip')->setReplyTo($messages['barbelith']);
+        $messages['barbelith'] = $this->mandango->create('Model\Message')->setAuthor('barbelith');
+        $messages['pablodip'] = $this->mandango->create('Model\Message')->setAuthor('pablodip')->setReplyTo($messages['barbelith']);
 
         $this->mandango->getRepository('Model\Message')->save($messages);
 
@@ -150,8 +150,8 @@ class CoreRepositoryTest extends TestCase
     public function testSaveEventsInsert()
     {
         $documents = array(
-            $this->mandango->createDocument('Model\Events')->setName('foo')->setMyEventPrefix('2'),
-            $this->mandango->createDocument('Model\Events')->setName('bar')->setMyEventPrefix('1'),
+            $this->mandango->create('Model\Events')->setName('foo')->setMyEventPrefix('2'),
+            $this->mandango->create('Model\Events')->setName('bar')->setMyEventPrefix('1'),
         );
         $this->mandango->getRepository('Model\Events')->save($documents);
 
@@ -168,8 +168,8 @@ class CoreRepositoryTest extends TestCase
     public function testSaveEventsUpdate()
     {
         $documents = array(
-            $this->mandango->createDocument('Model\Events')->setName('foo')->save()->clearEvents()->setName('bar')->setMyEventPrefix('2')->save(),
-            $this->mandango->createDocument('Model\Events')->setName('bar')->save()->clearEvents()->setName('foo')->setMyEventPrefix('1')->save()
+            $this->mandango->create('Model\Events')->setName('foo')->save()->clearEvents()->setName('bar')->setMyEventPrefix('2')->save(),
+            $this->mandango->create('Model\Events')->setName('bar')->save()->clearEvents()->setName('foo')->setMyEventPrefix('1')->save()
         );
 
         $this->mandango->getRepository('Model\Events')->save($documents);
@@ -187,8 +187,8 @@ class CoreRepositoryTest extends TestCase
     public function testSaveResetGroups()
     {
         // insert
-        $article = $this->mandango->createDocument('Model\Article')
-            ->addCategories($category = $this->mandango->createDocument('Model\Category')
+        $article = $this->mandango->create('Model\Article')
+            ->addCategories($category = $this->mandango->create('Model\Category')
                 ->setName('foo')
             )
             ->save()
@@ -197,7 +197,7 @@ class CoreRepositoryTest extends TestCase
 
         // update
         $article
-             ->addCategories($category = $this->mandango->createDocument('Model\Category')
+             ->addCategories($category = $this->mandango->create('Model\Category')
                 ->setName('foo')
             )
             ->save()
@@ -209,7 +209,7 @@ class CoreRepositoryTest extends TestCase
     {
         $articles = array();
         for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = $this->mandango->createDocument('Model\Article')->setTitle('foo');
+            $articles[$i] = $this->mandango->create('Model\Article')->setTitle('foo');
         }
         $this->mandango->getRepository('Model\Article')->save($articles);
 
@@ -231,7 +231,7 @@ class CoreRepositoryTest extends TestCase
     {
         $articles = array();
         for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = $this->mandango->createDocument('Model\Article')->setTitle('foo');
+            $articles[$i] = $this->mandango->create('Model\Article')->setTitle('foo');
         }
         $this->mandango->getRepository('Model\Article')->save($articles);
 
@@ -252,7 +252,7 @@ class CoreRepositoryTest extends TestCase
 
     public function testDeleteEventsSingleDocument()
     {
-        $document = $this->mandango->createDocument('Model\Events')->setName('foo')->save()->clearEvents()->setMyEventPrefix('ups')->setName('bar');
+        $document = $this->mandango->create('Model\Events')->setName('foo')->save()->clearEvents()->setMyEventPrefix('ups')->setName('bar');
         $document->delete();
 
         $this->assertSame(array(

@@ -23,7 +23,7 @@ class CoreSingleInheritanceTest extends TestCase
 
     public function testDocumentSetDocumentData()
     {
-        $formElement = $this->mandango->createDocument('Model\FormElement');
+        $formElement = $this->mandango->create('Model\FormElement');
         $formElement->setDocumentData(array(
             'label'   => 123,
             'default' => 234,
@@ -31,7 +31,7 @@ class CoreSingleInheritanceTest extends TestCase
         $this->assertSame('123', $formElement->getLabel());
         $this->assertSame(234, $formElement->getDefault());
 
-        $textareaFormElement = $this->mandango->createDocument('Model\TextareaFormElement');
+        $textareaFormElement = $this->mandango->create('Model\TextareaFormElement');
         $textareaFormElement->setDocumentData(array(
             'label'   => 234,
             'default' => 345,
@@ -39,7 +39,7 @@ class CoreSingleInheritanceTest extends TestCase
         $this->assertSame('234', $textareaFormElement->getLabel());
         $this->assertSame('345', $textareaFormElement->getDefault());
 
-        $radioFormElement = $this->mandango->createDocument('Model\RadioFormElement');
+        $radioFormElement = $this->mandango->create('Model\RadioFormElement');
         $radioFormElement->setDocumentData(array(
             'label'   => 345,
             'default' => 'foobar',
@@ -52,12 +52,12 @@ class CoreSingleInheritanceTest extends TestCase
 
     public function testDocumentSet()
     {
-        $document = $this->mandango->createDocument('Model\TextareaFormElement')->set('label', 'foo')->set('default', 'bar');
+        $document = $this->mandango->create('Model\TextareaFormElement')->set('label', 'foo')->set('default', 'bar');
         $this->assertSame('foo', $document->getLabel());
         $this->assertSame('bar', $document->getDefault());
 
         $options = array('foo' => 'bar');
-        $document = $this->mandango->createDocument('Model\RadioFormElement')->set('label', 'foo')->set('options', $options);
+        $document = $this->mandango->create('Model\RadioFormElement')->set('label', 'foo')->set('options', $options);
         $this->assertSame('foo', $document->getLabel());
         $this->assertSame($options, $document->getOptions());
     }
@@ -67,17 +67,17 @@ class CoreSingleInheritanceTest extends TestCase
      */
     public function testDocumentSetFieldNotExist()
     {
-        $this->mandango->createDocument('Model\RadioFormElement')->set('no', 'foo');
+        $this->mandango->create('Model\RadioFormElement')->set('no', 'foo');
     }
 
     public function testDocumentGet()
     {
-        $document = $this->mandango->createDocument('Model\TextareaFormElement')->setLabel('foo')->setDefault('bar');
+        $document = $this->mandango->create('Model\TextareaFormElement')->setLabel('foo')->setDefault('bar');
         $this->assertSame('foo', $document->get('label'));
         $this->assertSame('bar', $document->get('default'));
 
         $options = array('foo' => 'bar');
-        $document = $this->mandango->createDocument('Model\RadioFormElement')->setLabel('foo')->setOptions($options);
+        $document = $this->mandango->create('Model\RadioFormElement')->setLabel('foo')->setOptions($options);
         $this->assertSame('foo', $document->get('label'));
         $this->assertSame($options, $document->get('options'));
     }
@@ -87,12 +87,12 @@ class CoreSingleInheritanceTest extends TestCase
      */
     public function testDocumentGetFieldNotExist()
     {
-        $this->mandango->createDocument('Model\RadioFormElement')->get('no');
+        $this->mandango->create('Model\RadioFormElement')->get('no');
     }
 
     public function testDocumentFromArray()
     {
-        $document = $this->mandango->createDocument('Model\TextareaFormElement')->fromArray(array(
+        $document = $this->mandango->create('Model\TextareaFormElement')->fromArray(array(
             'label'   => 'foo',
             'default' => 'bar',
         ));
@@ -100,7 +100,7 @@ class CoreSingleInheritanceTest extends TestCase
         $this->assertSame('bar', $document->getDefault());
 
         $options = array('foo' => 'bar');
-        $document = $this->mandango->createDocument('Model\RadioFormElement')->fromArray(array(
+        $document = $this->mandango->create('Model\RadioFormElement')->fromArray(array(
             'label'   => 'foo',
             'options' => $options,
         ));
@@ -110,7 +110,7 @@ class CoreSingleInheritanceTest extends TestCase
 
     public function testDocumentToArray()
     {
-        $document = $this->mandango->createDocument('Model\TextareaFormElement')->setLabel('foo')->setDefault('bar');
+        $document = $this->mandango->create('Model\TextareaFormElement')->setLabel('foo')->setDefault('bar');
         $this->assertSame(array(
             'label'   => 'foo',
             'default' => null,
@@ -118,7 +118,7 @@ class CoreSingleInheritanceTest extends TestCase
         ), $document->toArray());
 
         $options = array('foo' => 'bar');
-        $document = $this->mandango->createDocument('Model\RadioFormElement')->setLabel('foo')->setOptions($options);
+        $document = $this->mandango->create('Model\RadioFormElement')->setLabel('foo')->setOptions($options);
         $this->assertSame(array(
             'label'   => 'foo',
             'default' => null,
@@ -128,7 +128,7 @@ class CoreSingleInheritanceTest extends TestCase
 
     public function testDocumentQueryForSave()
     {
-        $formElement = $this->mandango->createDocument('Model\FormElement')->setLabel(123)->setDefault(234);
+        $formElement = $this->mandango->create('Model\FormElement')->setLabel(123)->setDefault(234);
         $this->assertSame(array(
             'label'   => '123',
             'default' => 234,
@@ -137,7 +137,7 @@ class CoreSingleInheritanceTest extends TestCase
         $formElement->setId(new \MongoId('123'));
         $this->assertSame(array(), $formElement->queryForSave());
 
-        $textareaFormElement = $this->mandango->createDocument('Model\TextareaFormElement')->setLabel(345)->setDefault(456);
+        $textareaFormElement = $this->mandango->create('Model\TextareaFormElement')->setLabel(345)->setDefault(456);
         $this->assertSame(array(
             'type'    => 'textarea',
             'label'   => '345',
@@ -148,7 +148,7 @@ class CoreSingleInheritanceTest extends TestCase
         $this->assertSame(array(), $textareaFormElement->queryForSave());
 
         $options = array('foobar' => 'foo', 'barfoo' => 'bar');
-        $radioFormElement = $this->mandango->createDocument('Model\RadioFormElement')->setLabel(567)->setDefault(678)->setOptions($options);
+        $radioFormElement = $this->mandango->create('Model\RadioFormElement')->setLabel(567)->setDefault(678)->setOptions($options);
         $this->assertSame(array(
             'type'    => 'radio',
             'label'   => '567',
@@ -168,17 +168,17 @@ class CoreSingleInheritanceTest extends TestCase
     {
         $formElements = array();
         for ($i = 0; $i < 5; $i++) {
-            $formElements[] = $this->mandango->createDocument('Model\FormElement')->setLabel('Element'.$i)->save();
+            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('Element'.$i)->save();
         }
 
         $textareaFormElements = array();
         for ($i = 0; $i < 3; $i++) {
-            $textareaFormElements[] = $this->mandango->createDocument('Model\TextareaFormElement')->setLabel('Textarea'.$i)->save();
+            $textareaFormElements[] = $this->mandango->create('Model\TextareaFormElement')->setLabel('Textarea'.$i)->save();
         }
 
         $radioFormElements = array();
         for ($i = 0; $i < 1; $i++) {
-            $radioFormElements[] = $this->mandango->createDocument('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
+            $radioFormElements[] = $this->mandango->create('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
         }
 
         $this->assertSame(9, $this->mandango->getRepository('Model\FormElement')->count());
@@ -192,17 +192,17 @@ class CoreSingleInheritanceTest extends TestCase
     {
         $formElements = array();
         for ($i = 0; $i < 5; $i++) {
-            $formElements[] = $this->mandango->createDocument('Model\FormElement')->setLabel('Element'.$i)->save();
+            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('Element'.$i)->save();
         }
 
         $textareaFormElements = array();
         for ($i = 0; $i < 3; $i++) {
-            $textareaFormElements[] = $this->mandango->createDocument('Model\TextareaFormElement')->setLabel('Textarea'.$i)->save();
+            $textareaFormElements[] = $this->mandango->create('Model\TextareaFormElement')->setLabel('Textarea'.$i)->save();
         }
 
         $radioFormElements = array();
         for ($i = 0; $i < 1; $i++) {
-            $radioFormElements[] = $this->mandango->createDocument('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
+            $radioFormElements[] = $this->mandango->create('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
         }
 
         $this->mandango->getRepository('Model\FormElement')->remove(array('label' => 'Textarea0'));
@@ -217,17 +217,17 @@ class CoreSingleInheritanceTest extends TestCase
     {
         $formElements = array();
         for ($i = 0; $i < 5; $i++) {
-            $formElements[] = $this->mandango->createDocument('Model\FormElement')->setLabel('Element'.$i)->save();
+            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('Element'.$i)->save();
         }
 
         $textareaFormElements = array();
         for ($i = 0; $i < 5; $i++) {
-            $textareaFormElements[] = $this->mandango->createDocument('Model\TextareaFormElement')->setLabel('Textarea'.$i)->save();
+            $textareaFormElements[] = $this->mandango->create('Model\TextareaFormElement')->setLabel('Textarea'.$i)->save();
         }
 
         $radioFormElements = array();
         for ($i = 0; $i < 5; $i++) {
-            $radioFormElements[] = $this->mandango->createDocument('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
+            $radioFormElements[] = $this->mandango->create('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
         }
 
         $this->mandango->getRepository('Model\FormElement')->getIdentityMap()->clear();
@@ -309,17 +309,17 @@ class CoreSingleInheritanceTest extends TestCase
     {
         $formElements = array();
         for ($i = 0; $i < 5; $i++) {
-            $formElements[] = $this->mandango->createDocument('Model\FormElement')->setLabel('Element'.$i)->save();
+            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('Element'.$i)->save();
         }
 
         $textareaFormElements = array();
         for ($i = 0; $i < 3; $i++) {
-            $textareaFormElements[] = $this->mandango->createDocument('Model\TextareaFormElement')->setLabel('Textarea'.$i)->save();
+            $textareaFormElements[] = $this->mandango->create('Model\TextareaFormElement')->setLabel('Textarea'.$i)->save();
         }
 
         $radioFormElements = array();
         for ($i = 0; $i < 1; $i++) {
-            $radioFormElements[] = $this->mandango->createDocument('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
+            $radioFormElements[] = $this->mandango->create('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
         }
 
         $this->assertSame(9, $this->mandango->getRepository('Model\FormElement')->createQuery()->count());
@@ -329,13 +329,13 @@ class CoreSingleInheritanceTest extends TestCase
 
     public function testEvents()
     {
-        $formElement = $this->mandango->createDocument('Model\FormElement')->setLabel('Element')->save();
+        $formElement = $this->mandango->create('Model\FormElement')->setLabel('Element')->save();
         $this->assertSame(array(
             'ElementPreInserting',
             'ElementPostInserting',
         ), $formElement->getEvents());
 
-        $textareaFormElement = $this->mandango->createDocument('Model\TextareaFormElement')->setLabel('Textarea')->save();
+        $textareaFormElement = $this->mandango->create('Model\TextareaFormElement')->setLabel('Textarea')->save();
         $this->assertSame(array(
             'ElementPreInserting',
             'TextareaPreInserting',

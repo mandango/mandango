@@ -165,7 +165,7 @@ interface MandangoInterface
      *
      * @api
      */
-    function createDocument($documentClass);
+    function create($documentClass);
 
     /**
      * Returns repositories by document class.

@@ -192,7 +192,7 @@ class Mandango implements MandangoInterface
     /**
      * {@inheritdoc}
      */
-    public function createDocument($documentClass)
+    public function create($documentClass)
     {
         return new $documentClass($this);
     }

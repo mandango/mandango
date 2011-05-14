@@ -178,7 +178,7 @@ class DataLoaderTest extends TestCase
      */
     public function testLoadMandangoUnitOfWorkHasPending()
     {
-        $author = $this->mandango->createDocument('Model\Author');
+        $author = $this->mandango->create('Model\Author');
         $this->mandango->persist($author);
 
         $dataLoader = new DataLoader($this->mandango);

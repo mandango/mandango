@@ -17,7 +17,7 @@ class CoreQueryForSaveTest extends TestCase
 {
     public function testDocumentFieldsInsert()
     {
-        $article = $this->mandango->createDocument('Model\Article');
+        $article = $this->mandango->create('Model\Article');
         $article->setTitle('foo');
         $article->setContent('bar');
         $article->setNote(null);
@@ -32,7 +32,7 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentFieldsUpdate()
     {
-        $article = $this->mandango->createDocument('Model\Article');
+        $article = $this->mandango->create('Model\Article');
         $article->setDocumentData(array(
             '_id'      => new \MongoId('123'),
             'title'    => 'foo',
@@ -59,8 +59,8 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentReferencesOneInsert()
     {
-        $article = $this->mandango->createDocument('Model\Article')
-            ->setAuthor($this->mandango->createDocument('Model\Author')->setId($id = new \MongoId('123')))
+        $article = $this->mandango->create('Model\Article')
+            ->setAuthor($this->mandango->create('Model\Author')->setId($id = new \MongoId('123')))
         ;
 
         $this->assertSame(array(
@@ -70,11 +70,11 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentReferencesOneUpdate()
     {
-        $article = $this->mandango->createDocument('Model\Article')->setDocumentData(array(
+        $article = $this->mandango->create('Model\Article')->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'author' => new \MongoId('234'),
         ));
-        $article->setAuthor($this->mandango->createDocument('Model\Author')->setId($id = new \MongoId('345')));
+        $article->setAuthor($this->mandango->create('Model\Author')->setId($id = new \MongoId('345')));
 
         $this->assertSame(array(
             '$set' => array(
@@ -88,10 +88,10 @@ class CoreQueryForSaveTest extends TestCase
         $categories = array();
         $ids = array();
         for ($i = 1; $i <= 10; $i ++) {
-            $categories[] = $this->mandango->createDocument('Model\Category')->setId($ids[] = new \MongoId($i));
+            $categories[] = $this->mandango->create('Model\Category')->setId($ids[] = new \MongoId($i));
         }
 
-        $article = $this->mandango->createDocument('Model\Article');
+        $article = $this->mandango->create('Model\Article');
         $article->getCategories()->add($categories);
         $article->updateReferenceFields();
 
@@ -102,12 +102,12 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentEmbeddedsOneInsert()
     {
-        $article = $this->mandango->createDocument('Model\Article')
+        $article = $this->mandango->create('Model\Article')
             ->setTitle('foo')
-            ->setSource($this->mandango->createDocument('Model\Source')
+            ->setSource($this->mandango->create('Model\Source')
                 ->setName(123)
                 ->setText(null)
-                ->setInfo($this->mandango->createDocument('Model\Info')
+                ->setInfo($this->mandango->create('Model\Info')
                     ->setName(234)
                     ->setText(null)
                 )
@@ -127,7 +127,7 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentEmbeddedsOneUpdate()
     {
-        $article = $this->mandango->createDocument('Model\Article')->setDocumentData(array(
+        $article = $this->mandango->create('Model\Article')->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'title' => 'foo',
             'source' => array(
@@ -160,7 +160,7 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentEmbeddedsOneChange()
     {
-        $article = $this->mandango->createDocument('Model\Article')->setDocumentData(array(
+        $article = $this->mandango->create('Model\Article')->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'title' => 'foo',
             'source' => array(
@@ -170,10 +170,10 @@ class CoreQueryForSaveTest extends TestCase
                 ),
             ),
         ));
-        $article->setSource($this->mandango->createDocument('Model\Source')
+        $article->setSource($this->mandango->create('Model\Source')
             ->setText(234)
             ->setLine(345)
-            ->setInfo($this->mandango->createDocument('Model\Info')
+            ->setInfo($this->mandango->create('Model\Info')
                 ->setName(456)
                 ->setText(567)
             )
@@ -195,7 +195,7 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentEmbeddedsOneChangeDeep()
     {
-        $article = $this->mandango->createDocument('Model\Article')->setDocumentData(array(
+        $article = $this->mandango->create('Model\Article')->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'title' => 'foo',
             'source' => array(
@@ -205,7 +205,7 @@ class CoreQueryForSaveTest extends TestCase
                 ),
             ),
         ));
-        $article->getSource()->setInfo($this->mandango->createDocument('Model\Info')
+        $article->getSource()->setInfo($this->mandango->create('Model\Info')
             ->setName(null)
             ->setText(234)
             ->setNote(345)
@@ -223,7 +223,7 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentEmbeddedsOneRemove()
     {
-        $article = $this->mandango->createDocument('Model\Article')->setDocumentData(array(
+        $article = $this->mandango->create('Model\Article')->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'title' => 'foo',
             'source' => array(
@@ -244,7 +244,7 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentEmbeddedsOneRemoveDeep()
     {
-        $article = $this->mandango->createDocument('Model\Article')->setDocumentData(array(
+        $article = $this->mandango->create('Model\Article')->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'title' => 'foo',
             'source' => array(
@@ -265,32 +265,32 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentEmbeddedsManyInsert()
     {
-        $comment1 = $this->mandango->createDocument('Model\Comment')
+        $comment1 = $this->mandango->create('Model\Comment')
             ->setName(123)
             ->setText(null)
             ->setNote('foo')
         ;
         $comment1->getInfos()->add(array(
-            $this->mandango->createDocument('Model\Info')
+            $this->mandango->create('Model\Info')
                 ->setName(345)
                 ->setText('foobar'),
-            $this->mandango->createDocument('Model\Info')
+            $this->mandango->create('Model\Info')
                 ->setName(456)
                 ->setLine('barfoo'),
         ));
         $comment1->getInfos()->remove(array(
-            $this->mandango->createDocument('Model\Info')->setName('ups')
+            $this->mandango->create('Model\Info')->setName('ups')
         ));
 
-        $article = $this->mandango->createDocument('Model\Article')->setTitle('foo');
+        $article = $this->mandango->create('Model\Article')->setTitle('foo');
         $article->getComments()->add(array(
             $comment1,
-            $this->mandango->createDocument('Model\Comment')
+            $this->mandango->create('Model\Comment')
                 ->setName(234)
                 ->setText('bar')
         ));
         $article->getComments()->remove(array(
-            $this->mandango->createDocument('Model\Comment')->setName(567)
+            $this->mandango->create('Model\Comment')->setName(567)
         ));
 
         $this->assertSame(array(
@@ -320,7 +320,7 @@ class CoreQueryForSaveTest extends TestCase
 
     public function testDocumentEmbeddedsManyUpdate()
     {
-        $article = $this->mandango->createDocument('Model\Article')->setDocumentData(array(
+        $article = $this->mandango->create('Model\Article')->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'title' => 'foo',
             'comments' => array(
@@ -359,10 +359,10 @@ class CoreQueryForSaveTest extends TestCase
         $comments[1]->setName('mon')->setText('go');
         $article->getComments()->remove($comments[2]);
         $article->getComments()->remove($comments[3]);
-        $article->getComments()->add($this->mandango->createDocument('Model\Comment')->setName('inserting1')->setText(123));
-        $article->getComments()->add($this->mandango->createDocument('Model\Comment')->setName('inserting2')->setText(321));
-        $comments[0]->getInfos()->add($this->mandango->createDocument('Model\Info')->setName('insertinfo1')->setNote(678));
-        $comments[1]->getInfos()->add($this->mandango->createDocument('Model\Info')->setName('insertinfo2')->setNote(876));
+        $article->getComments()->add($this->mandango->create('Model\Comment')->setName('inserting1')->setText(123));
+        $article->getComments()->add($this->mandango->create('Model\Comment')->setName('inserting2')->setText(321));
+        $comments[0]->getInfos()->add($this->mandango->create('Model\Info')->setName('insertinfo1')->setNote(678));
+        $comments[1]->getInfos()->add($this->mandango->create('Model\Info')->setName('insertinfo2')->setNote(876));
 
         $this->assertSame(array(
             '$set' => array(

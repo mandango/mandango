@@ -132,8 +132,8 @@ class RepositoryTest extends TestCase
         $articles = array();
         $articlesById = array();
         for ($i = 0; $i <= 10; $i++) {
-            $articleSaved = $this->mandango->createDocument('Model\Article')->setTitle('Article'.$i)->save();
-            $articles[] = $article = $this->mandango->createDocument('Model\Article')->setId($articleSaved->getId());
+            $articleSaved = $this->mandango->create('Model\Article')->setTitle('Article'.$i)->save();
+            $articles[] = $article = $this->mandango->create('Model\Article')->setId($articleSaved->getId());
             $articlesById[$article->getId()->__toString()] = $article;
         }
 
