@@ -108,8 +108,13 @@ class Core extends Extension
         $this->initDefinitionsProcess();
 
         // document
+        $this->documentMandangoPropertyProcess();
         $this->documentConstructorMethodProcess();
+        $this->documentInitializeDefaultsMethodProcess();
         $this->documentGetMandangoMethodProcess();
+        if (!$this->configClass['isEmbedded']) {
+            $this->documentGetRepositoryMethodProcess();
+        }
 
         $this->documentSetDocumentDataMethodProcess();
         $this->documentFieldsProcess();
@@ -602,49 +607,89 @@ EOF
         }
     }
 
+    private function documentMandangoPropertyProcess()
+    {
+        $property = new Property('private', 'mandango', null);
+        $this->definitions['document_base']->addProperty($property);
+    }
+
     private function documentConstructorMethodProcess()
     {
-        $code = '';
+        $method = new Method('public', '__construct', '\Mandango\Mandango $mandango', <<<EOF
+        \$this->mandango = \$mandango;
+
+        \$this->initializeDefaults();
+        \$this->initialize();
+EOF
+        );
+        $method->setDocComment(<<<EOF
+    /**
+     * Constructor.
+     *
+     * @param Mandango\Mandango \$mandango The mandango.
+     */
+EOF
+        );
+        $this->definitions['document_base']->addMethod($method);
+    }
+
+    private function documentInitializeDefaultsMethodProcess()
+    {
+        // default values
+        $defaultValuesCode = array();
         foreach ($this->configClass['fields'] as $name => $field) {
             if (isset($field['default'])) {
                 $setter = 'set'.ucfirst($name);
                 $default = var_export($field['default'], true);
-                $code .= <<<EOF
+                $defaultValuesCode[] = <<<EOF
         \$this->$setter($default);
-
 EOF;
             }
         }
+        $defaultValuesCode = implode("\n", $defaultValuesCode);
 
-        if ($code) {
-            $method = new Method('public', '__construct', '', $code);
-            $method->setDocComment(<<<EOF
+        $method = new Method('private', 'initializeDefaults', '', <<<EOF
+$defaultValuesCode
+EOF
+        );
+        $method->setDocComment(<<<EOF
     /**
-     * Constructor.
+     * Initializes the document defaults.
      */
 EOF
-            );
-            $this->definitions['document_base']->addMethod($method);
-        }
+        );
+        $this->definitions['document_base']->addMethod($method);
     }
 
     private function documentGetMandangoMethodProcess()
     {
-        $mandango = '';
-        if ($this->configClass['mandango']) {
-            $mandango = "'".$this->configClass['mandango']."'";
-        }
-
         $method = new Method('public', 'getMandango', '', <<<EOF
-        return \Mandango\Container::get($mandango);
+        return \$this->mandango;
 EOF
         );
-        $method->setStatic(true);
         $method->setDocComment(<<<EOF
     /**
-     * Returns the mandango of the document.
+     * Returns the mandango.
      *
-     * @return Mandango\Mandango The mandango of the document.
+     * @return Mandango\Mandango The mandango.
+     */
+EOF
+        );
+
+        $this->definitions['document_base']->addMethod($method);
+    }
+
+    private function documentGetRepositoryMethodProcess()
+    {
+        $method = new Method('public', 'getRepository', '', <<<EOF
+        return \$this->mandango->getRepository(get_class(\$this));
+EOF
+        );
+        $method->setDocComment(<<<EOF
+    /**
+     * Returns the repository.
+     *
+     * @return Mandango\Repository The repository.
      */
 EOF
         );
@@ -721,7 +766,7 @@ EOF;
 
             $embeddedsOneCode[] = <<<EOF
         if (isset(\$data['$name'])) {
-            \$embedded = new \\{$embedded['class']}();
+            \$embedded = new \\{$embedded['class']}(\$this->getMandango());
 $rap
             if (isset(\$data['_fields']['$name'])) {
                 \$data['$name']['_fields'] = \$data['_fields']['$name'];
@@ -876,7 +921,7 @@ EOF
                 \$this->data['fields']['$name'] = null;
             } elseif (!isset(\$this->data['fields']) || !array_key_exists('$name', \$this->data['fields'])) {
                 \$this->addFieldCache('{$field['dbName']}');
-                \$data = static::getRepository()->getCollection()->findOne(array('_id' => \$this->id), array('{$field['dbName']}' => 1));
+                \$data = \$this->getRepository()->getCollection()->findOne(array('_id' => \$this->id), array('{$field['dbName']}' => 1));
                 if (isset(\$data['{$field['dbName']}'])) {
                     $typeCode
                 } else {
@@ -896,7 +941,7 @@ EOF;
             ) {
                 \$field = \$rap['path'].'.{$field['dbName']}';
                 \$rap['root']->addFieldCache(\$field);
-                \$collection = call_user_func(array(get_class(\$rap['root']), 'getRepository'))->getCollection();
+                \$collection = \$this->getMandango()->getRepository(get_class(\$rap['root']))->getCollection();
                 \$data = \$collection->findOne(array('_id' => \$rap['root']->getId()), array(\$field => 1));
                 foreach (explode('.', \$field) as \$key) {
                     if (!isset(\$data[\$key])) {
@@ -986,7 +1031,7 @@ EOF;
             if (!\$id = \$this->$fieldGetter()) {
                 return null;
             }
-            if (!\$document = \\{$reference['class']}::getRepository()->findOneById(\$id)) {
+            if (!\$document = \$this->getMandango()->getRepository('{$reference['class']}')->findOneById(\$id)) {
                 throw new \RuntimeException('The reference "$name" does not exist.');
             }
             \$this->data['referencesOne']['$name'] = \$document;
@@ -1066,7 +1111,7 @@ EOF;
                 return null;
             }
 $getDiscriminatorValue
-            if (!\$document = call_user_func(array(\$discriminatorValue, 'getRepository'))->findOneById(\$ref['id'])) {
+            if (!\$document = \$this->getMandango()->getRepository(\$discriminatorValue)->findOneById(\$ref['id'])) {
                 throw new \RuntimeException('The reference "$name" does not exist.');
             }
             \$this->data['referencesOne']['$name'] = \$document;
@@ -1441,7 +1486,7 @@ EOF;
                 }
             }
             if (\$documents) {
-                \\{$reference['class']}::getRepository()->save(\$documents);
+                \$this->getMandango()->getRepository('{$reference['class']}')->save(\$documents);
             }
         }
 EOF;
@@ -1535,9 +1580,9 @@ EOF
             if (\$this->isNew()) {
                 \$this->data['embeddedsOne']['$name'] = null;
             } elseif (!isset(\$this->data['embeddedsOne']) || !array_key_exists('$name', \$this->data['embeddedsOne'])) {
-                \$exists = static::getRepository()->getCollection()->findOne(array('_id' => \$this->id, '$name' => array('\$exists' => 1)));
+                \$exists = \$this->getRepository()->getCollection()->findOne(array('_id' => \$this->id, '$name' => array('\$exists' => 1)));
                 if (\$exists) {
-                    \$embedded = new \\{$embedded['class']}();
+                    \$embedded = new \\{$embedded['class']}(\$this->getMandango());
                     \$embedded->setRootAndPath(\$this, '$name');
                     \$this->data['embeddedsOne']['$name'] = \$embedded;
                 } else {
@@ -1556,11 +1601,11 @@ EOF;
                 &&
                 false === strpos(\$rap['path'], '._add')
             ) {
-                \$collection = call_user_func(array(get_class(\$rap['root']), 'getRepository'))->getCollection();
+                \$collection = \$this->getMandango()->getRepository(get_class(\$rap['root']))->getCollection();
                 \$field = \$rap['path'].'.$name';
                 \$result = \$collection->findOne(array('_id' => \$rap['root']->getId(), \$field => array('\$exists' => 1)));
                 if (\$result) {
-                    \$embedded = new \\{$embedded['class']}();
+                    \$embedded = new \\{$embedded['class']}(\$this->getMandango());
                     \$embedded->setRootAndPath(\$rap['root'], \$field);
                     \$this->data['embeddedsOne']['$name'] = \$embedded;
                 }
@@ -1674,7 +1719,7 @@ EOF
     {
         foreach ($this->configClass['relationsOne'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
-        return \\{$relation['class']}::getRepository()->createQuery(array('{$relation['reference']}' => \$this->getId()))->one();
+        return \$this->getMandango()->getRepository('{$relation['class']}')->createQuery(array('{$relation['reference']}' => \$this->getId()))->one();
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1693,7 +1738,7 @@ EOF
     {
         foreach ($this->configClass['relationsManyOne'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
-        return \\{$relation['class']}::getRepository()->createQuery(array('{$relation['reference']}' => \$this->getId()));
+        return \$this->getMandango()->getRepository('{$relation['class']}')->createQuery(array('{$relation['reference']}' => \$this->getId()));
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1712,7 +1757,7 @@ EOF
     {
         foreach ($this->configClass['relationsManyMany'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
-        return \\{$relation['class']}::getRepository()->createQuery(array('{$relation['reference']}' => \$this->getId()));
+        return \$this->getMandango()->getRepository('{$relation['class']}')->createQuery(array('{$relation['reference']}' => \$this->getId()));
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1732,13 +1777,13 @@ EOF
         foreach ($this->configClass['relationsManyThrough'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         \$ids = array();
-        foreach (\\{$relation['through']}::getRepository()->getCollection()
+        foreach (\$this->mandango->getRepository('{$relation['through']}')->getCollection()
             ->find(array('{$relation['local']}' => \$this->getId()), array('{$relation['foreign']}' => 1))
         as \$value) {
             \$ids[] = \$value['{$relation['foreign']}'];
         }
 
-        return \\{$relation['class']}::getRepository()->createQuery(array('_id' => array('\$in' => \$ids)));
+        return \$this->getMandango()->getRepository('{$relation['class']}')->createQuery(array('_id' => array('\$in' => \$ids)));
 EOF
             );
             $method->setDocComment(<<<EOF
@@ -1976,7 +2021,7 @@ EOF;
             $setter = 'set'.ucfirst($name);
             $embeddedsOneCode[] = <<<EOF
         if (isset(\$array['$name'])) {
-            \$embedded = new \\{$embedded['class']}();
+            \$embedded = new \\{$embedded['class']}(\$this->getMandango());
             \$embedded->fromArray(\$array['$name']);
             \$this->$setter(\$embedded);
         }
@@ -1996,7 +2041,7 @@ EOF;
         if (isset(\$array['$name'])) {
             \$embeddeds = array();
             foreach (\$array['$name'] as \$documentData) {
-                \$embeddeds[] = \$embedded = new \\{$embedded['class']}();
+                \$embeddeds[] = \$embedded = new \\{$embedded['class']}(\$this->getMandango());
                 \$embedded->setDocumentData(\$documentData);
             }
             \$this->$getter()->replace(\$embeddeds);
@@ -2612,6 +2657,7 @@ EOF
     {
         $variables = <<<EOF
         \$repository = \$this->getRepository();
+        \$mandango = \$repository->getMandango();
         \$documentClass = \$repository->getDocumentClass();
         \$identityMap =& \$repository->getIdentityMap()->allByReference();
         \$isFile = \$repository->isFile();
@@ -2631,7 +2677,7 @@ EOF;
                 \$data['_query_hash'] = \$this->getHash();
                 \$data['_fields'] = \$fields;
 
-                \$document = new \$documentClass();
+                \$document = new \$documentClass(\$mandango);
                 \$document->setDocumentData(\$data);
 
                 \$identityMap[\$id] = \$document;
@@ -2645,6 +2691,7 @@ EOF;
 
             $variables = <<<EOF
         \$identityMaps = array();
+        \$mandango = \$this->getRepository()->getMandango();
         \$isFile = \$this->getRepository()->isFile();
 EOF;
 
@@ -2660,7 +2707,7 @@ EOF;
                 $createObjectsValues[] = <<<EOF
                 if ('$value' == \$data['$field']) {
                     if (!isset(\$identityMaps['$value'])) {
-                        \$identityMaps['$value'] = \\{$valueClass}::getRepository()->getIdentityMap()->allByReference();
+                        \$identityMaps['$value'] = \$mandango->getRepository('{$valueClass}')->getIdentityMap()->allByReference();
                     }
                     \$documentClass = '$valueClass';
                     \$identityMap = \$identityMaps['$value'];

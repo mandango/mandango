@@ -28,9 +28,9 @@ class CoreFieldAliasTest extends TestCase
         $articleRaw = array(
             'basatos' => 123
         );
-        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
+        $this->mandango->getRepository('Model\Article')->getCollection()->insert($articleRaw);
 
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
         $this->assertSame('123', $article->getDatabase());
     }
@@ -42,9 +42,9 @@ class CoreFieldAliasTest extends TestCase
                 'desde' => 123,
             ),
         );
-        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
+        $this->mandango->getRepository('Model\Article')->getCollection()->insert($articleRaw);
 
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
         $this->assertSame('123', $article->getSource()->getFrom());
     }
@@ -54,9 +54,9 @@ class CoreFieldAliasTest extends TestCase
         $articleRaw = array(
             'basatos' => '123',
         );
-        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
+        $this->mandango->getRepository('Model\Article')->getCollection()->insert($articleRaw);
 
-        $query = \Model\Article::getRepository()->createQuery();
+        $query = $this->mandango->getRepository('Model\Article')->createQuery();
         $article = $query->one();
 
         $this->assertNull($query->getFieldsCache());
@@ -71,9 +71,9 @@ class CoreFieldAliasTest extends TestCase
                 'desde' => '123',
             ),
         );
-        \Model\Article::getRepository()->getCollection()->insert($articleRaw);
+        $this->mandango->getRepository('Model\Article')->getCollection()->insert($articleRaw);
 
-        $query = \Model\Article::getRepository()->createQuery();
+        $query = $this->mandango->getRepository('Model\Article')->createQuery();
         $article = $query->one();
 
         $this->assertNull($query->getFieldsCache());
@@ -83,7 +83,7 @@ class CoreFieldAliasTest extends TestCase
 
     public function testDocumentSetDocumentData()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article->setDocumentData(array(
             'basatos' => 123,
         ));
@@ -92,7 +92,7 @@ class CoreFieldAliasTest extends TestCase
 
     public function testDocumentQueryForSaveNew()
     {
-        $article = \Model\Article::create()->setDatabase(123);
+        $article = $this->mandango->create('Model\Article')->setDatabase(123);
         $this->assertSame(array(
             'basatos' => '123',
         ), $article->queryForSave());
@@ -100,7 +100,7 @@ class CoreFieldAliasTest extends TestCase
 
     public function testDocumentQueryForSaveUpdate()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'basatos' => '234',
@@ -123,8 +123,8 @@ class CoreFieldAliasTest extends TestCase
 
     public function testDocumentQueryForSaveEmbeddedNew()
     {
-        $source = \Model\Source::create()->setFrom(123);
-        $article = \Model\Article::create()->setSource($source);
+        $source = $this->mandango->create('Model\Source')->setFrom(123);
+        $article = $this->mandango->create('Model\Article')->setSource($source);
         $this->assertSame(array(
             'source' => array(
                 'desde' => '123',
@@ -134,7 +134,7 @@ class CoreFieldAliasTest extends TestCase
 
     public function testDocumentQueryForSaveEmbeddedNotNew()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'source' => array(

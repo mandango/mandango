@@ -89,10 +89,9 @@ class RepositoryTest extends TestCase
         $mandango = new Mandango($this->metadata, $this->queryCache);
         $mandango->setConnections($connections);
         $mandango->setDefaultConnectionName('local');
-        \Mandango\Container::set('default', $mandango);
 
-        $this->assertSame($connections['local'], \Model\Article::getRepository()->getConnection());
-        $this->assertSame($connections['global'], \Model\ConnectionGlobal::getRepository()->getConnection());
+        $this->assertSame($connections['local'], $mandango->getRepository('Model\Article')->getConnection());
+        $this->assertSame($connections['global'], $mandango->getRepository('Model\ConnectionGlobal')->getConnection());
     }
 
     public function testCollection()
@@ -101,30 +100,29 @@ class RepositoryTest extends TestCase
         $connection = new Connection($this->server, $this->dbName.'_collection');
         $mandango->setConnection('default', $connection);
         $mandango->setDefaultConnectionName('default');
-        \Mandango\Container::set('default', $mandango);
 
-        $collection = \Model\Article::getRepository()->getCollection();
+        $collection = $mandango->getRepository('Model\Article')->getCollection();
         $this->assertEquals($connection->getMongoDB()->selectCollection('articles'), $collection);
-        $this->assertSame($collection, \Model\Article::getRepository()->getCollection());
+        $this->assertSame($collection, $mandango->getRepository('Model\Article')->getCollection());
     }
 
     public function testCollectionGridFS()
     {
-        $collection = \Model\Image::getRepository()->getCollection();
+        $collection = $this->mandango->getRepository('Model\Image')->getCollection();
         $this->assertEquals($this->db->getGridFS('model_image'), $collection);
-        $this->assertSame($collection, \Model\Image::getRepository()->getCollection());
+        $this->assertSame($collection, $this->mandango->getRepository('Model\Image')->getCollection());
     }
 
     public function testQuery()
     {
-        $query = \Model\Article::getRepository()->createQuery();
+        $query = $this->mandango->getRepository('Model\Article')->createQuery();
         $this->assertInstanceOf('Model\ArticleQuery', $query);
 
-        $query = \Model\Author::getRepository()->createQuery();
+        $query = $this->mandango->getRepository('Model\Author')->createQuery();
         $this->assertInstanceOf('Model\AuthorQuery', $query);
 
         $criteria = array('is_active' => true);
-        $query = \Model\Article::getRepository()->createQuery($criteria);
+        $query = $this->mandango->getRepository('Model\Article')->createQuery($criteria);
         $this->assertInstanceOf('Model\ArticleQuery', $query);
         $this->assertSame($criteria, $query->getCriteria());
     }
@@ -134,12 +132,12 @@ class RepositoryTest extends TestCase
         $articles = array();
         $articlesById = array();
         for ($i = 0; $i <= 10; $i++) {
-            $articleSaved = \Model\Article::create()->setTitle('Article'.$i)->save();
-            $articles[] = $article = \Model\Article::create()->setId($articleSaved->getId());
+            $articleSaved = $this->mandango->create('Model\Article')->setTitle('Article'.$i)->save();
+            $articles[] = $article = $this->mandango->create('Model\Article')->setId($articleSaved->getId());
             $articlesById[$article->getId()->__toString()] = $article;
         }
 
-        $repository = \Model\Article::getRepository();
+        $repository = $this->mandango->getRepository('Model\Article');
         $identityMap = $repository->getIdentityMap();
 
         $identityMap->clear();

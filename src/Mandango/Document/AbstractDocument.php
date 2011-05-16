@@ -26,36 +26,21 @@ abstract class AbstractDocument
     protected $fieldsModified = array();
 
     /**
-     * Creates an instance of the document and returns it to have a fluent interface.
-     *
-     * @return Mandango\AbstractDocument The instance.
-     *
-     * @api
+     * Initializes the document.
      */
-    static public function create()
+    protected function initialize()
     {
-        return new static();
     }
 
-    /*
-     * Returns the mandango of the document.
+    /**
+     * Returns the document metadata.
      *
-     * @return Mandango\Mandango The mandango of the document.
-     *
-     * abstract static public function getMandango();
+     * @return array The document metadata.
      */
-
-     /**
-      * Returns the metadata info of the class.
-      *
-      * @return array The metadata info of the class.
-      *
-      * @api
-      */
-     static public function getMetadata()
-     {
-         return static::getMandango()->getMetadata()->getClassInfo(get_called_class());
-     }
+    public function getMetadata()
+    {
+        return $this->getMandango()->getMetadata()->getClassInfo(get_class($this));
+    }
 
     /**
      * Returns the document data.
@@ -298,5 +283,56 @@ abstract class AbstractDocument
                 Archive::remove($this, 'embedded_one.'.$name);
             }
         }
+    }
+
+    /**
+     * Returns an array with the document info to debug.
+     *
+     * @return array An array with the document info.
+     */
+    public function debug()
+    {
+        $info = array();
+
+        $metadata = $this->getMetadata();
+
+        $referenceFields = array();
+        foreach (array_merge($metadata['referencesOne'], $metadata['referencesMany']) as $name => $reference) {
+            $referenceFields[] = $reference['field'];
+        }
+
+        // fields
+        foreach ($metadata['fields'] as $name => $field) {
+            if (in_array($name, $referenceFields)) {
+                continue;
+            }
+            $info['fields'][$name] = $this->{'get'.ucfirst($name)}();
+        }
+
+        // referencesOne
+        foreach ($metadata['referencesOne'] as $name => $referenceOne) {
+            $info['referencesOne'][$name] = $this->{'get'.ucfirst($referenceOne['field'])}();
+        }
+
+        // referencesMany
+        foreach ($metadata['referencesMany'] as $name => $referenceMany) {
+            $info['referencesMany'][$name] = $this->{'get'.ucfirst($referenceMany['field'])}();
+        }
+
+        // embeddedsOne
+        foreach ($metadata['embeddedsOne'] as $name => $embeddedOne) {
+            $embedded = $this->{'get'.ucfirst($name)}();
+            $info['embeddedsOne'][$name] = $embedded ? $embedded->debug() : null;
+        }
+
+        // embeddedsMany
+        foreach ($metadata['embeddedsMany'] as $name => $embeddedMany) {
+            $info['embeddedsMany'][$name] = array();
+            foreach ($this->{'get'.ucfirst($name)}() as $key => $value) {
+                $info['embeddedsMany'][$name][$key] = $value->debug();
+            }
+        }
+
+        return $info;
     }
 }

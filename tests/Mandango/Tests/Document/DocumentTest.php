@@ -52,10 +52,10 @@ class DocumentTest extends TestCase
 
     public function testAddFieldCache()
     {
-        $query1 = \Model\Article::getRepository()->createQuery();
-        $query2 = \Model\Article::getRepository()->createQuery();
+        $query1 = $this->mandango->getRepository('Model\Article')->createQuery();
+        $query2 = $this->mandango->getRepository('Model\Article')->createQuery();
 
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article->addQueryHash($query1->getHash());
         $article->addFieldCache('title');
         $this->assertSame(array('title' => 1), $query1->getFieldsCache());
@@ -72,10 +72,10 @@ class DocumentTest extends TestCase
 
     public function testAddReferenceCache()
     {
-        $query1 = \Model\Article::getRepository()->createQuery();
-        $query2 = \Model\Article::getRepository()->createQuery();
+        $query1 = $this->mandango->getRepository('Model\Article')->createQuery();
+        $query2 = $this->mandango->getRepository('Model\Article')->createQuery();
 
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article->addQueryHash($query1->getHash());
         $article->addReferenceCache('author');
         $this->assertSame(array('author'), $query1->getReferencesCache());

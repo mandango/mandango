@@ -192,6 +192,16 @@ class Mandango implements MandangoInterface
     /**
      * {@inheritdoc}
      */
+    public function create($documentClass)
+    {
+        $document = new $documentClass($this);
+
+        return $document;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getRepository($documentClass)
     {
         if (!isset($this->repositories[$documentClass])) {

@@ -17,10 +17,10 @@ class CorePolymorphicReferencesTest extends TestCase
 {
     public function testDocumentReferencesOneSetterGetter()
     {
-        $article = \Model\Article::create();
+        $article = $this->mandango->create('Model\Article');
 
-        $author = \Model\Author::create()->setName('foo')->save();
-        $category = \Model\Category::create()->setName('foo')->save();
+        $author = $this->mandango->create('Model\Author')->setName('foo')->save();
+        $category = $this->mandango->create('Model\Category')->setName('foo')->save();
 
         $this->assertSame($article, $article->setLike($author));
         $this->assertSame($author, $article->getLike());
@@ -38,10 +38,10 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentReferencesOneSetterGetterDiscriminatorMap()
     {
-        $article = \Model\Article::create();
+        $article = $this->mandango->create('Model\Article');
 
-        $author = \Model\Author::create()->setName('foo')->save();
-        $category = \Model\Category::create()->setName('foo')->save();
+        $author = $this->mandango->create('Model\Author')->setName('foo')->save();
+        $category = $this->mandango->create('Model\Category')->setName('foo')->save();
 
         $this->assertSame($article, $article->setFriend($author));
         $this->assertSame($author, $article->getFriend());
@@ -59,9 +59,9 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentReferencesOneGetterQuery()
     {
-        $author = \Model\Author::create()->setName('foo')->save();
+        $author = $this->mandango->create('Model\Author')->setName('foo')->save();
 
-        $article = \Model\Article::create();
+        $article = $this->mandango->create('Model\Article');
         $this->assertNull($article->getLike());
         $article->setLikeRef(array(
             '_mandangoDocumentClass' => 'Model\Author',
@@ -72,9 +72,9 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentReferencesOneGetterQueryDiscriminatorMap()
     {
-        $category = \Model\Category::create()->setName('foo')->save();
+        $category = $this->mandango->create('Model\Category')->setName('foo')->save();
 
-        $article = \Model\Article::create();
+        $article = $this->mandango->create('Model\Article');
         $this->assertNull($article->getLike());
         $article->setFriendRef(array(
             'name' => 'ct',
@@ -88,13 +88,13 @@ class CorePolymorphicReferencesTest extends TestCase
      */
     public function testDocumentReferencesOneSetterInvalidClass()
     {
-        \Model\Article::create()->setLike(new \DateTime());
+        $this->mandango->create('Model\Article')->setLike(new \DateTime());
     }
 
     public function testDocumentUpdateReferenceFieldsReferencesOne()
     {
-        $author = \Model\Author::create();
-        $article = \Model\Article::create()->setLike($author);
+        $author = $this->mandango->create('Model\Author');
+        $article = $this->mandango->create('Model\Article')->setLike($author);
         $author->setId(new \MongoId('123'));
         $article->updateReferenceFields();
         $this->assertSame(array(
@@ -105,8 +105,8 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentUpdateReferenceFieldsReferencesOneDiscriminatorMap()
     {
-        $author = \Model\Author::create();
-        $article = \Model\Article::create()->setFriend($author);
+        $author = $this->mandango->create('Model\Author');
+        $article = $this->mandango->create('Model\Article')->setFriend($author);
         $author->setId(new \MongoId('123'));
         $article->updateReferenceFields();
         $this->assertSame(array(
@@ -117,8 +117,8 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentQueryForSaveReferencesOne()
     {
-        $author = \Model\Author::create()->setName('pablodip')->save();
-        $article = \Model\Article::create()->setLike($author);
+        $author = $this->mandango->create('Model\Author')->setName('pablodip')->save();
+        $article = $this->mandango->create('Model\Article')->setLike($author);
 
         $this->assertSame(array(
             'like' => array(
@@ -130,7 +130,7 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentReferencesManyGetter()
     {
-        $article = \Model\Article::create();
+        $article = $this->mandango->create('Model\Article');
         $related = $article->getRelated();
         $this->assertInstanceOf('Mandango\Group\PolymorphicReferenceGroup', $related);
         $this->assertSame('_mandangoDocumentClass', $related->getDiscriminatorField());
@@ -141,12 +141,12 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentUpdateReferenceFieldsReferencesManyNew()
     {
-        $article = \Model\Article::create();
+        $article = $this->mandango->create('Model\Article');
         $related = $article->getRelated();
-        $author1 = \Model\Author::create()->setId(new \MongoId('1'));
-        $author2 = \Model\Author::create()->setId(new \MongoId('2'));
-        $category1 = \Model\Category::create()->setId(new \MongoId('3'));
-        $user1 = \Model\User::create()->setId(new \MongoId('4'));
+        $author1 = $this->mandango->create('Model\Author')->setId(new \MongoId('1'));
+        $author2 = $this->mandango->create('Model\Author')->setId(new \MongoId('2'));
+        $category1 = $this->mandango->create('Model\Category')->setId(new \MongoId('3'));
+        $user1 = $this->mandango->create('Model\User')->setId(new \MongoId('4'));
         $related->add(array($author1, $author2, $category1, $user1));
 
         $article->updateReferenceFields();
@@ -160,7 +160,7 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentUpdateReferenceFieldsReferencesManyNotNew()
     {
-        $article = \Model\Article::create()->setDocumentData(array(
+        $article = $this->mandango->create('Model\Article')->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'related' => $relatedRef = array(
                 array('_mandangoDocumentClass' => 'Model\Author', 'id' => new \MongoId('1')),
@@ -171,11 +171,11 @@ class CorePolymorphicReferencesTest extends TestCase
         ));
         $related = $article->getRelated();
         $add = array();
-        $related->add($add[] = \Model\User::create()->setId(new \MongoId('1')));
-        $related->add($add[] = \Model\Author::create()->setId(new \MongoId('5')));
-        $related->add($add[] = \Model\Author::create()->setId(new \MongoId('6')));
-        $related->remove(\Model\Author::create()->setId($relatedRef[1]['id']));
-        $related->remove(\Model\Category::create()->setId($relatedRef[3]['id']));
+        $related->add($add[] = $this->mandango->create('Model\User')->setId(new \MongoId('1')));
+        $related->add($add[] = $this->mandango->create('Model\Author')->setId(new \MongoId('5')));
+        $related->add($add[] = $this->mandango->create('Model\Author')->setId(new \MongoId('6')));
+        $related->remove($this->mandango->create('Model\Author')->setId($relatedRef[1]['id']));
+        $related->remove($this->mandango->create('Model\Category')->setId($relatedRef[3]['id']));
 
         $article->updateReferenceFields();
         $this->assertSame(array(
@@ -189,12 +189,12 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentUpdateReferenceFieldsReferencesManyNewDiscriminatorMap()
     {
-        $article = \Model\Article::create();
+        $article = $this->mandango->create('Model\Article');
         $elements = $article->getElements();
-        $element1 = \Model\FormElement::create()->setId(new \MongoId('1'));
-        $element2 = \Model\FormElement::create()->setId(new \MongoId('2'));
-        $textareaElement1 = \Model\TextareaFormElement::create()->setId(new \MongoId('3'));
-        $radioElement1 = \Model\RadioFormElement::create()->setId(new \MongoId('4'));
+        $element1 = $this->mandango->create('Model\FormElement')->setId(new \MongoId('1'));
+        $element2 = $this->mandango->create('Model\FormElement')->setId(new \MongoId('2'));
+        $textareaElement1 = $this->mandango->create('Model\TextareaFormElement')->setId(new \MongoId('3'));
+        $radioElement1 = $this->mandango->create('Model\RadioFormElement')->setId(new \MongoId('4'));
         $elements->add(array($element1, $element2, $textareaElement1, $radioElement1));
 
         $article->updateReferenceFields();
@@ -208,7 +208,7 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentUpdateReferenceFieldsReferencesManyNotNewDiscriminatorMap()
     {
-        $article = \Model\Article::create()->setDocumentData(array(
+        $article = $this->mandango->create('Model\Article')->setDocumentData(array(
             '_id' => new \MongoId('123'),
             'elements' => $elementsRef = array(
                 array('type' => 'element', 'id' => new \MongoId('1')),
@@ -219,11 +219,11 @@ class CorePolymorphicReferencesTest extends TestCase
         ));
         $elements = $article->getElements();
         $add = array();
-        $elements->add($add[] = \Model\RadioFormElement::create()->setId(new \MongoId('1')));
-        $elements->add($add[] = \Model\FormElement::create()->setId(new \MongoId('5')));
-        $elements->add($add[] = \Model\FormElement::create()->setId(new \MongoId('6')));
-        $elements->remove(\Model\FormElement::create()->setId($elementsRef[1]['id']));
-        $elements->remove(\Model\TextareaFormElement::create()->setId($elementsRef[3]['id']));
+        $elements->add($add[] = $this->mandango->create('Model\RadioFormElement')->setId(new \MongoId('1')));
+        $elements->add($add[] = $this->mandango->create('Model\FormElement')->setId(new \MongoId('5')));
+        $elements->add($add[] = $this->mandango->create('Model\FormElement')->setId(new \MongoId('6')));
+        $elements->remove($this->mandango->create('Model\FormElement')->setId($elementsRef[1]['id']));
+        $elements->remove($this->mandango->create('Model\TextareaFormElement')->setId($elementsRef[3]['id']));
 
         $article->updateReferenceFields();
         $this->assertSame(array(
@@ -242,15 +242,15 @@ class CorePolymorphicReferencesTest extends TestCase
     {
         $authors = array();
         for ($i = 0; $i < 9; $i++) {
-            $authors[] = \Model\Author::create()->setName('Author'.$i)->save();
+            $authors[] = $this->mandango->create('Model\Author')->setName('Author'.$i)->save();
         }
         $categories = array();
         for ($i = 0; $i < 9; $i++) {
-            $categories[] = \Model\Category::create()->setName('Category'.$i)->save();
+            $categories[] = $this->mandango->create('Model\Category')->setName('Category'.$i)->save();
         }
         $users = array();
         for ($i = 0; $i < 9; $i++) {
-            $users[] = \Model\User::create()->setUsername('User'.$i)->save();
+            $users[] = $this->mandango->create('Model\User')->setUsername('User'.$i)->save();
         }
 
         $relatedRef = array();
@@ -258,7 +258,7 @@ class CorePolymorphicReferencesTest extends TestCase
         $relatedRef[] = array('_mandangoDocumentClass' => 'Model\Author', 'id' => $authors[5]->getId());
         $relatedRef[] = array('_mandangoDocumentClass' => 'Model\Category', 'id' => $categories[1]->getId());
         $relatedRef[] = array('_mandangoDocumentClass' => 'Model\User', 'id' => $users[8]->getId());
-        $article = \Model\Article::create()->setRelatedRef($relatedRef);
+        $article = $this->mandango->create('Model\Article')->setRelatedRef($relatedRef);
         $this->assertSame(array(
             $authors[3],
             $authors[5],
@@ -271,15 +271,15 @@ class CorePolymorphicReferencesTest extends TestCase
     {
         $elements = array();
         for ($i = 0; $i < 9; $i++) {
-            $elements[] = \Model\FormElement::create()->setLabel('Element'.$i)->save();
+            $elements[] = $this->mandango->create('Model\FormElement')->setLabel('Element'.$i)->save();
         }
         $textareaElements = array();
         for ($i = 0; $i < 9; $i++) {
-            $textareaElements[] = \Model\TextareaFormElement::create()->setLabel('Textarea'.$i)->save();
+            $textareaElements[] = $this->mandango->create('Model\TextareaFormElement')->setLabel('Textarea'.$i)->save();
         }
         $radioElements = array();
         for ($i = 0; $i < 9; $i++) {
-            $radioElements[] = \Model\RadioFormElement::create()->setLabel('Radio'.$i)->save();
+            $radioElements[] = $this->mandango->create('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
         }
 
         $elementsRef = array();
@@ -287,7 +287,7 @@ class CorePolymorphicReferencesTest extends TestCase
         $elementsRef[] = array('type' => 'element', 'id' => $elements[5]->getId());
         $elementsRef[] = array('type' => 'textarea', 'id' => $textareaElements[1]->getId());
         $elementsRef[] = array('type' => 'radio', 'id' => $radioElements[8]->getId());
-        $article = \Model\Article::create()->setElementsRef($elementsRef);
+        $article = $this->mandango->create('Model\Article')->setElementsRef($elementsRef);
         $this->assertSame(array(
             $elements[3],
             $elements[5],
@@ -298,10 +298,10 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testDocumentQueryForSaveReferencesMany()
     {
-        $article = \Model\Article::create();
+        $article = $this->mandango->create('Model\Article');
         $related = $article->getRelated();
-        $author = \Model\Author::create()->setName('foo')->save();
-        $category = \Model\Category::create()->setName('bar')->save();
+        $author = $this->mandango->create('Model\Author')->setName('foo')->save();
+        $category = $this->mandango->create('Model\Category')->setName('bar')->save();
         $related->add(array($author, $category));
         $article->updateReferenceFields();
 
@@ -321,7 +321,7 @@ class CorePolymorphicReferencesTest extends TestCase
 
     public function testBasicQueryForSave()
     {
-        $element = \Model\FormElement::create()->setLabel('foo');
+        $element = $this->mandango->create('Model\FormElement')->setLabel('foo');
         $this->assertSame(array(
             'label' => 'foo',
         ), $element->queryForSave());
@@ -333,7 +333,7 @@ class CorePolymorphicReferencesTest extends TestCase
             ),
         ), $element->queryForSave());
 
-        $textareaElement = \Model\TextareaFormElement::create()->setLabel('ups');
+        $textareaElement = $this->mandango->create('Model\TextareaFormElement')->setLabel('ups');
         $this->assertSame(array(
             'type' => 'textarea',
             'label' => 'ups',

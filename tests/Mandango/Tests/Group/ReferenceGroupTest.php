@@ -18,7 +18,7 @@ class ReferenceGroupTest extends TestCase
 {
     public function testConstructor()
     {
-        $group = new ReferenceGroup('Model\Category', $article = new \Model\Article(), 'category_ids');
+        $group = new ReferenceGroup('Model\Category', $article = $this->mandango->create('Model\Article'), 'category_ids');
         $this->assertSame($article, $group->getParent());
         $this->assertSame('category_ids', $group->getField());
     }

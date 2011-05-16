@@ -20,13 +20,13 @@ class DocumentArrayAccessTest extends TestCase
      */
     public function testOffsetExists()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         isset($article['title']);
     }
 
     public function testOffsetSet()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article['title'] = 'foo';
         $this->assertSame('foo', $article->getTitle());
     }
@@ -36,13 +36,13 @@ class DocumentArrayAccessTest extends TestCase
      */
     public function testOffsetSetNameNotExists()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article['no'] = 'foo';
     }
 
     public function testOffsetGet()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article->setTitle('bar');
         $this->assertSame('bar', $article['title']);
     }
@@ -52,7 +52,7 @@ class DocumentArrayAccessTest extends TestCase
      */
     public function testOffsetGetNameNotExists()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         $article['no'];
     }
 
@@ -61,7 +61,7 @@ class DocumentArrayAccessTest extends TestCase
      */
     public function testOffsetUnset()
     {
-        $article = new \Model\Article();
+        $article = $this->mandango->create('Model\Article');
         unset($article['title']);
     }
 }

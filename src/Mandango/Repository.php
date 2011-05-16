@@ -89,6 +89,14 @@ abstract class Repository implements RepositoryInterface
     /**
      * {@inheritdoc}
      */
+    public function getMetadata()
+    {
+        return $this->mandango->getMetadata()->getClassInfo($this->documentClass);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isFile()
     {
         return $this->isFile;

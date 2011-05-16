@@ -24,30 +24,30 @@ class EmbeddedGroupTest extends TestCase
         );
 
         $group = new EmbeddedGroup('Model\Comment');
-        $group->setRootAndPath($article = new \Model\Article(), 'comments');
+        $group->setRootAndPath($article = $this->mandango->create('Model\Article'), 'comments');
         $group->setSavedData($data);
         $this->assertSame(2, $group->count());
         $saved = $group->getSaved();
-        $this->assertEquals(\Model\Comment::create()->setDocumentData($data[0]), $saved[0]);
+        $this->assertEquals($this->mandango->create('Model\Comment')->setDocumentData($data[0]), $saved[0]);
         $this->assertSame(array('root' => $article, 'path' => 'comments.0'), $saved[0]->getRootAndPath());
-        $this->assertEquals(\Model\Comment::create()->setDocumentData($data[0]), $saved[0]);
+        $this->assertEquals($this->mandango->create('Model\Comment')->setDocumentData($data[0]), $saved[0]);
         $this->assertSame(array('root' => $article, 'path' => 'comments.1'), $saved[1]->getRootAndPath());
     }
 
     public function testRootAndPath()
     {
         $group = new EmbeddedGroup('Model\Comment');
-        $comment = new \Model\Comment();
+        $comment = $this->mandango->create('Model\Comment');
         $group->add($comment);
-        $group->setRootAndPath($article = new \Model\Article(), 'comments');
+        $group->setRootAndPath($article = $this->mandango->create('Model\Article'), 'comments');
         $this->assertSame(array('root' => $article, 'path' => 'comments._add0'), $comment->getRootAndPath());
     }
 
     public function testAdd()
     {
         $group = new EmbeddedGroup('Model\Comment');
-        $group->setRootAndPath($article = new \Model\Article(), 'comments');
-        $comment = new \Model\Comment();
+        $group->setRootAndPath($article = $this->mandango->create('Model\Article'), 'comments');
+        $comment = $this->mandango->create('Model\Comment');
         $group->add($comment);
         $this->assertSame(array('root' => $article, 'path' => 'comments._add0'), $comment->getRootAndPath());
     }

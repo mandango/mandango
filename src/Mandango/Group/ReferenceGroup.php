@@ -76,7 +76,7 @@ class ReferenceGroup extends Group
      */
     protected function doInitializeSaved(array $data)
     {
-        return call_user_func(array($this->getDocumentClass(), 'getRepository'))->findById($data);
+        return $this->getParent()->getMandango()->getRepository($this->getDocumentClass())->findById($data);
     }
 
     /**
@@ -86,8 +86,8 @@ class ReferenceGroup extends Group
      */
     public function createQuery()
     {
-        $documentClass = $this->getDocumentClass();
-
-        return $documentClass::getRepository()->createQuery(array('_id' => array('$in' => $this->doInitializeSavedData())));
+        return $this->getParent()->getMandango()->getRepository($this->getDocumentClass())->createQuery(array(
+            '_id' => array('$in' => $this->doInitializeSavedData()),
+        ));
     }
 }
