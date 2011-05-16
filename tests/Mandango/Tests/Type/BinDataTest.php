@@ -19,6 +19,7 @@ class BinDataTypeTest extends TestCase
     {
         $type = new BinDataType();
         $this->assertEquals(new \MongoBinData('123'), $type->toMongo('123'));
+        $this->assertEquals(new \MongoBinData(file_get_contents(__FILE__)), $type->toMongo(__FILE__));
     }
 
     public function testToPHP()
@@ -33,6 +34,7 @@ class BinDataTypeTest extends TestCase
         $function = $this->getTypeFunction($type->toMongoInString());
 
         $this->assertEquals(new \MongoBinData('123'), $function('123'));
+        $this->assertEquals(new \MongoBinData(file_get_contents(__FILE__)), $function(__FILE__));
     }
 
     public function testToPHPInString()

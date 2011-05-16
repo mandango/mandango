@@ -25,6 +25,10 @@ class BinDataType extends Type
      */
     public function toMongo($value)
     {
+        if (is_file($value)) {
+            $value = file_get_contents($value);
+        }
+
         return new \MongoBinData($value);
     }
 
@@ -41,7 +45,7 @@ class BinDataType extends Type
      */
     public function toMongoInString()
     {
-        return '%to% = new \MongoBinData(%from%);';
+        return 'if (is_file(%from%)) { %from% = file_get_contents(%from%); } %to% = new \MongoBinData(%from%);';
     }
 
     /**
