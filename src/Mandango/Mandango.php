@@ -194,7 +194,9 @@ class Mandango implements MandangoInterface
      */
     public function create($documentClass)
     {
-        return new $documentClass($this);
+        $document = new $documentClass($this);
+
+        return $document;
     }
 
     /**

@@ -110,6 +110,7 @@ class Core extends Extension
         // document
         $this->documentMandangoPropertyProcess();
         $this->documentConstructorMethodProcess();
+        $this->documentInitializeDefaultsMethodProcess();
         $this->documentGetMandangoMethodProcess();
         if (!$this->configClass['isEmbedded']) {
             $this->documentGetRepositoryMethodProcess();
@@ -614,11 +615,26 @@ EOF
 
     private function documentConstructorMethodProcess()
     {
-        $code = <<<EOF
+        $method = new Method('public', '__construct', '\Mandango\Mandango $mandango', <<<EOF
         \$this->mandango = \$mandango;
 
-EOF;
+        \$this->initializeDefaults();
+        \$this->initialize();
+EOF
+        );
+        $method->setDocComment(<<<EOF
+    /**
+     * Constructor.
+     *
+     * @param Mandango\Mandango \$mandango The mandango.
+     */
+EOF
+        );
+        $this->definitions['document_base']->addMethod($method);
+    }
 
+    private function documentInitializeDefaultsMethodProcess()
+    {
         // default values
         $defaultValuesCode = array();
         foreach ($this->configClass['fields'] as $name => $field) {
@@ -632,17 +648,13 @@ EOF;
         }
         $defaultValuesCode = implode("\n", $defaultValuesCode);
 
-        $method = new Method('public', '__construct', '\Mandango\Mandango $mandango', <<<EOF
-        \$this->mandango = \$mandango;
-
+        $method = new Method('private', 'initializeDefaults', '', <<<EOF
 $defaultValuesCode
 EOF
         );
         $method->setDocComment(<<<EOF
     /**
-     * Constructor.
-     *
-     * @param Mandango\Mandango \$mandango The mandango.
+     * Initializes the document defaults.
      */
 EOF
         );

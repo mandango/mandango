@@ -26,6 +26,13 @@ abstract class AbstractDocument
     protected $fieldsModified = array();
 
     /**
+     * Initializes the document.
+     */
+    protected function initialize()
+    {
+    }
+
+    /**
      * Returns the document metadata.
      *
      * @return array The document metadata.
