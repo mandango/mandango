@@ -25,7 +25,7 @@ class CoreDocumentTest extends TestCase
 
     public function testFieldsSettersGetters()
     {
-        $article = $this->mandango->create('Model\Article');
+        $article = $this->mandango->create('Model\Article', array($this->mandango->create('Model\Author')));
         $this->assertNull($article->getTitle());
         $this->assertNull($article->getContent());
         $this->assertSame($article, $article->setTitle('foo'));

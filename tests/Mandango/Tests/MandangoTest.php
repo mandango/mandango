@@ -188,6 +188,13 @@ class MandangoTest extends TestCase
         $this->assertSame(true, $book->getIsHere());
     }
 
+    public function testCreateInitializeArgs()
+    {
+        $author = $this->mandango->create('Model\Author');
+        $initializeArgs = $this->mandango->create('Model\InitializeArgs', array($author));
+        $this->assertSame($author, $initializeArgs->getAuthor());
+    }
+
     public function testGetRepository()
     {
         $mandango = new Mandango($this->metadataFactory, $this->queryCache);

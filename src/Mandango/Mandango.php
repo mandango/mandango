@@ -272,17 +272,20 @@ class Mandango
     /**
      * Creates a new document.
      *
-     * @param string $documentClass The document class.
+     * @param string $documentClass  The document class.
+     * @param array  $initializeArgs The args to initialize method of the document (optional).
      *
      * @return Document The document.
      *
      * @api
      */
-    public function create($documentClass)
+    public function create($documentClass, array $initializeArgs = array())
     {
         $document = new $documentClass($this);
         $document->initializeDefaults();
-        $document->initialize();
+        if (method_exists($document, 'initialize')) {
+            call_user_func_array(array($document, 'initialize'), $initializeArgs);
+        }
 
         return $document;
     }

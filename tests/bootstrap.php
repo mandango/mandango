@@ -244,6 +244,14 @@ $configClasses = array(
             'postDelete' => array('myPostDelete'),
         ),
     ),
+    'Model\InitializeArgs' => array(
+        'fields' => array(
+            'name' => 'string',
+        ),
+        'referencesOne' => array(
+            'author' => array('class' => 'Model\Author'),
+        ),
+    ),
     // gridfs
     'Model\Image' => array(
         'isFile' => true,
