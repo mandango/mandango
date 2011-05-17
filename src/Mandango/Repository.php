@@ -18,7 +18,7 @@ namespace Mandango;
  *
  * @api
  */
-abstract class Repository implements RepositoryInterface
+abstract class Repository
 {
     /*
      * abstract string The document class.
@@ -63,7 +63,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the Mandango.
+     *
+     * @return Mandango The Mandango.
+     *
+     * @api
      */
     public function getMandango()
     {
@@ -71,7 +75,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the identity map.
+     *
+     * @return IdentityMapInterface The identity map.
+     *
+     * @api
      */
     public function getIdentityMap()
     {
@@ -79,7 +87,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the document class.
+     *
+     * @return string The document class.
+     *
+     * @api
      */
     public function getDocumentClass()
     {
@@ -87,7 +99,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the metadata.
+     *
+     * @return array The metadata.
+     *
+     * @api
      */
     public function getMetadata()
     {
@@ -95,7 +111,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns if the document is a file (if it uses GridFS).
+     *
+     * @return boolean If the document is a file.
+     *
+     * @api
      */
     public function isFile()
     {
@@ -103,7 +123,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the connection name, or null if it is the default.
+     *
+     * @return string|null The connection name.
+     *
+     * @api
      */
     public function getConnectionName()
     {
@@ -111,7 +135,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the collection name.
+     *
+     * @return string The collection name.
+     *
+     * @api
      */
     public function getCollectionName()
     {
@@ -119,7 +147,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the connection.
+     *
+     * @return ConnectionInterface The connection.
+     *
+     * @api
      */
     public function getConnection()
     {
@@ -135,7 +167,11 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the collection.
+     *
+     * @return \MongoCollection The collection.
+     *
+     * @api
      */
     public function getCollection()
     {
@@ -153,7 +189,13 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Create a query for the repository document class.
+     *
+     * @param array $criteria The criteria for the query (optional).
+     *
+     * @return Query The query.
+     *
+     * @api
      */
     public function createQuery(array $criteria = array())
     {
@@ -165,7 +207,13 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Find documents by id.
+     *
+     * @param array $ids An array of ids.
+     *
+     * @return array An array of documents.
+     *
+     * @api
      */
     public function findById(array $ids)
     {
@@ -191,7 +239,13 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns one document by id.
+     *
+     * @param mixed $id An id.
+     *
+     * @return Document|null The document or null if it does not exist.
+     *
+     * @api
      */
     public function findOneById($id)
     {
@@ -207,7 +261,13 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Count documents.
+     *
+     * @param array $query The query (opcional, by default an empty array).
+     *
+     * @return integer The number of documents.
+     *
+     * @api
      */
     public function count(array $query = array())
     {
@@ -215,7 +275,13 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Remove documents.
+     *
+     * @param array $query The query (optional, by default an empty array).
+     *
+     * @return mixed The result of the remove collection method.
+     *
+     * @api
      */
     public function remove(array $query = array())
     {
@@ -223,7 +289,18 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Shortcut to the collection group method.
+     *
+     * @param mixed $keys    The keys.
+     * @param array $initial The initial value.
+     * @param mixes $reduce  The reduce function.
+     * @param array $options The options (optional).
+     *
+     * @return array The result
+     *
+     * @see \MongoCollection::group()
+     *
+     * @api
      */
     public function group($keys, array $initial, $reduce, array $options = array())
     {
@@ -231,7 +308,14 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Shortcut to make a distinct command.
+     *
+     * @param string $field The field.
+     * @param array  $query The query (optional).
+     *
+     * @return array The results.
+     *
+     * @api
      */
     public function distinct($field, array $query = array())
     {
@@ -243,7 +327,17 @@ abstract class Repository implements RepositoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Shortcut to make map reduce.
+     *
+     * @param mixed $map     The map function.
+     * @param mixed $reduce  The reduce function.
+     * @param array $out     The out.
+     * @param array $query   The query (optional).
+     * @param array $options Extra options for the command (optional).
+     *
+     * @return array With the
+     *
+     * @throws \RuntimeException If the database returns an error.
      */
     public function mapReduce($map, $reduce, array $out, array $query = array(), array $options = array())
     {

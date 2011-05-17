@@ -20,7 +20,7 @@ use Mandango\Cache\CacheInterface;
  *
  * @api
  */
-class Mandango implements MandangoInterface
+class Mandango
 {
     const VERSION = '1.0.0-DEV';
 
@@ -52,7 +52,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the metadata factory.
+     *
+     * @return MetadataFactory The metadata factory.
+     *
+     * @api
      */
     public function getMetadataFactory()
     {
@@ -60,7 +64,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the query cache.
+     *
+     * @return CacheInterface The query cache.
+     *
+     * @api
      */
     public function getQueryCache()
     {
@@ -68,7 +76,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the logger callable.
+     *
+     * @return mixed The logger callable.
+     *
+     * @api
      */
     public function getLoggerCallable()
     {
@@ -76,7 +88,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the UnitOfWork.
+     *
+     * @return UnitOfWork The UnitOfWork.
+     *
+     * @api
      */
     public function getUnitOfWork()
     {
@@ -84,7 +100,12 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Set a connection.
+     *
+     * @param string              $name       The connection name.
+     * @param ConnectionInterface $connection The connection.
+     *
+     * @api
      */
     public function setConnection($name, ConnectionInterface $connection)
     {
@@ -99,7 +120,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Set the connections.
+     *
+     * @param array $connections An array of connections.
+     *
+     * @api
      */
     public function setConnections(array $connections)
     {
@@ -110,7 +135,13 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Remove a connection.
+     *
+     * @param string $name The connection name.
+     *
+     * @throws \InvalidArgumentException If the connection does not exists.
+     *
+     * @api
      */
     public function removeConnection($name)
     {
@@ -122,7 +153,9 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Clear the connections.
+     *
+     * @api
      */
     public function clearConnections()
     {
@@ -130,7 +163,13 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns if a connection exists.
+     *
+     * @param string $name The connection name.
+     *
+     * @return boolean Returns if a connection exists.
+     *
+     * @api
      */
     public function hasConnection($name)
     {
@@ -138,7 +177,15 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Return a connection.
+     *
+     * @param string $name The connection name.
+     *
+     * @return ConnectionInterface The connection.
+     *
+     * @throws \InvalidArgumentException If the connection does not exists.
+     *
+     * @api
      */
     public function getConnection($name)
     {
@@ -150,7 +197,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the connections.
+     *
+     * @return array The array of connections.
+     *
+     * @api
      */
     public function getConnections()
     {
@@ -158,7 +209,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Set the default connection name.
+     *
+     * @param string $name The connection name.
+     *
+     * @api
      */
     public function setDefaultConnectionName($name)
     {
@@ -166,7 +221,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the default connection name.
+     *
+     * @return string The default connection name.
+     *
+     * @api
      */
     public function getDefaultConnectionName()
     {
@@ -174,7 +233,14 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the default connection.
+     *
+     * @return ConnectionInterface The default connection.
+     *
+     * @throws \RuntimeException If there is not default connection name.
+     * @throws \RuntimeException If the default connection does not exists.
+     *
+     * @api
      */
     public function getDefaultConnection()
     {
@@ -190,7 +256,13 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns the metadata of a document class.
+     *
+     * @param string $documentClass The document class.
+     *
+     * @return array The metadata.
+     *
+     * @api
      */
     public function getMetadata($documentClass)
     {
@@ -198,7 +270,13 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Creates a new document.
+     *
+     * @param string $documentClass The document class.
+     *
+     * @return Document The document.
+     *
+     * @api
      */
     public function create($documentClass)
     {
@@ -208,7 +286,16 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns repositories by document class.
+     *
+     * @param string $documentClass The document class.
+     *
+     * @return Mandango\Repository The repository.
+     *
+     * @throws \InvalidArgumentException If the document class is not a valid document class.
+     * @throws \RuntimeException         If the repository class build does not exist.
+     *
+     * @api
      */
     public function getRepository($documentClass)
     {
@@ -229,7 +316,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Returns all repositories.
+     *
+     * @return array All repositories.
+     *
+     * @api
      */
     public function getAllRepositories()
     {
@@ -241,7 +332,9 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Ensure the indexes of all repositories.
+     *
+     * @api
      */
     public function ensureAllIndexes()
     {
@@ -251,7 +344,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Access to UnitOfWork ->persist() method.
+     *
+     * @see UnitOfWork::persist()
+     *
+     * @api
      */
     public function persist($documents)
     {
@@ -259,7 +356,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Access to UnitOfWork ->remove() method.
+     *
+     * @see Mandango\UnitOfWork::remove()
+     *
+     * @api
      */
     public function remove($document)
     {
@@ -267,7 +368,11 @@ class Mandango implements MandangoInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Access to UnitOfWork ->commit() method.
+     *
+     * @see Mandango\UnitOfWork::commit()
+     *
+     * @api
      */
     public function flush()
     {
