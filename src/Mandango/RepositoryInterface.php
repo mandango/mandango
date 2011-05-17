@@ -183,4 +183,19 @@ interface RepositoryInterface
      * @api
      */
     function distinct($field, array $query = array());
+
+    /**
+     * Shortcut to make map reduce.
+     *
+     * @param mixed $map     The map function.
+     * @param mixed $reduce  The reduce function.
+     * @param array $out     The out.
+     * @param array $query   The query (optional).
+     * @param array $options Extra options for the command (optional).
+     *
+     * @return array With the
+     *
+     * @throws \RuntimeException If the database returns an error.
+     */
+    function mapReduce($map, $reduce, array $out, array $query = array(), array $options = array());
 }

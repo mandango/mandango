@@ -241,4 +241,30 @@ abstract class Repository implements RepositoryInterface
             'query'    => $query,
         ));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function mapReduce($map, $reduce, array $out, array $query = array(), array $options = array())
+    {
+        $command = array_merge($options, array(
+            'mapreduce' => $this->getCollectionName(),
+            'map'       => is_string($map) ? new \MongoCode($map) : $map,
+            'reduce'    => is_string($reduce) ? new \MongoCode($reduce) : $reduce,
+            'out'       => $out,
+            'query'     => $query,
+        ));
+
+        $result = $this->getConnection()->getMongoDB()->command($command);
+
+        if (!$result['ok']) {
+            throw new \RuntimeException($result['errmsg']);
+        }
+
+        if (isset($out['inline']) && $out['inline']) {
+            return $result['results'];
+        }
+
+        return $this->getConnection()->getMongoDB()->selectCollection($result['result'])->find();
+    }
 }
