@@ -28,7 +28,7 @@ abstract class AbstractDocument
     /**
      * Initializes the document.
      */
-    protected function initialize()
+    public function initialize()
     {
     }
 

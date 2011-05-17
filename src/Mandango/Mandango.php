@@ -281,6 +281,8 @@ class Mandango
     public function create($documentClass)
     {
         $document = new $documentClass($this);
+        $document->initializeDefaults();
+        $document->initialize();
 
         return $document;
     }

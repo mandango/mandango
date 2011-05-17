@@ -617,9 +617,6 @@ EOF
     {
         $method = new Method('public', '__construct', '\Mandango\Mandango $mandango', <<<EOF
         \$this->mandango = \$mandango;
-
-        \$this->initializeDefaults();
-        \$this->initialize();
 EOF
         );
         $method->setDocComment(<<<EOF
@@ -648,7 +645,7 @@ EOF;
         }
         $defaultValuesCode = implode("\n", $defaultValuesCode);
 
-        $method = new Method('private', 'initializeDefaults', '', <<<EOF
+        $method = new Method('public', 'initializeDefaults', '', <<<EOF
 $defaultValuesCode
 EOF
         );
