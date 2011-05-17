@@ -13,6 +13,7 @@ namespace Mandango\Tests;
 
 use Mandango\Repository as BaseRepository;
 use Mandango\Connection;
+use Mandango\ConnectionInterface;
 use Mandango\Mandango;
 use Mandango\Query;
 
@@ -26,7 +27,19 @@ class Repository extends BaseRepository
 
 class RepositoryMock extends Repository
 {
+    private $collectionNameMock;
     private $collection;
+    private $connection;
+
+    public function setCollectionName($collectionName)
+    {
+        $this->collectionNameMock = $collectionName;
+    }
+
+    public function getCollectionName()
+    {
+        return $this->collectionNameMock;
+    }
 
     public function setCollection($collection)
     {
@@ -36,6 +49,16 @@ class RepositoryMock extends Repository
     public function getCollection()
     {
         return $this->collection;
+    }
+
+    public function setConnection(ConnectionInterface $connection)
+    {
+        $this->connection = $connection;
+    }
+
+    public function getConnection()
+    {
+        return $this->connection;
     }
 }
 
@@ -215,5 +238,67 @@ class RepositoryTest extends TestCase
         $repository = new RepositoryMock($this->mandango);
         $repository->setCollection($collection);
         $repository->remove($criteria);
+    }
+
+    public function testGroup()
+    {
+        $keys = array('category' => 1);
+        $initial = array('items' => array());
+        $reduce = 'function (obj, prev) { prev.items.push(obj.name); }';
+        $options = array();
+
+        $result = array(new \DateTime());
+
+        $collection = $this->getMockBuilder('MongoCollection')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $collection
+            ->expects($this->once())
+            ->method('group')
+            ->with($keys, $initial, $reduce, $options)
+            ->will($this->returnValue($result))
+        ;
+
+        $repository = new RepositoryMock($this->mandango);
+        $repository->setCollection($collection);
+        $this->assertSame($result, $repository->group($keys, $initial, $reduce, $options));
+    }
+
+    public function testDistinct()
+    {
+        $collectionName = 'myCollectionName';
+
+        $field = 'fieldName';
+        $query = array();
+
+        $result = array(new \DateTime());
+
+        $mongoDB = $this->getMockBuilder('MongoDB')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $mongoDB
+            ->expects($this->once())
+            ->method('command')
+            ->with(array(
+                'distinct' => $collectionName,
+                'key'      => $field,
+                'query'    => $query,
+            ))
+            ->will($this->returnValue($result))
+        ;
+
+        $connection = $this->getMock('Mandango\ConnectionInterface');
+        $connection
+            ->expects($this->any())
+            ->method('getMongoDB')
+            ->will($this->returnValue($mongoDB))
+        ;
+
+        $repository = new RepositoryMock($this->mandango);
+        $repository->setCollectionName($collectionName);
+        $repository->setConnection($connection);
+        $this->assertSame($result, $repository->distinct($field, $query));
     }
 }

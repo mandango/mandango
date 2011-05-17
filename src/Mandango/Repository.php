@@ -221,4 +221,24 @@ abstract class Repository implements RepositoryInterface
     {
         return $this->getCollection()->remove($query, array('safe' => true));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function group($keys, array $initial, $reduce, array $options = array())
+    {
+        return $this->getCollection()->group($keys, $initial, $reduce, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function distinct($field, array $query = array())
+    {
+        return $this->getConnection()->getMongoDB()->command(array(
+            'distinct' => $this->getCollectionName(),
+            'key'      => $field,
+            'query'    => $query,
+        ));
+    }
 }

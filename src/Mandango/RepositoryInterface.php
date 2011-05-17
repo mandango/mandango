@@ -155,4 +155,32 @@ interface RepositoryInterface
      * @api
      */
     function remove(array $query = array());
+
+    /**
+     * Shortcut to the collection group method.
+     *
+     * @param mixed $keys    The keys.
+     * @param array $initial The initial value.
+     * @param mixes $reduce  The reduce function.
+     * @param array $options The options (optional).
+     *
+     * @return array The result
+     *
+     * @see \MongoCollection::group()
+     *
+     * @api
+     */
+    function group($keys, array $initial, $reduce, array $options = array());
+
+    /**
+     * Shortcut to make a distinct command.
+     *
+     * @param string $field The field.
+     * @param array  $query The query (optional).
+     *
+     * @return array The results.
+     *
+     * @api
+     */
+    function distinct($field, array $query = array());
 }
