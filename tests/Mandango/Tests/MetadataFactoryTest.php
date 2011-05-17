@@ -11,9 +11,9 @@
 
 namespace Mandango\Tests;
 
-use Mandango\Metadata as BaseMetadata;
+use Mandango\MetadataFactory as BaseMetadataFactory;
 
-class Metadata extends BaseMetadata
+class MetadataFactory extends BaseMetadataFactory
 {
     protected $classes = array(
         'Model\Article'  => false,
@@ -24,29 +24,29 @@ class Metadata extends BaseMetadata
     );
 }
 
-class MetadataInfo
+class MetadataFactoryInfo
 {
-    public function getModelArticleClassInfo()
+    public function getModelArticleClass()
     {
         return 'foo';
     }
 
-    public function getModelAuthorClassInfo()
+    public function getModelAuthorClass()
     {
         return 'bar';
     }
 
-    public function getModelCommentClassInfo()
+    public function getModelCommentClass()
     {
         return 'ups';
     }
 }
 
-class MetadataTest extends TestCase
+class MetadataFactoryTest extends TestCase
 {
     public function testGetClasses()
     {
-        $metadata = new Metadata();
+        $metadata = new MetadataFactory();
         $this->assertSame(array(
             'Model\Article',
             'Model\Author',
@@ -58,7 +58,7 @@ class MetadataTest extends TestCase
 
     public function testGetDocumentClasses()
     {
-        $metadata = new Metadata();
+        $metadata = new MetadataFactory();
         $this->assertSame(array(
             'Model\Article',
             'Model\Author',
@@ -68,7 +68,7 @@ class MetadataTest extends TestCase
 
     public function testGetEmbeddedDocumentClasses()
     {
-        $metadata = new Metadata();
+        $metadata = new MetadataFactory();
         $this->assertSame(array(
             'Model\Comment',
             'Model\Source',
@@ -77,7 +77,7 @@ class MetadataTest extends TestCase
 
     public function testHasClass()
     {
-        $metadata = new Metadata();
+        $metadata = new MetadataFactory();
         $this->assertTrue($metadata->hasClass('Model\Article'));
         $this->assertTrue($metadata->hasClass('Model\Comment'));
         $this->assertFalse($metadata->hasClass('Model\User'));
@@ -85,7 +85,7 @@ class MetadataTest extends TestCase
 
     public function testIsDocumentClass()
     {
-        $metadata = new Metadata();
+        $metadata = new MetadataFactory();
         $this->assertTrue($metadata->isDocumentClass('Model\Article'));
         $this->assertTrue($metadata->isDocumentClass('Model\Author'));
         $this->assertFalse($metadata->isDocumentClass('Model\Comment'));
@@ -96,13 +96,13 @@ class MetadataTest extends TestCase
      */
     public function testIsDocumentClassClassDoesNotExist()
     {
-        $metadata = new Metadata();
+        $metadata = new MetadataFactory();
         $metadata->isDocumentClass('Model\User');
     }
 
     public function testIsEmbeddedDocumentClass()
     {
-        $metadata = new Metadata();
+        $metadata = new MetadataFactory();
         $this->assertTrue($metadata->isEmbeddedDocumentClass('Model\Comment'));
         $this->assertTrue($metadata->isEmbeddedDocumentClass('Model\Source'));
         $this->assertFalse($metadata->isEmbeddedDocumentClass('Model\Article'));
@@ -113,16 +113,16 @@ class MetadataTest extends TestCase
      */
     public function testIsEmbeddedDocumentClassClassDoesNotExist()
     {
-        $metadata = new Metadata();
+        $metadata = new MetadataFactory();
         $metadata->isEmbeddedDocumentClass('Model\User');
     }
 
-    public function testGetClassInfo()
+    public function testGetClass()
     {
-        $metadata = new Metadata();
-        $this->assertSame('foo', $metadata->getClassInfo('Model\Article'));
-        $this->assertSame('bar', $metadata->getClassInfo('Model\Author'));
-        $this->assertSame('ups', $metadata->getClassInfo('Model\Comment'));
+        $metadata = new MetadataFactory();
+        $this->assertSame('foo', $metadata->getClass('Model\Article'));
+        $this->assertSame('bar', $metadata->getClass('Model\Author'));
+        $this->assertSame('ups', $metadata->getClass('Model\Comment'));
     }
 
     /**
@@ -130,7 +130,7 @@ class MetadataTest extends TestCase
      */
     public function testGetClassInfoClassDoesNotExist()
     {
-        $metadata = new Metadata();
-        $metadata->getClassInfo('Model\User');
+        $metadata = new MetadataFactory();
+        $metadata->getClass('Model\User');
     }
 }

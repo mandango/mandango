@@ -25,7 +25,7 @@ class DataLoaderTest extends TestCase
     public function testSetGetMandango()
     {
         $dataLoader = new DataLoader($this->mandango);
-        $dataLoader->setMandango($mandango = new Mandango($this->metadata, $this->queryCache));
+        $dataLoader->setMandango($mandango = new Mandango($this->metadataFactory, $this->queryCache));
         $this->assertSame($mandango, $dataLoader->getMandango());
     }
 

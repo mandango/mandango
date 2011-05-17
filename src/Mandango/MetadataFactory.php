@@ -16,7 +16,7 @@ namespace Mandango;
  *
  * @author Pablo Díez <pablodip@gmail.com>
  */
-abstract class Metadata
+abstract class MetadataFactory
 {
     /*
      * abstract
@@ -116,15 +116,15 @@ abstract class Metadata
     }
 
     /**
-     * Returns the info of a class.
+     * Returns the metadata of a class.
      *
      * @param string $class The class.
      *
-     * @return array The info of the class.
+     * @return array The metadata of the class.
      *
-     * @throws \LogicException If the class does not exist in the metadata.
+     * @throws \LogicException If the class does not exist in the metadata factory.
      */
-    public function getClassInfo($class)
+    public function getClass($class)
     {
         $this->checkClass($class);
 
@@ -133,13 +133,13 @@ abstract class Metadata
             $this->infoClass = new $infoClass();
         }
 
-        return $this->infoClass->{'get'.str_replace('\\', '', $class).'ClassInfo'}();
+        return $this->infoClass->{'get'.str_replace('\\', '', $class).'Class'}();
     }
 
     protected function checkClass($class)
     {
         if (!$this->hasClass($class)) {
-            throw new \LogicException(sprintf('The class "%s" does not exist in the metadata.', $class));
+            throw new \LogicException(sprintf('The class "%s" does not exist in the metadata factory.', $class));
         }
     }
 }

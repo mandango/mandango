@@ -17,13 +17,13 @@ class CoreMetadataTest extends TestCase
 {
     public function testMetadata()
     {
-        $this->assertSame($this->metadata->getClassInfo('Model\Article'), $this->mandango->getRepository('Model\Article')->getMetadata());
-        $this->assertSame($this->metadata->getClassInfo('Model\Source'), $this->mandango->getMetadata()->getClassInfo('Model\Source'));
+        $this->assertSame($this->metadataFactory->getClass('Model\Article'), $this->mandango->getRepository('Model\Article')->getMetadata());
+        $this->assertSame($this->metadataFactory->getClass('Model\Source'), $this->mandango->getMetadataFactory()->getClass('Model\Source'));
     }
 
     public function testInherited()
     {
-        $metadata = $this->metadata->getClassInfo('Model\RadioFormElement');
+        $metadata = $this->metadataFactory->getClass('Model\RadioFormElement');
 
         // fields
         $this->assertTrue(isset($metadata['fields']['label']));

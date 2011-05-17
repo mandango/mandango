@@ -31,8 +31,8 @@ class Core extends Extension
     protected function setup()
     {
         $this->addRequiredOptions(array(
-            'metadata_class',
-            'metadata_output',
+            'metadata_factory_class',
+            'metadata_factory_output',
         ));
 
         $this->addOptions(array(
@@ -2761,7 +2761,7 @@ $createObjects
 
         if (\$references = \$this->getReferences()) {
             \$mandango = \$this->getRepository()->getMandango();
-            \$metadata = \$mandango->getMetadata()->getClassInfo(\$this->getRepository()->getDocumentClass());
+            \$metadata = \$mandango->getMetadataFactory()->getClass(\$this->getRepository()->getDocumentClass());
             foreach (\$references as \$referenceName) {
                 // one
                 if (isset(\$metadata['referencesOne'][\$referenceName])) {
@@ -3105,14 +3105,14 @@ EOF
      */
     private function globalMetadataProcess()
     {
-        $output = new Output($this->getOption('metadata_output'), true);
-        $definition = new Definition($this->getOption('metadata_class'), $output);
-        $definition->setParentClass('\Mandango\Metadata');
-        $this->definitions['metadata'] = $definition;
+        $output = new Output($this->getOption('metadata_factory_output'), true);
+        $definition = new Definition($this->getOption('metadata_factory_class'), $output);
+        $definition->setParentClass('\Mandango\MetadataFactory');
+        $this->definitions['metadata_factory'] = $definition;
 
-        $output = new Output($this->getOption('metadata_output'), true);
-        $definition = new Definition($this->getOption('metadata_class').'Info', $output);
-        $this->definitions['metadata_info'] = $definition;
+        $output = new Output($this->getOption('metadata_factory_output'), true);
+        $definition = new Definition($this->getOption('metadata_factory_class').'Info', $output);
+        $this->definitions['metadata_factory_info'] = $definition;
 
         $classes = array();
         foreach ($this->configClasses as $class => $configClass) {
@@ -3152,15 +3152,15 @@ EOF
 
             $info = \Mandango\Mondator\Dumper::exportArray($info, 12);
 
-            $method = new Method('public', 'get'.str_replace('\\', '', $class).'ClassInfo', '', <<<EOF
+            $method = new Method('public', 'get'.str_replace('\\', '', $class).'Class', '', <<<EOF
         return $info;
 EOF
             );
-            $this->definitions['metadata_info']->addMethod($method);
+            $this->definitions['metadata_factory_info']->addMethod($method);
         }
 
         $property = new Property('protected', 'classes', $classes);
-        $this->definitions['metadata']->addProperty($property);
+        $this->definitions['metadata_factory']->addProperty($property);
     }
 
     private function parseAndCheckAssociationClass(&$association, $name)

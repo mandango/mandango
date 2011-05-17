@@ -91,7 +91,7 @@ abstract class Repository implements RepositoryInterface
      */
     public function getMetadata()
     {
-        return $this->mandango->getMetadata()->getClassInfo($this->documentClass);
+        return $this->mandango->getMetadataFactory()->getClass($this->documentClass);
     }
 
     /**

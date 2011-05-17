@@ -985,7 +985,7 @@ class CoreDocumentTest extends TestCase
     public function testGetMetadata()
     {
         $article = $this->mandango->create('Model\Article');
-        $this->assertSame($this->mandango->getMetadata()->getClassInfo('Model\Article'), $article->getMetadata());
+        $this->assertSame($this->mandango->getMetadataFactory()->getClass('Model\Article'), $article->getMetadata());
     }
 
     public function testRootAndPath()

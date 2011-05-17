@@ -21,13 +21,13 @@ namespace Mandango;
 interface MandangoInterface
 {
     /**
-     * Returns the metadata.
+     * Returns the metadata factory.
      *
-     * @return Metadata The metadata.
+     * @return MetadataFactory The metadata factory.
      *
      * @api
      */
-    function getMetadata();
+    function getMetadataFactory();
 
     /**
      * Returns the query cache.
@@ -155,6 +155,17 @@ interface MandangoInterface
      * @api
      */
     function getDefaultConnection();
+
+    /**
+     * Returns the metadata of a document class.
+     *
+     * @param string $documentClass The document class.
+     *
+     * @return array The metadata.
+     *
+     * @api
+     */
+    function getMetadata($documentClass);
 
     /**
      * Creates a new document.

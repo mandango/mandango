@@ -24,7 +24,7 @@ class Mandango implements MandangoInterface
 {
     const VERSION = '1.0.0-DEV';
 
-    private $metadata;
+    private $metadataFactory;
     private $queryCache;
     private $loggerCallable;
     private $unitOfWork;
@@ -35,15 +35,15 @@ class Mandango implements MandangoInterface
     /**
      * Constructor.
      *
-     * @param Mandango\Metadata             $metadata       The metadata.
-     * @param Mandango\Cache\CacheInterface $queryCache     The query cache.
-     * @param mixed                         $loggerCallable The logger callable (optional, null by default).
+     * @param Mandango\MetadataFactory      $metadataFactory The metadata factory.
+     * @param Mandango\Cache\CacheInterface $queryCache      The query cache.
+     * @param mixed                         $loggerCallable  The logger callable (optional, null by default).
      *
      * @api
      */
-    public function __construct(Metadata $metadata, CacheInterface $queryCache, $loggerCallable = null)
+    public function __construct(MetadataFactory $metadataFactory, CacheInterface $queryCache, $loggerCallable = null)
     {
-        $this->metadata = $metadata;
+        $this->metadataFactory = $metadataFactory;
         $this->queryCache = $queryCache;
         $this->loggerCallable = $loggerCallable;
         $this->unitOfWork = new UnitOfWork($this);
@@ -54,9 +54,9 @@ class Mandango implements MandangoInterface
     /**
      * {@inheritdoc}
      */
-    public function getMetadata()
+    public function getMetadataFactory()
     {
-        return $this->metadata;
+        return $this->metadataFactory;
     }
 
     /**
@@ -192,6 +192,14 @@ class Mandango implements MandangoInterface
     /**
      * {@inheritdoc}
      */
+    public function getMetadata($documentClass)
+    {
+        return $this->metadataFactory->getClass($documentClass);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function create($documentClass)
     {
         $document = new $documentClass($this);
@@ -205,7 +213,7 @@ class Mandango implements MandangoInterface
     public function getRepository($documentClass)
     {
         if (!isset($this->repositories[$documentClass])) {
-            if (!$this->metadata->hasClass($documentClass) || !$this->metadata->isDocumentClass($documentClass)) {
+            if (!$this->metadataFactory->hasClass($documentClass) || !$this->metadataFactory->isDocumentClass($documentClass)) {
                 throw new \InvalidArgumentException(sprintf('The class "%s" is not a valid document class.', $documentClass));
             }
 
@@ -225,7 +233,7 @@ class Mandango implements MandangoInterface
      */
     public function getAllRepositories()
     {
-        foreach ($this->getMetadata()->getDocumentClasses() as $class) {
+        foreach ($this->metadataFactory->getDocumentClasses() as $class) {
             $this->getRepository($class);
         }
 

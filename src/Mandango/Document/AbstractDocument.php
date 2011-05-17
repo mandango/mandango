@@ -39,7 +39,7 @@ abstract class AbstractDocument
      */
     public function getMetadata()
     {
-        return $this->getMandango()->getMetadata()->getClassInfo(get_class($this));
+        return $this->getMandango()->getMetadataFactory()->getClass(get_class($this));
     }
 
     /**
