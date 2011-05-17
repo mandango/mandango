@@ -174,6 +174,20 @@ class MandangoTest extends TestCase
         );
     }
 
+    public function testCreate()
+    {
+        $article = $this->mandango->create('Model\Article');
+        $this->assertInstanceOf('Model\Article', $article);
+
+        $author = $this->mandango->create('Model\Author');
+        $this->assertInstanceOf('Model\Author', $author);
+
+        // defaults
+        $book = $this->mandango->create('Model\Book');
+        $this->assertSame('good', $book->getComment());
+        $this->assertSame(true, $book->getIsHere());
+    }
+
     public function testGetRepository()
     {
         $mandango = new Mandango($this->metadataFactory, $this->queryCache);
