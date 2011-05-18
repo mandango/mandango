@@ -1,0 +1,171 @@
+1.0.0 BETA2 - 18/5/2011
+-----------------------
+
+  * [ef33b4b] changed query cache by cache
+  * [37dab9d] added initializeArgs creating documents
+  * [ce6cdbf] calling initializeDefaults and initializ only creating
+  * [5e70c84] removed mandango and repository interfaces
+  * [2f703fb] added mapReduce function to repositories
+  * [e88462b] added group and distict function to repositories
+  * [439df8a] added tests to create
+  * [42922b2] refactored the metadata stuff
+  * [891c024] Merge branch 'di'
+  * [fbdda63] added initialize method to initialize the documents
+  * [b9ec137] improved the bin data type
+  * [f6e092d] changed createDocument by creaate
+  * [c3a86e2] added getMetadata and debug methods to documents
+  * [37c04f5] removing the container by injecting the mandango in the documents
+  * [16ee957] fixed hash generation in queries
+  * [7ee0a79] tweaked README
+  * [a887ccf] added link to documentation in README
+  * [dea83e9] improved the query hash generation
+  * [b8149a6] initialize fields in the toArray method
+  * [99c39ff] added to change the connection data before it is initialized
+  * [cb585c8] added references cache
+  * [6c88aba] updated Mondator
+  * [3786b2d] changed license to MIT and files header
+  * [07154a5] changed some methods and properties to private
+  * [32d65e3] removed old code
+  * [0a0f49e] removed Reference* types
+  * [4b5fdd6] added @api phpdoc tag
+  * [4f35b2f] added unit of work interface
+  * [abcad93] added some interfaces
+  * [2e9c3dd] added to be able to pass an array of documents to the persist and remove functions of the unit of work
+  * [620e930] changed some variables visibility to private
+  * [ecfef8f] changed ->saved() by ->getSaved() in groups
+  * [c3ad454] added createQuery to ReferenceGroup
+  * [a3a1c6f] changed "is_file" by "isFile"
+  * [8b64c90] reseting groups when save
+  * [8a2b77a] removed unused code
+  * [3508150] added all method to groups
+  * [d751725] fixed call twice to updateReferenceFields
+  * [360bba6] added add and remove methods to references and embeddeds many
+  * [8602d99] changed underscore by camelCase in configClasses
+  * [4c18f5c] changed alias by dbName
+  * [d16f6af] added inherited data to metadata
+  * [5397955] throw exception in multiple single inheritance
+  * [7f7250b] changed the ->find method to ->findById and ->findOneById
+  * [5ccb694] changed some methods
+  * [b942c99] removed inflector, used ucfirst for data names
+  * [d360c09] fixed saving references in embeddeds without references
+  * [d84bcae] fixed parent events in single inheritance
+  * [6c76192] fixed data loader in single inheritance with references
+  * [4d19e15] fixed the parent queryForSave in inheritance when the document is not new
+  * [7d785f8] added more information to metadata
+  * [7dc0030] support multiple single inheritance
+  * [3559eab] add mergeCriteria to queries and fix criteria and fields
+  * [56d0154] add Countable interface to groups
+  * [d0bea48] use reference name to save the referenced field
+  * [605bc99] add field alias
+  * [4f05391] added the reference fields automatically
+  * [bd92653] adding discriminator map to polymorphic references
+  * [0aa4bfb] adding polymorphic references
+  * [5e24e78] adding more support for the single inheritance
+  * [b37b7d4] adding single inheritance
+  * [e6eac93] added the IteratorAggregate interface to the groups
+  * [6151885] add selected fields to hydrate method to do not query twice
+  * [eba4705] add php extension to filesystem cache files
+  * [d403e52] fixed phpdoc and tests autoload
+  * [fd2b3f9] changed doctrine common cache by simpler mandango cache
+  * [33212c2] fixed date type
+  * [b129115] added behaviors process to core extension
+  * [4e35198] added relations
+  * [b4e2921] added DocumentPropertyOverloading extension
+  * [591b7ac] added DocumentArrayAccess extension
+  * [06c042b] moved symfony class loader submodule
+  * [43904f8] importing
+
+1.0.0 BETA1 - 7/10/2010
+-----------------------
+
+This is Mondongo, the previous Mandango.
+
+ * [b3210d3] changed ->findOneByMongoId() by ->findOneById()
+ * [2cfa0b4] changed reference_one and reference_many types: now its only accept \MongoIds
+ * [4f5dff6] fixed bug with query references many when there is not its
+ * [e8e8a5c] improved DocumentDataMap extension
+ * [43f20e2] improved the export of the indexes arrays
+ * [cfa2e7c] fixed typo
+ * [70df7f6] changed to specify full class in Mondator
+ * [0dc9e01] adding missing paremeter in a sprintf() function
+ * [9927328] fixed mondator newConfigClasses logic
+ * [765d9e8] fixed typo
+ * [34fd531] Merge remote branch 'Keeguon/master'
+ * [3638bb6] added default_extensions options to core extension
+ * [c473c81] simplified the core extension
+ * [ff7a470] renamed some extensions
+ * [796af06] updated loggable cursors return values
+ * [981d7eb] adding missing parenthesis (again)
+ * [134c59d] fixed type code indent
+ * [8a1d95f] improved the array export on Mondator
+ * [5ae7347] fixed typo
+ * [c95828a] changed DocumentMap extension by DocumentDataMap
+ * [df22490] fixed typo
+ * [e799832] added DocumentMap extension
+ * [e0546c9] added DocumentDataCamelCaseMap extension
+ * [519879b] added checks to core extension
+ * [14da29a] fixeds warnings with relations in embeddeds
+ * [d1203a8] fixed gitignore file for tests/model/Base (by Keeguon)
+ * [08dae67] changing embeds by embeddeds
+ * [721f138] logged the connection name
+ * [a8eed21] removed the logger callable from mondongo constructor
+ * [8f5992c] added PropertyOverloading extension
+ * [2e56d39] fixed extensions order in test bootstrap
+ * [a57b1b4] changed embeds by embeddeds
+ * [61f6cd2] changed $map by $dataMap in documents
+ * [5506731] changed embed by embedded
+ * [83c66cb] made safe the inserts with GridFS and fixed typo
+ * [b78dae4] added log to storeBytes and storeFile with GridFS
+ * [6b031bd] added test to LoggableMongoGridFSCursor
+ * [398eb54] added GridFS support
+ * [608daaa] added to can add new config classes in extensions
+ * [9bf4aa0] move to coreEnd the process of extensions of configClasses
+ * [2960117] added new configuration system to mondongo's extensions
+ * [c1ceb93] changed ->findOneById() by ->findOneByMongoId()
+ * [fc711c4] completed the log
+ * [1ca3edf] adding to log actions
+ * [3ed9aaa] added tests to relations many_many
+ * [bc038c3] fixed outputs overriden in base objects
+ * [90051a8] revert some tests
+ * [61cfd4d] changed classData by configClass in extensions
+ * [64e3531] changed output logic on mondator
+ * [a6cff5a] improved test TestCase
+ * [e7a5cbf] added ensureIndexes method to repository
+ * [fa9c9ac] added access to some repository methods in the mondongo
+ * [1bd2e0a] deleted old code
+ * [8b542a3] added methods to container of definitions
+ * [ae54ad7] changed PHPDoc by docComment
+ * [f73ba16] added methods to work with properties and methods in definitions of mondator
+ * [6eab8bd] added final keywork to classes and methods in mondator
+ * [3e5b853] added the class name to the constructor of definitions in mondator
+ * [667ba3f] the value of the properties of mondator is required now
+ * [6341eb2] removed isStatic and isAbstraft options from the constructor of Method and Property of Mondator
+ * [4945e72] added options to CoreStart extension to set default document and repository namespaces
+ * [9e6647f] changed method names
+ * [477c243] removed repositories to embed documents
+ * [e6e9a00] changed removed method of test documents
+ * [b9a6598] fixed method name
+ * [7f290f6] changed classDefinicions by configClasses in Mondator to be more explicit (again)
+ * [7bc5dc0] changed classes by classDefinitions in Mondator to be more explicit
+ * [58ade9e] added phpdoc
+ * [a768d18] fixed typo
+ * [d73ee41] renamed repository method ->get to ->findOneById and not it only accept \MongoId object
+ * [01e2f85] updated generated model of tests
+ * [e65e5e4] added phpdoc to mondongo generated classes
+ * [a83105e] added phpdoc to mondator generator
+ * [77728ee] added events to extensions
+ * [75c093d] added the posibility to add extensions to classes
+ * [4eb98d0] separated the generation and dump of containers in Mondator
+ * [1c8109e] adding to repository the model of tests (base classes continue ignored)
+ * [dd61eb5] adding events to documents
+ * [bb12a43] added ArrayAccess extension
+ * [df3c167] completed FromToArray extension
+ * [c4f98e1] added the ->fromArray() method to documents
+ * [13de9b5] added some methods to do things in the groups by key
+ * [164e0d4] added reference_one and reference_many types
+ * [8506734] added relations to article document of tests
+ * [23a92a2] ignored the generated model of the tests
+ * [2204466] added the map property to documents
+ * [d5924f2] removed id type
+ * [ca5d48f] added relations to documents
+ * [bcef4be] updated master branch to 1.0
