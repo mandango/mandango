@@ -22,7 +22,7 @@ use Mandango\Cache\CacheInterface;
  */
 class Mandango
 {
-    const VERSION = '1.0.0BETA2';
+    const VERSION = '1.0.0-DEV';
 
     private $metadataFactory;
     private $cache;
