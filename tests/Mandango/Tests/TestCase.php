@@ -32,7 +32,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected $mandango;
     protected $unitOfWork;
     protected $metadataFactory;
-    protected $queryCache;
+    protected $cache;
     protected $mongo;
     protected $db;
 
@@ -59,7 +59,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->unitOfWork->clear();
         $this->unitOfWork->clear();
         $this->metadataFactory = $this->mandango->getMetadataFactory();
-        $this->queryCache = $this->mandango->getQueryCache();
+        $this->cache = $this->mandango->getCache();
 
         foreach ($this->mandango->getAllRepositories() as $repository) {
             $repository->getIdentityMap()->clear();

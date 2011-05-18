@@ -18,7 +18,7 @@ class UnitOfWorkTest extends TestCase
 {
     public function testPersist()
     {
-        $unitOfWork = new UnitOfWork(new Mandango($this->metadataFactory, $this->queryCache));
+        $unitOfWork = new UnitOfWork(new Mandango($this->metadataFactory, $this->cache));
 
         $this->assertFalse($unitOfWork->hasPendingForPersist());
         $this->assertFalse($unitOfWork->hasPending());
@@ -45,7 +45,7 @@ class UnitOfWorkTest extends TestCase
 
     public function testRemove()
     {
-        $unitOfWork = new UnitOfWork(new Mandango($this->metadataFactory, $this->queryCache));
+        $unitOfWork = new UnitOfWork(new Mandango($this->metadataFactory, $this->cache));
 
         $this->assertFalse($unitOfWork->hasPendingForRemove());
         $this->assertFalse($unitOfWork->hasPending());
@@ -72,7 +72,7 @@ class UnitOfWorkTest extends TestCase
 
     public function testHasPendingClear()
     {
-        $unitOfWork = new UnitOfWork(new Mandango($this->metadataFactory, $this->queryCache));
+        $unitOfWork = new UnitOfWork(new Mandango($this->metadataFactory, $this->cache));
 
         $this->assertFalse($unitOfWork->hasPending());
 

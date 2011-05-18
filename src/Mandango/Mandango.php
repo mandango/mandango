@@ -25,7 +25,7 @@ class Mandango
     const VERSION = '1.0.0-DEV';
 
     private $metadataFactory;
-    private $queryCache;
+    private $cache;
     private $loggerCallable;
     private $unitOfWork;
     private $connections;
@@ -36,15 +36,15 @@ class Mandango
      * Constructor.
      *
      * @param Mandango\MetadataFactory      $metadataFactory The metadata factory.
-     * @param Mandango\Cache\CacheInterface $queryCache      The query cache.
+     * @param Mandango\Cache\CacheInterface $cache           The cache.
      * @param mixed                         $loggerCallable  The logger callable (optional, null by default).
      *
      * @api
      */
-    public function __construct(MetadataFactory $metadataFactory, CacheInterface $queryCache, $loggerCallable = null)
+    public function __construct(MetadataFactory $metadataFactory, CacheInterface $cache, $loggerCallable = null)
     {
         $this->metadataFactory = $metadataFactory;
-        $this->queryCache = $queryCache;
+        $this->cache = $cache;
         $this->loggerCallable = $loggerCallable;
         $this->unitOfWork = new UnitOfWork($this);
         $this->connections = array();
@@ -64,15 +64,15 @@ class Mandango
     }
 
     /**
-     * Returns the query cache.
+     * Returns the cache.
      *
-     * @return CacheInterface The query cache.
+     * @return CacheInterface The cache.
      *
      * @api
      */
-    public function getQueryCache()
+    public function getCache()
     {
-        return $this->queryCache;
+        return $this->cache;
     }
 
     /**

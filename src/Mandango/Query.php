@@ -109,7 +109,7 @@ abstract class Query implements \Countable, \IteratorAggregate
      */
     public function getFieldsCache()
     {
-        $cache = $this->repository->getMandango()->getQueryCache()->get($this->hash);
+        $cache = $this->repository->getMandango()->getCache()->get($this->hash);
 
         return ($cache && isset($cache['fields'])) ? $cache['fields'] : null;
     }
@@ -121,7 +121,7 @@ abstract class Query implements \Countable, \IteratorAggregate
      */
     public function getReferencesCache()
     {
-        $cache = $this->repository->getMandango()->getQueryCache()->get($this->hash);
+        $cache = $this->repository->getMandango()->getCache()->get($this->hash);
 
         return ($cache && isset($cache['references'])) ? $cache['references'] : null;
     }

@@ -109,7 +109,7 @@ class RepositoryTest extends TestCase
             'global' => new Connection($this->server, $this->dbName.'_global'),
         );
 
-        $mandango = new Mandango($this->metadataFactory, $this->queryCache);
+        $mandango = new Mandango($this->metadataFactory, $this->cache);
         $mandango->setConnections($connections);
         $mandango->setDefaultConnectionName('local');
 
@@ -119,7 +119,7 @@ class RepositoryTest extends TestCase
 
     public function testCollection()
     {
-        $mandango = new Mandango($this->metadataFactory, $this->queryCache);
+        $mandango = new Mandango($this->metadataFactory, $this->cache);
         $connection = new Connection($this->server, $this->dbName.'_collection');
         $mandango->setConnection('default', $connection);
         $mandango->setDefaultConnectionName('default');

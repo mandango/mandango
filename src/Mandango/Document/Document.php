@@ -175,7 +175,7 @@ abstract class Document extends AbstractDocument
      */
     public function addFieldCache($field)
     {
-        $queryCache = $this->getMandango()->getQueryCache();
+        $queryCache = $this->getMandango()->getCache();
 
         foreach ($this->getQueryHashes() as $hash) {
             $cache = $queryCache->has($hash) ? $queryCache->get($hash) : array();
@@ -189,7 +189,7 @@ abstract class Document extends AbstractDocument
      */
     public function addReferenceCache($reference)
     {
-        $queryCache = $this->getMandango()->getQueryCache();
+        $queryCache = $this->getMandango()->getCache();
 
         foreach ($this->getQueryHashes() as $hash) {
             $cache = $queryCache->has($hash) ? $queryCache->get($hash) : array();

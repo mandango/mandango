@@ -39,10 +39,10 @@ class QueryTest extends TestCase
     {
         $this->assertNull($this->query->getFieldsCache());
 
-        $this->queryCache->set($this->query->getHash(), array('fields' => $fields = array('title' => 1, 'content' => 1)));
+        $this->cache->set($this->query->getHash(), array('fields' => $fields = array('title' => 1, 'content' => 1)));
         $this->assertSame($fields, $this->query->getFieldsCache());
 
-        $this->queryCache->remove($this->query->getHash());
+        $this->cache->remove($this->query->getHash());
         $this->assertNull($this->query->getFieldsCache());
     }
 
