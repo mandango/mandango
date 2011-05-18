@@ -31,9 +31,9 @@ abstract class Document extends AbstractDocument
      *
      * @api
      */
-    protected function getRepository()
+    public function getRepository()
     {
-        return $this->getMandango()->getRepository();
+        return $this->getMandango()->getRepository(get_class($this));
     }
 
     /**

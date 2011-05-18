@@ -108,13 +108,7 @@ class Core extends Extension
         $this->initDefinitionsProcess();
 
         // document
-        $this->documentMandangoPropertyProcess();
-        $this->documentConstructorMethodProcess();
         $this->documentInitializeDefaultsMethodProcess();
-        $this->documentGetMandangoMethodProcess();
-        if (!$this->configClass['isEmbedded']) {
-            $this->documentGetRepositoryMethodProcess();
-        }
 
         $this->documentSetDocumentDataMethodProcess();
         $this->documentFieldsProcess();
@@ -607,29 +601,6 @@ EOF
         }
     }
 
-    private function documentMandangoPropertyProcess()
-    {
-        $property = new Property('private', 'mandango', null);
-        $this->definitions['document_base']->addProperty($property);
-    }
-
-    private function documentConstructorMethodProcess()
-    {
-        $method = new Method('public', '__construct', '\Mandango\Mandango $mandango', <<<EOF
-        \$this->mandango = \$mandango;
-EOF
-        );
-        $method->setDocComment(<<<EOF
-    /**
-     * Constructor.
-     *
-     * @param Mandango\Mandango \$mandango The mandango.
-     */
-EOF
-        );
-        $this->definitions['document_base']->addMethod($method);
-    }
-
     private function documentInitializeDefaultsMethodProcess()
     {
         // default values
@@ -655,42 +626,6 @@ EOF
      */
 EOF
         );
-        $this->definitions['document_base']->addMethod($method);
-    }
-
-    private function documentGetMandangoMethodProcess()
-    {
-        $method = new Method('public', 'getMandango', '', <<<EOF
-        return \$this->mandango;
-EOF
-        );
-        $method->setDocComment(<<<EOF
-    /**
-     * Returns the mandango.
-     *
-     * @return Mandango\Mandango The mandango.
-     */
-EOF
-        );
-
-        $this->definitions['document_base']->addMethod($method);
-    }
-
-    private function documentGetRepositoryMethodProcess()
-    {
-        $method = new Method('public', 'getRepository', '', <<<EOF
-        return \$this->mandango->getRepository(get_class(\$this));
-EOF
-        );
-        $method->setDocComment(<<<EOF
-    /**
-     * Returns the repository.
-     *
-     * @return Mandango\Repository The repository.
-     */
-EOF
-        );
-
         $this->definitions['document_base']->addMethod($method);
     }
 
@@ -1774,7 +1709,7 @@ EOF
         foreach ($this->configClass['relationsManyThrough'] as $name => $relation) {
             $method = new Method('public', 'get'.ucfirst($name), '', <<<EOF
         \$ids = array();
-        foreach (\$this->mandango->getRepository('{$relation['through']}')->getCollection()
+        foreach (\$this->getMandango()->getRepository('{$relation['through']}')->getCollection()
             ->find(array('{$relation['local']}' => \$this->getId()), array('{$relation['foreign']}' => 1))
         as \$value) {
             \$ids[] = \$value['{$relation['foreign']}'];

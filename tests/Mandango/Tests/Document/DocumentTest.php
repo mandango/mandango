@@ -22,7 +22,7 @@ class DocumentTest extends TestCase
 {
     public function testSetGetId()
     {
-        $document = new Document();
+        $document = new Document($this->mandango);
         $this->assertNull($document->getId());
 
         $id = new \MongoId('123');
@@ -37,7 +37,7 @@ class DocumentTest extends TestCase
     {
         $hashes = array(md5(1), md5(2), md5(3));
 
-        $document = new Document();
+        $document = new Document($this->mandango);
         $this->assertSame(array(), $document->getQueryHashes());
         $document->addQueryHash($hashes[0]);
         $this->assertSame(array($hashes[0]), $document->getQueryHashes());
@@ -92,7 +92,7 @@ class DocumentTest extends TestCase
 
     public function testIsnew()
     {
-        $document = new Document();
+        $document = new Document($this->mandango);
         $this->assertTrue($document->isNew());
 
         $document->setId(new \MongoId('123'));

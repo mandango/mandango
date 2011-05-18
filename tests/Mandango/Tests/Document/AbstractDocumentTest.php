@@ -24,6 +24,12 @@ class AbstractDocument extends BaseAbstractDocument
 
 class AbstractDocumentTest extends TestCase
 {
+    public function testGetMandango()
+    {
+        $document = new AbstractDocument($this->mandango);
+        $this->assertSame($this->mandango, $document->getMandango());
+    }
+
     public function testCreate()
     {
         $this->assertEquals($this->mandango->create('Model\Article'), $this->mandango->create('Model\Article'));
@@ -31,7 +37,7 @@ class AbstractDocumentTest extends TestCase
 
     public function testDocumentData()
     {
-        $document = new AbstractDocument();
+        $document = new AbstractDocument($this->mandango);
         $this->assertSame(array(), $document->getDocumentData());
         $data = array('fields' => array('foo' => 'bar'));
         $document->setDocumentData($data);

@@ -12,6 +12,7 @@
 namespace Mandango\Document;
 
 use Mandango\Archive;
+use Mandango\Mandango;
 
 /**
  * The abstract class for documents.
@@ -22,8 +23,30 @@ use Mandango\Archive;
  */
 abstract class AbstractDocument
 {
+    private $mandango;
+
     protected $data = array();
     protected $fieldsModified = array();
+
+    /**
+     * Constructor.
+     *
+     * @param Mandango $mandango The mandango.
+     */
+    public function __construct(Mandango $mandango)
+    {
+        $this->mandango = $mandango;
+    }
+
+    /**
+     * Returns the mandango.
+     *
+     * @return Mandango The mandango.
+     */
+    public function getMandango()
+    {
+        return $this->mandango;
+    }
 
     /**
      * Returns the document metadata.
