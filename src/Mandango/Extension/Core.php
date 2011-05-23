@@ -870,6 +870,8 @@ EOF;
                 (\$rap = \$this->getRootAndPath())
                 &&
                 !\$this->isEmbeddedOneChangedInParent()
+                &&
+                !\$this->isEmbeddedManyNew()
             ) {
                 \$field = \$rap['path'].'.{$field['dbName']}';
                 \$rap['root']->addFieldCache(\$field);

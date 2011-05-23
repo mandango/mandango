@@ -907,6 +907,14 @@ class CoreDocumentTest extends TestCase
         $this->assertNull($query->getFieldsCache());
         $savedComments = $comments->getSaved();
         $this->assertSame(array('comments' => 1), $query->getFieldsCache());
+        foreach ($comments as $comment) {
+            $comment->getName();
+        }
+        $this->assertSame(array('comments' => 1), $query->getFieldsCache());
+        $commentNew = $this->mandango->create('Model\Comment');
+        $comments->add($commentNew);
+        $commentNew->getName();
+        $this->assertSame(array('comments' => 1), $query->getFieldsCache());
         $savedInfos = $savedComments[0]->getInfos()->getSaved();
         $this->assertSame(array('comments' => 1), $query->getFieldsCache());
     }

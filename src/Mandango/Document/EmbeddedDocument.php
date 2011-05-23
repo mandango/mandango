@@ -92,4 +92,18 @@ abstract class EmbeddedDocument extends AbstractDocument
 
         return $parentDocument->isEmbeddedOneChanged($name);
     }
+
+    /**
+     * Returns whether the embedded document is an embedded many new.
+     *
+     * @return bool Whether the embedded document is an embedded many new.
+     */
+    public function isEmbeddedManyNew()
+    {
+        if (!$rap = $this->getRootAndPath()) {
+            return false;
+        }
+
+        return false !== strpos($rap['path'], '._add');
+    }
 }
