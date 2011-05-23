@@ -48,7 +48,13 @@ abstract class Query implements \Countable, \IteratorAggregate
         $this->repository = $repository;
 
         $hash = $this->repository->getDocumentClass();
-        foreach (debug_backtrace() as $value) {
+
+        if (version_compare(PHP_VERSION, '5.3.6', '=>')) {
+            $debugBacktrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        } else {
+            $debugBacktrace = debug_backtrace();
+        }
+        foreach ($debugBacktrace as $value) {
             if (isset($value['function'])) {
                 $hash .= $value['function'];
             }
