@@ -193,8 +193,10 @@ abstract class Document extends AbstractDocument
 
         foreach ($this->getQueryHashes() as $hash) {
             $value = $cache->has($hash) ? $cache->get($hash) : array();
-            $value['references'][] = $reference;
-            $cache->set($hash, $value);
+            if (!isset($value['references']) || !in_array($reference, $value['references'])) {
+                $value['references'][] = $reference;
+                $cache->set($hash, $value);
+            }
         }
     }
 }

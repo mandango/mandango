@@ -90,6 +90,26 @@ class DocumentTest extends TestCase
         $this->assertSame(array('note', 'comments'), $query2->getReferencesCache());
     }
 
+    public function testAddReferenceCacheDouble()
+    {
+        $query1 = $this->mandango->getRepository('Model\Article')->createQuery();
+        $query2 = $this->mandango->getRepository('Model\Article')->createQuery();
+
+        $article = $this->mandango->create('Model\Article');
+        $article->addQueryHash($query1->getHash());
+        $article->addReferenceCache('author');
+        $this->assertSame(array('author'), $query1->getReferencesCache());
+        $article->addReferenceCache('author');
+        $this->assertSame(array('author'), $query1->getReferencesCache());
+        $article->addQueryHash($query2->getHash());
+        $article->addReferenceCache('author');
+        $this->assertSame(array('author'), $query1->getReferencesCache());
+        $this->assertSame(array('author'), $query2->getReferencesCache());
+        $article->addReferenceCache('author');
+        $this->assertSame(array('author'), $query1->getReferencesCache());
+        $this->assertSame(array('author'), $query2->getReferencesCache());
+    }
+
     public function testIsnew()
     {
         $document = new Document($this->mandango);
