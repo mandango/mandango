@@ -170,7 +170,7 @@ class LoggableMongoCursor extends \MongoCursor
             if ($info['skip']) {
                 $log['skip'] = $info['skip'];
             }
-            if ($info['batchSize']) {
+            if (isset($info['batchSize'])) {
                 $log['batchSize'] = $info['batchSize'];
             }
             if (isset($info['query']['$hint'])) {
