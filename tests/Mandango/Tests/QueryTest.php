@@ -238,6 +238,30 @@ class QueryTest extends TestCase
         $this->query->hint($value);
     }
 
+    public function testSlaveOkay()
+    {
+        $query = $this->query;
+        $this->assertNull($query->getSlaveOkay());
+
+        $this->assertSame($query, $query->slaveOkay(true));
+        $this->assertTrue($query->getSlaveOkay());
+
+        $this->assertSame($query, $query->slaveOkay(false));
+        $this->assertFalse($query->getSlaveOkay());
+
+        $query->slaveOkay(null);
+        $this->assertNull($query->getSlaveOkay());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @dataProvider      providerNotBoolean
+     */
+    public function testSlaveOkayNotBoolean($value)
+    {
+        $this->query->slaveOkay($value);
+    }
+
     public function testSnapshot()
     {
         $query = $this->query;

@@ -33,6 +33,7 @@ abstract class Query implements \Countable, \IteratorAggregate
     private $skip;
     private $batchSize;
     private $hint;
+    private $slaveOkay;
     private $snapshot;
     private $timeout;
 
@@ -414,6 +415,36 @@ abstract class Query implements \Countable, \IteratorAggregate
     }
 
     /**
+     * Sets the slave okay.
+     *
+     * @param Boolean|null $okay If it is okay to query the slave (true by default).
+     *
+     * @return Mandango\Query The query instance (fluent interface).
+     */
+    public function slaveOkay($okay = true)
+    {
+        if (null !== $okay) {
+            if (!is_bool($okay)) {
+                throw new \InvalidArgumentException('The slave okay is not a boolean.');
+            }
+        }
+
+        $this->slaveOkay = $okay;
+
+        return $this;
+    }
+
+    /**
+     * Returns the slave okay.
+     *
+     * @return Boolean|null The slave okay.
+     */
+    public function getSlaveOkay()
+    {
+        return $this->slaveOkay;
+    }
+
+    /**
      * Set if the snapshot mode is used.
      *
      * @param bool $snapshot If the snapshot mode is used.
@@ -556,6 +587,10 @@ abstract class Query implements \Countable, \IteratorAggregate
 
         if (null !== $this->hint) {
             $cursor->hint($this->hint);
+        }
+
+        if (null !== $this->slaveOkay) {
+            $cursor->slaveOkay($this->slaveOkay);
         }
 
         if ($this->snapshot) {
