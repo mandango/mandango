@@ -108,15 +108,29 @@ abstract class Document extends AbstractDocument
     /**
      * Save the document.
      *
+     * @var array $options 
      * @return Mandango\Document\Document The document (fluent interface).
      *
      * @api
      */
-    public function save()
+    public function save(array $options = array())
     {
-        $this->getRepository()->save($this);
+        $this->getRepository()->save($this, $options);
 
         return $this;
+    }
+
+    /**
+     * Ssafe save the document.
+     *
+     * @return Mandango\Document\Document The document (fluent interface).
+     *
+     * @api
+     */
+    public function safeSave(array $options = array())
+    {
+        $options['safe'] = true;
+        return $this->save($options);
     }
 
     /**
