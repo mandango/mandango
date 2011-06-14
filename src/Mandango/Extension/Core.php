@@ -2459,7 +2459,7 @@ EOF;
         }
 
         // method
-        $method = new Method('public', 'save', '$documents', <<<EOF
+        $method = new Method('public', 'save', '$documents, array $options = array()', <<<EOF
         if (!is_array(\$documents)) {
             \$documents = array(\$documents);
         }
@@ -2485,7 +2485,7 @@ EOF;
             }
 
             if (\$a) {
-                \$collection->batchInsert(\$a);
+                \$collection->batchInsert(\$a, \$options);
 
                 foreach (\$a as \$oid => \$data) {
                     \$document = \$inserts[\$oid];
