@@ -324,6 +324,7 @@ class CorePolymorphicReferencesTest extends TestCase
         $element = $this->mandango->create('Model\FormElement')->setLabel('foo');
         $this->assertSame(array(
             'label' => 'foo',
+            'type'  => 'formelement',
         ), $element->queryForSave());
         $element->save();
         $element->setLabel('bar');
@@ -335,8 +336,8 @@ class CorePolymorphicReferencesTest extends TestCase
 
         $textareaElement = $this->mandango->create('Model\TextareaFormElement')->setLabel('ups');
         $this->assertSame(array(
-            'type' => 'textarea',
             'label' => 'ups',
+            'type' => 'textarea',
         ), $textareaElement->queryForSave());
         $textareaElement->save();
         $textareaElement->setLabel('zam');

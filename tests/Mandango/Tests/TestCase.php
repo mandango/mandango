@@ -39,12 +39,12 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         if (!static::$staticConnection) {
-            static::$staticConnection = new Connection($this->server, $this->dbName);
+            static::$staticConnection = new Connection($this->server, $this->dbName, array('profile' => 1));
         }
         $this->connection = static::$staticConnection;
 
         if (!static::$staticGlobalConnection) {
-            static::$staticGlobalConnection = new Connection($this->server, $this->dbName.'_global');
+            static::$staticGlobalConnection = new Connection($this->server, $this->dbName.'_global', array('profile' => 1));
         }
         $this->globalConnection = static::$staticGlobalConnection;
 

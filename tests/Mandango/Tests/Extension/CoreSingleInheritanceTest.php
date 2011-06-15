@@ -131,6 +131,7 @@ class CoreSingleInheritanceTest extends TestCase
         $formElement = $this->mandango->create('Model\FormElement')->setLabel(123)->setDefault(234);
         $this->assertSame(array(
             'label'   => '123',
+            'type'  => 'formelement',
             'default' => 234,
         ), $formElement->queryForSave());
         $formElement->clearModified();
@@ -139,8 +140,8 @@ class CoreSingleInheritanceTest extends TestCase
 
         $textareaFormElement = $this->mandango->create('Model\TextareaFormElement')->setLabel(345)->setDefault(456);
         $this->assertSame(array(
-            'type'    => 'textarea',
             'label'   => '345',
+            'type'    => 'textarea',
             'default' => '456',
         ), $textareaFormElement->queryForSave());
         $textareaFormElement->clearModified();
@@ -150,8 +151,8 @@ class CoreSingleInheritanceTest extends TestCase
         $options = array('foobar' => 'foo', 'barfoo' => 'bar');
         $radioFormElement = $this->mandango->create('Model\RadioFormElement')->setLabel(567)->setDefault(678)->setOptions($options);
         $this->assertSame(array(
-            'type'    => 'radio',
             'label'   => '567',
+            'type'    => 'radio',
             'default' => 678,
             'options' => serialize($options),
         ), $radioFormElement->queryForSave());
@@ -159,16 +160,21 @@ class CoreSingleInheritanceTest extends TestCase
 
     public function testRepositoryCollectionName()
     {
-        $this->assertSame('model_formelement', $this->mandango->getRepository('Model\FormElement')->getCollectionName());
-        $this->assertSame('model_formelement', $this->mandango->getRepository('Model\TextareaFormElement')->getCollectionName());
-        $this->assertSame('model_formelement', $this->mandango->getRepository('Model\RadioFormElement')->getCollectionName());
+        $this->assertSame('model_element', $this->mandango->getRepository('Model\FormElement')->getCollectionName());
+        $this->assertSame('model_element', $this->mandango->getRepository('Model\TextareaFormElement')->getCollectionName());
+        $this->assertSame('model_element', $this->mandango->getRepository('Model\RadioFormElement')->getCollectionName());
     }
 
     public function testRepositoryCount()
     {
+        $elements = array();
+        for ($i = 0; $i < 2; $i++) {
+            $elements[] = $this->mandango->create('Model\Element')->setLabel('Element'.$i)->save();
+        }
+
         $formElements = array();
         for ($i = 0; $i < 5; $i++) {
-            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('Element'.$i)->save();
+            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('FormElement'.$i)->save();
         }
 
         $textareaFormElements = array();
@@ -181,18 +187,34 @@ class CoreSingleInheritanceTest extends TestCase
             $radioFormElements[] = $this->mandango->create('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
         }
 
+        $textElements = array();
+        for ($i = 0; $i < 5; $i++) {
+            $textElements[] = $this->mandango->create('Model\TextElement')->setLabel('TextElement'.$i)->save();
+        }
+
+        $this->assertSame(16, $this->mandango->getRepository('Model\Element')->count());
+        $this->assertSame(3, $this->mandango->getRepository('Model\Element')->count(array('label' => new \MongoRegex('/^Textarea/'))));
+        $this->assertSame(8, $this->mandango->getRepository('Model\Element')->count(array('label' => new \MongoRegex('/^Text/'))));
+        $this->assertSame(1, $this->mandango->getRepository('Model\Element')->count(array('label' => new \MongoRegex('/^Radio/'))));
+        $this->assertSame(5, $this->mandango->getRepository('Model\Element')->count(array('label' => new \MongoRegex('/^Form/'))));
         $this->assertSame(9, $this->mandango->getRepository('Model\FormElement')->count());
         $this->assertSame(3, $this->mandango->getRepository('Model\FormElement')->count(array('label' => new \MongoRegex('/^Text/'))));
         $this->assertSame(3, $this->mandango->getRepository('Model\TextareaFormElement')->count());
         $this->assertSame(0, $this->mandango->getRepository('Model\TextareaFormElement')->count(array('label' => new \MongoRegex('/^R/'))));
         $this->assertSame(1, $this->mandango->getRepository('Model\RadioFormElement')->count());
+        $this->assertSame(5, $this->mandango->getRepository('Model\TextElement')->count());
     }
 
     public function testRepositoryRemove()
     {
+        $elements = array();
+        for ($i = 0; $i < 2; $i++) {
+            $elements[] = $this->mandango->create('Model\Element')->setLabel('Element'.$i)->save();
+        }
+
         $formElements = array();
         for ($i = 0; $i < 5; $i++) {
-            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('Element'.$i)->save();
+            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('FormElement'.$i)->save();
         }
 
         $textareaFormElements = array();
@@ -206,18 +228,24 @@ class CoreSingleInheritanceTest extends TestCase
         }
 
         $this->mandango->getRepository('Model\FormElement')->remove(array('label' => 'Textarea0'));
-        $this->assertSame(8, $this->mandango->getRepository('Model\FormElement')->getCollection()->count());
-        $this->mandango->getRepository('Model\TextareaFormElement')->remove(array('label' => new \MongoRegex('/^Element/')));
-        $this->assertSame(8, $this->mandango->getRepository('Model\FormElement')->getCollection()->count());
+        $this->assertSame(10, $this->mandango->getRepository('Model\Element')->getCollection()->count());
+        $this->assertSame(10, $this->mandango->getRepository('Model\FormElement')->getCollection()->count());
+        $this->mandango->getRepository('Model\TextareaFormElement')->remove(array('label' => new \MongoRegex('/^FormElement/')));
+        $this->assertSame(10, $this->mandango->getRepository('Model\FormElement')->getCollection()->count());
         $this->mandango->getRepository('Model\TextareaFormElement')->remove();
-        $this->assertSame(6, $this->mandango->getRepository('Model\TextareaFormElement')->getCollection()->count());
+        $this->assertSame(8, $this->mandango->getRepository('Model\TextareaFormElement')->getCollection()->count());
     }
 
     public function testQueryAll()
     {
+        $elements = array();
+        for ($i = 0; $i < 2; $i++) {
+            $elements[] = $this->mandango->create('Model\Element')->setLabel('Element'.$i)->save();
+        }
+
         $formElements = array();
         for ($i = 0; $i < 5; $i++) {
-            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('Element'.$i)->save();
+            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('FormElement'.$i)->save();
         }
 
         $textareaFormElements = array();
@@ -235,6 +263,12 @@ class CoreSingleInheritanceTest extends TestCase
         $this->mandango->getRepository('Model\RadioFormElement')->getIdentityMap()->clear();
 
         // different classes in root class
+        $document = $this->mandango->getRepository('Model\Element')->createQuery(array('_id' => $formElements[0]->getId()))->one();
+        $this->assertInstanceof('Model\FormElement', $document);
+        $this->assertEquals($formElements[0]->getId(), $document->getId());
+        $document = $this->mandango->getRepository('Model\Element')->createQuery(array('_id' => $radioFormElements[0]->getId()))->one();
+        $this->assertInstanceof('Model\RadioFormElement', $document);
+        $this->assertEquals($radioFormElements[0]->getId(), $document->getId());
         $document = $this->mandango->getRepository('Model\FormElement')->createQuery(array('_id' => $formElements[0]->getId()))->one();
         $this->assertInstanceof('Model\FormElement', $document);
         $this->assertEquals($formElements[0]->getId(), $document->getId());
@@ -254,6 +288,9 @@ class CoreSingleInheritanceTest extends TestCase
             $textareaFormElements[1]->getId(),
             $radioFormElements[1]->getId(),
         );
+        $documents = $this->mandango->getRepository('Model\Element')->createQuery(array('_id' => array('$in' => $ids)))->all();
+        $this->assertSame(6, count($documents));
+
         $documents = $this->mandango->getRepository('Model\FormElement')->createQuery(array('_id' => array('$in' => $ids)))->all();
         $this->assertSame(6, count($documents));
 
@@ -321,7 +358,14 @@ class CoreSingleInheritanceTest extends TestCase
         for ($i = 0; $i < 1; $i++) {
             $radioFormElements[] = $this->mandango->create('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
         }
+        
+        $textElements = array();
+        for ($i = 0; $i < 5; $i++) {
+            $textElements[] = $this->mandango->create('Model\TextElement')->setLabel('TextElement'.$i)->save();
+        }
 
+        $this->assertSame(14, $this->mandango->getRepository('Model\Element')->createQuery()->count());
+        $this->assertSame(5, $this->mandango->getRepository('Model\TextElement')->createQuery()->count());
         $this->assertSame(9, $this->mandango->getRepository('Model\FormElement')->createQuery()->count());
         $this->assertSame(3, $this->mandango->getRepository('Model\TextareaFormElement')->createQuery()->count());
         $this->assertSame(1, $this->mandango->getRepository('Model\RadioFormElement')->createQuery()->count());
