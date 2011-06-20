@@ -34,33 +34,33 @@ class FormElement extends \Model\Base\FormElement
         return $this->eventPrefix;
     }
 
-    protected function elementPreInsert()
+    protected function formElementPreInsert()
     {
-        $this->events[] = $this->eventPrefix.'ElementPreInserting';
+        $this->events[] = $this->eventPrefix.'FormElementPreInserting';
     }
 
-    protected function elementPostInsert()
+    protected function formElementPostInsert()
     {
-        $this->events[] = $this->eventPrefix.'ElementPostInserting';
+        $this->events[] = $this->eventPrefix.'FormElementPostInserting';
     }
 
-    protected function elementPreUpdate()
+    protected function formElementPreUpdate()
     {
-        $this->events[] = $this->eventPrefix.'ElementPreUpdating';
+        $this->events[] = $this->eventPrefix.'FormElementPreUpdating';
     }
 
-    protected function elementPostUpdate()
+    protected function formElementPostUpdate()
     {
-        $this->events[] = $this->eventPrefix.'ElementPostUpdating';
+        $this->events[] = $this->eventPrefix.'FormElementPostUpdating';
     }
 
-    protected function elementPreDelete()
+    protected function formElementPreDelete()
     {
-        $this->events[] = $this->eventPrefix.'ElementPreDeleting';
+        $this->events[] = $this->eventPrefix.'FormElementPreDeleting';
     }
 
-    protected function elementPostDelete()
+    protected function formElementPostDelete()
     {
-        $this->events[] = $this->eventPrefix.'ElementPostDeleting';
+        $this->events[] = $this->eventPrefix.'FormElementPostDeleting';
     }
 }

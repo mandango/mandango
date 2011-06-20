@@ -375,15 +375,20 @@ class CoreSingleInheritanceTest extends TestCase
     {
         $formElement = $this->mandango->create('Model\FormElement')->setLabel('Element')->save();
         $this->assertSame(array(
-            'ElementPreInserting',
-            'ElementPostInserting',
+            'FormElementPreInserting',
+            'FormElementPostInserting',
+        ), $formElement->getEvents());
+
+        $formElement = $this->mandango->create('Model\TextTextElement')->setLabel('Element')->save();
+        $this->assertSame(array(
+            'TextTextElementPreInsert',
         ), $formElement->getEvents());
 
         $textareaFormElement = $this->mandango->create('Model\TextareaFormElement')->setLabel('Textarea')->save();
         $this->assertSame(array(
-            'ElementPreInserting',
+            'FormElementPreInserting',
             'TextareaPreInserting',
-            'ElementPostInserting',
+            'FormElementPostInserting',
             'TextareaPostInserting',
         ), $textareaFormElement->getEvents());
     }

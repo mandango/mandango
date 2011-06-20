@@ -280,9 +280,19 @@ $configClasses = array(
         ),
     ),
     'Model\TextElement' => array(
+        'inheritable' => array('type' => 'single'),
         'inheritance' => array('class' => 'Model\Element', 'value' => 'textelement'),
         'fields' => array(
           'htmltext'   => 'string',
+        ),
+    ),
+    'Model\TextTextElement' => array(
+        'inheritance' => array('class' => 'Model\TextElement', 'value' => 'texttextelement'),
+        'fields' => array(
+            'text_text' => 'string',
+        ),
+        'events' => array(
+            'preInsert' => array('textTextElementPreInsert'),
         ),
     ),
     'Model\FormElement' => array(
@@ -295,12 +305,12 @@ $configClasses = array(
             'author' => array('class' => 'Model\Author'),
         ),
         'events' => array(
-            'preInsert'  => array('elementPreInsert'),
-            'postInsert' => array('elementPostInsert'),
-            'preUpdate'  => array('elementPreUpdate'),
-            'postUpdate' => array('elementPostUpdate'),
-            'preDelete'  => array('elementPreDelete'),
-            'postDelete' => array('elementPostDelete'),
+            'preInsert'  => array('formElementPreInsert'),
+            'postInsert' => array('formElementPostInsert'),
+            'preUpdate'  => array('formElementPreUpdate'),
+            'postUpdate' => array('formElementPostUpdate'),
+            'preDelete'  => array('formElementPreDelete'),
+            'postDelete' => array('formElementPostDelete'),
         ),
         'embeddedsMany' => array(
             'comments' => array('class' => 'Model\Comment'),

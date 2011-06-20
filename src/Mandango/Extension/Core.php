@@ -3038,9 +3038,8 @@ EOF
                 }
                 $this->configClasses[$inheritableClass]['inheritable']['values'][$value] = $class;
 
-                if (isset($this->configClasses[$inheritableClass]["inheritance"]["class"])) {
-                    $grandParentClass = $this->configClasses[$inheritableClass]["inheritance"]["class"];
-                    $configClass['_parent_events'] = array_merge($configClass['_parent_events'], $this->configClasses[$grandParentClass]['events']);
+                if (isset($this->configClasses[$inheritableClass]['inheritance']['class'])) {
+                    $grandParentClass = $this->configClasses[$inheritableClass]['inheritance']['class'];
                     $this->configClasses[$grandParentClass]['inheritable']['values'][$value] = $class;
                 }
 
