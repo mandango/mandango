@@ -267,14 +267,10 @@ $configClasses = array(
         ),
     ),
     // single inheritance
-    'Model\FormElement' => array(
+    'Model\Element' => array(
         'inheritable' => array('type' => 'single'),
         'fields' => array(
-            'label'   => 'string',
-            'default' => 'raw',
-        ),
-        'referencesOne' => array(
-            'author' => array('class' => 'Model\Author'),
+          'label'   => 'string',
         ),
         'referencesMany' => array(
             'categories' => array('class' => 'Model\Category'),
@@ -282,8 +278,21 @@ $configClasses = array(
         'embeddedsOne' => array(
             'source' => array('class' => 'Model\Source'),
         ),
-        'embeddedsMany' => array(
-            'comments' => array('class' => 'Model\Comment'),
+    ),
+    'Model\TextElement' => array(
+        'inheritance' => array('class' => 'Model\Element', 'value' => 'textelement'),
+        'fields' => array(
+          'htmltext'   => 'string',
+        ),
+    ),
+    'Model\FormElement' => array(
+        'inheritable' => array('type' => 'single'),
+        'inheritance' => array('class' => 'Model\Element', 'value' => 'formelement'),
+        'fields' => array(
+            'default' => 'raw',
+        ),
+        'referencesOne' => array(
+            'author' => array('class' => 'Model\Author'),
         ),
         'events' => array(
             'preInsert'  => array('elementPreInsert'),
@@ -292,6 +301,9 @@ $configClasses = array(
             'postUpdate' => array('elementPostUpdate'),
             'preDelete'  => array('elementPreDelete'),
             'postDelete' => array('elementPostDelete'),
+        ),
+        'embeddedsMany' => array(
+            'comments' => array('class' => 'Model\Comment'),
         ),
     ),
     'Model\TextareaFormElement' => array(

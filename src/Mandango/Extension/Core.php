@@ -149,7 +149,7 @@ class Core extends Extension
             $this->repositorySaveMethodProcess();
             $this->repositoryDeleteMethodProcess();
             $this->repositoryEnsureIndexesMethodProcess();
-
+            $this->repositoryInheritanceMethodProcess();
             // query
             $this->queryAllMethodProcess();
             $this->queryCreateCursorMethodProcess();
@@ -2303,7 +2303,10 @@ EOF;
                 $value = $this->configClass['inheritance']['value'];
                 $codeHeader = <<<EOF
         \$isNew = \$this->isNew();
-        \$query = \$isNew ? array_merge(array('$field' => '$value'), parent::queryForSave()) : parent::queryForSave();
+        \$query = parent::queryForSave();
+        if (\$isNew) {
+            \$query['$field'] = '$value';
+        }
         \$reset = false;
 EOF;
             } else {
@@ -2368,12 +2371,26 @@ EOF
         $field = $this->configClass['inheritance']['field'];
         $value = $this->configClass['inheritance']['value'];
 
-        $method = new Method('public', 'count', 'array $query = array()', <<<EOF
+        $function = '';
+        if ($this->configClass['inheritable']) {
+            $function .= <<<EOF
+            
+        \$types = \$this->getTypes();
+        \$types[] = '$value';
+        \$query = array_merge(\$query, array('$field' => array('\$in' => \$types)));
+EOF;
+        } else {
+            $function .= <<<EOF
+            
         \$query = array_merge(\$query, array('$field' => '$value'));
-
+EOF;
+        }
+        $function .= <<<EOF
+        
         return parent::count(\$query);
-EOF
-        );
+EOF;
+                
+        $method = new Method('public', 'count', 'array $query = array()', $function);
         $method->setDocComment(<<<EOF
     /**
      * {@inheritdoc}
@@ -2392,12 +2409,25 @@ EOF
         $field = $this->configClass['inheritance']['field'];
         $value = $this->configClass['inheritance']['value'];
 
-        $method = new Method('public', 'remove', 'array $query = array()', <<<EOF
+        $function = '';
+        if ($this->configClass['inheritable']) {
+            $function .= <<<EOF
+
+        \$types = \$this->getTypes();
+        \$types[] = '$value';
+        \$query = array_merge(\$query, array('$field' => array('\$in' => \$types)));
+EOF;
+        } else {
+            $function .= <<<EOF
+
         \$query = array_merge(\$query, array('$field' => '$value'));
+EOF;
+        }
+        $function .= <<<EOF
 
         return parent::remove(\$query);
-EOF
-        );
+EOF;
+        $method = new Method('public', 'remove', 'array $query = array()',$function);
         $method->setDocComment(<<<EOF
     /**
      * {@inheritdoc}
@@ -2559,6 +2589,73 @@ EOF
      *
      * @param mixed \$documents A document or an array of documents.
      */
+EOF
+        );
+        $this->definitions['repository_base']->addMethod($method);
+    }
+
+    private function repositoryInheritanceMethodProcess()
+    {
+        if (!$this->configClass['inheritable']) {
+            return;
+        }
+
+        $property = new Property('protected', 'typeClasses', null);
+        $this->definitions['repository_base']->addProperty($property);
+
+        $method = new Method('public', 'getTypeClasses',null, <<<EOF
+        \$this->initTypeClasses();
+
+        return \$this->typeClasses;
+EOF
+        );
+        $this->definitions['repository_base']->addMethod($method);
+
+        $method = new Method('public', 'getTypeClass','$type', <<<EOF
+        \$this->initTypeClasses();
+
+        if (!\$this->hasType(\$type)) {
+            throw new \InvalidArgumentException(sprintf('The type "%s" does not exist.', \$type));
+        }
+
+        return \$this->typeClasses[\$type];
+EOF
+        );
+        $this->definitions['repository_base']->addMethod($method);
+
+        $method = new Method('public', 'getTypeForClass','$class', <<<EOF
+        \$this->initTypeClasses();
+
+        if (false === \$type = array_search(\$class, \$this->typeClasses)) {
+            throw new \InvalidArgumentException(sprintf('The class "%s" is not a type class.', \$class));
+        }
+
+        return \$type;
+EOF
+        );
+        $this->definitions['repository_base']->addMethod($method);
+
+        $method = new Method('public', 'getTypes',null, <<<EOF
+        \$this->initTypeClasses();
+
+        return array_keys(\$this->typeClasses);
+EOF
+        );
+        $this->definitions['repository_base']->addMethod($method);
+
+        $method = new Method('public', 'hasType','$type', <<<EOF
+        \$this->initTypeClasses();
+
+        return isset(\$this->typeClasses[\$type]);
+EOF
+        );
+        $this->definitions['repository_base']->addMethod($method);
+
+        $method = new Method('public', 'initTypeClasses',null, <<<EOF
+        if (null === \$this->typeClasses) {
+            \$metadata = \$this->getMandango()->getMetadata('$this->class');
+            \$this->typeClasses = \$metadata['inheritable']['values'];
+        }
 EOF
         );
         $this->definitions['repository_base']->addMethod($method);
@@ -2760,10 +2857,25 @@ EOF
 
         $field = $this->configClass['inheritance']['field'];
         $value = $this->configClass['inheritance']['value'];
-
-        $method = new Method('public', 'createCursor', '', <<<EOF
+        $function = <<<EOF
         \$criteria = \$savedCriteria = \$this->getCriteria();
+EOF;
+;
+        if ($this->configClass['inheritable']) {
+            $function .= <<<EOF
+
+        \$types = \$this->getRepository()->getTypes();
+        \$types[] = '$value';
+        \$criteria = array_merge(\$criteria, array('$field' => array('\$in' => \$types)));
+EOF;
+        } else {
+            $function .= <<<EOF
+
         \$criteria['$field'] = '$value';
+EOF;
+        }
+        $function .= <<<EOF
+
         \$this->criteria(\$criteria);
 
         \$cursor = parent::createCursor();
@@ -2771,8 +2883,8 @@ EOF
         \$this->criteria(\$savedCriteria);
 
         return \$cursor;
-EOF
-        );
+EOF;
+        $method = new Method('public', 'createCursor', '', $function);
         $method->setDocComment(<<<EOF
     /**
      * {@inheritdoc}
@@ -2943,6 +3055,12 @@ EOF
                 }
                 $this->configClasses[$inheritableClass]['inheritable']['values'][$value] = $class;
 
+                if (isset($this->configClasses[$inheritableClass]["inheritance"]["class"])) {
+                    $grandParentClass = $this->configClasses[$inheritableClass]["inheritance"]["class"];
+                    $configClass['_parent_events'] = array_merge($configClass['_parent_events'], $this->configClasses[$grandParentClass]['events']);
+                    $this->configClasses[$grandParentClass]['inheritable']['values'][$value] = $class;
+                }
+                
                 $configClass['collection'] = $this->configClasses[$inheritableClass]['collection'];
                 $configClass['inheritance']['field'] = $inheritable['field'];
             }
