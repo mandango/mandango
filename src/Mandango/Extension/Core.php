@@ -2499,8 +2499,9 @@ EOF;
 
         // updates
         foreach (\$updates as \$document) {
-            if (\$query = \$document->queryForSave()) {
-                $preUpdate\$collection->update(array('_id' => \$document->getId()), \$query, \$updateOptions);
+            if (\$document->isModified()) {
+                $preUpdate\$query = \$document->queryForSave();
+                \$collection->update(array('_id' => \$document->getId()), \$query, \$updateOptions);
                 \$document->clearModified();$resetGroupsCode$postUpdate
             }
         }
