@@ -358,7 +358,7 @@ class CoreSingleInheritanceTest extends TestCase
         for ($i = 0; $i < 1; $i++) {
             $radioFormElements[] = $this->mandango->create('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
         }
-        
+
         $textElements = array();
         for ($i = 0; $i < 5; $i++) {
             $textElements[] = $this->mandango->create('Model\TextElement')->setLabel('TextElement'.$i)->save();

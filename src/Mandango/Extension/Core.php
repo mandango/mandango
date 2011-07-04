@@ -2427,9 +2427,9 @@ EOF;
         }
         $function .= <<<EOF
 
-        return parent::remove(\$query);
+        return parent::remove(\$query, \$options);
 EOF;
-        $method = new Method('public', 'remove', 'array $query = array()',$function);
+        $method = new Method('public', 'remove', 'array $query = array(), array $options = array()', $function);
         $method->setDocComment(<<<EOF
     /**
      * {@inheritdoc}
@@ -2491,7 +2491,7 @@ EOF;
         }
 
         // method
-        $method = new Method('public', 'save', '$documents', <<<EOF
+        $method = new Method('public', 'save', '$documents, array $batchInsertOptions = array(), array $updateOptions = array()', <<<EOF
         if (!is_array(\$documents)) {
             \$documents = array(\$documents);
         }
@@ -2517,7 +2517,7 @@ EOF;
             }
 
             if (\$a) {
-                \$collection->batchInsert(\$a);
+                \$collection->batchInsert(\$a, \$batchInsertOptions);
 
                 foreach (\$a as \$oid => \$data) {
                     \$document = \$inserts[\$oid];
@@ -2531,8 +2531,9 @@ EOF;
 
         // updates
         foreach (\$updates as \$document) {
-            if (\$query = \$document->queryForSave()) {
-                $preUpdate\$collection->update(array('_id' => \$document->getId()), \$query);
+            if (\$document->isModified()) {
+                $preUpdate\$query = \$document->queryForSave();
+                \$collection->update(array('_id' => \$document->getId()), \$query, \$updateOptions);
                 \$document->clearModified();$resetGroupsCode$postUpdate
             }
         }
@@ -2542,7 +2543,9 @@ EOF
     /**
      * Save documents.
      *
-     * @param mixed \$documents A document or an array of documents.
+     * @param mixed \$documents          A document or an array of documents.
+     * @param array \$batchInsertOptions The options for the batch insert operation (optional).
+     * @param array \$updateOptions      The options for the update operation (optional).
      */
 EOF
         );
@@ -2569,7 +2572,7 @@ EOF;
         }
 
         // methods
-        $method = new Method('public', 'delete', '$documents', <<<EOF
+        $method = new Method('public', 'delete', '$documents, array $removeOptions = array()', <<<EOF
         if (!is_array(\$documents)) {
             \$documents = array(\$documents);
         }
@@ -2582,14 +2585,15 @@ EOF;
             unset(\$identityMap[\$id->__toString()]);
         }
 
-        \$this->getCollection()->remove(array('_id' => array('\$in' => \$ids)));$postDelete
+        \$this->getCollection()->remove(array('_id' => array('\$in' => \$ids)), \$removeOptions);$postDelete
 EOF
         );
         $method->setDocComment(<<<EOF
     /**
      * Delete documents.
      *
-     * @param mixed \$documents A document or an array of documents.
+     * @param mixed \$documents     A document or an array of documents.
+     * @param array \$removeOptions The options for the remove operation (optional).
      */
 EOF
         );

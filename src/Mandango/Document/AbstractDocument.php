@@ -39,6 +39,14 @@ abstract class AbstractDocument
     }
 
     /**
+     * Destructor - empties the Archive cache
+     */
+    public function __destruct()
+    {
+        Archive::removeObject($this);
+    }
+
+    /**
      * Returns the mandango.
      *
      * @return Mandango The mandango.

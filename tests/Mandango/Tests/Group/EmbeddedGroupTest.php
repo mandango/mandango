@@ -59,4 +59,16 @@ class EmbeddedGroupTest extends TestCase
         $group->setSavedData($data = array(array('foo' => 'bar'), array('bar' => 'foo')));
         $this->assertSame($data, $group->getSavedData());
     }
+    
+    public function testDuplicateSplObjectHash()
+    {
+        $group = new EmbeddedGroup('Model\Comment');
+        $comment = $this->mandango->create('Model\Comment');
+        $this->assertEquals(0, count($group->getAdd()));
+        $group->add($comment);
+        $this->assertEquals(1, count($group->getAdd()));
+        unset($group);
+        $group = new EmbeddedGroup('Model\Comment');
+        $this->assertEquals(0, count($group->getAdd()));
+    }
 }

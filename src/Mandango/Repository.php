@@ -277,15 +277,16 @@ abstract class Repository
     /**
      * Remove documents.
      *
-     * @param array $query The query (optional, by default an empty array).
+     * @param array $query   The query (optional, by default an empty array).
+     * @param array $options The options for the remove operation (optional).
      *
      * @return mixed The result of the remove collection method.
      *
      * @api
      */
-    public function remove(array $query = array())
+    public function remove(array $query = array(), array $options = array())
     {
-        return $this->getCollection()->remove($query, array('safe' => true));
+        return $this->getCollection()->remove($query, $options);
     }
 
     /**
