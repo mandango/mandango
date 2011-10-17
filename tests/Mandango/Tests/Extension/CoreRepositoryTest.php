@@ -184,6 +184,18 @@ class CoreRepositoryTest extends TestCase
         ), $documents[1]->getEvents());
     }
 
+    public function testSaveEventsPreUpdateProcessQueryLater()
+    {
+        $document = $this->mandango->create('Model\Events');
+        $document->setName('foo');
+        $document->save();
+        $document->setName('bar');
+        $document->save();
+
+        $doc = $document->getRepository()->getCollection()->findOne();
+        $this->assertSame('preUpdating', $doc['name']);
+    }
+
     public function testSaveResetGroups()
     {
         // insert

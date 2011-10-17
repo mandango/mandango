@@ -26,6 +26,14 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
     private $saved;
 
     /**
+     * Destructor - empties the Archive cache
+     */
+    public function __destruct()
+    {
+        Archive::removeObject($this);
+    }
+
+    /**
      * Adds document/s to the add queue of the group.
      *
      * @param Mandango\Document\AbstractDocument|array $documents One or more documents.

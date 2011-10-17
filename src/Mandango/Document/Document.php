@@ -108,13 +108,23 @@ abstract class Document extends AbstractDocument
     /**
      * Save the document.
      *
+     * @param array $options The options for the batch insert or update operation, it depends on if the document is new or not (optional).
+     *
      * @return Mandango\Document\Document The document (fluent interface).
      *
      * @api
      */
-    public function save()
+    public function save(array $options = array())
     {
-        $this->getRepository()->save($this);
+        if ($this->isNew()) {
+            $batchInsertOptions = $options;
+            $updateOptions = array();
+        } else {
+            $batchInsertOptions = array();
+            $updateOptions = $options;
+        }
+
+        $this->getRepository()->save($this, $batchInsertOptions, $updateOptions);
 
         return $this;
     }
@@ -122,11 +132,13 @@ abstract class Document extends AbstractDocument
     /**
      * Delete the document.
      *
+     * @param array $options The options for the remove operation (optional).
+     *
      * @api
      */
-    public function delete()
+    public function delete(array $options = array())
     {
-        $this->getRepository()->delete($this);
+        $this->getRepository()->delete($this, $options);
     }
 
     /**

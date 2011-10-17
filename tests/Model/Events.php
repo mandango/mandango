@@ -47,6 +47,7 @@ class Events extends \Model\Base\Events
     protected function myPreUpdate()
     {
         $this->events[] = $this->myEventPrefix.'PreUpdating';
+        $this->setName('preUpdating');
     }
 
     protected function myPostUpdate()

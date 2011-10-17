@@ -29,20 +29,22 @@
     /**
      * {@inheritdoc}
      */
-    public function remove(array $query = array())
+    public function remove(array $query = array(), array $options = array())
     {
         $query = array_merge($query, array('{{ config_class.inheritance.field }}' => '{{ config_class.inheritance.value }}'));
 
-        return parent::remove($query);
+        return parent::remove($query, $options);
     }
 {% endif %}
 
     /**
      * Save documents.
      *
-     * @param mixed $documents A document or an array of documents.
+     * @param mixed $documents          A document or an array of documents.
+     * @param array $batchInsertOptions The options for the batch insert operation (optional).
+     * @param array $updateOptions      The options for the update operation (optional).
      */
-    public function save($documents)
+    public function save($documents, array $batchInsertOptions = array(), array $updateOptions = array())
     {
         if (!is_array($documents)) {
             $documents = array($documents);
@@ -81,7 +83,7 @@
             }
 
             if ($a) {
-                $collection->batchInsert($a);
+                $collection->batchInsert($a, $batchInsertOptions);
 
                 foreach ($a as $oid => $data) {
                     $document = $inserts[$oid];
@@ -101,11 +103,12 @@
 
         // updates
         foreach ($updates as $document) {
-            if ($query = $document->queryForSave()) {
+            if ($document->isModified()) {
 {% if config_class.events.preUpdate or config_class._parent_events.preUpdate %}
                 $document->preUpdateEvent();
 {% endif %}
-                $collection->update(array('_id' => $document->getId()), $query);
+                $query = $document->queryForSave();
+                $collection->update(array('_id' => $document->getId()), $query, $updateOptions);
                 $document->clearModified();
 {% if config_class._has_groups %}
                 $document->resetGroups();
