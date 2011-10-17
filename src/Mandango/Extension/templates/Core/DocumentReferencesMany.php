@@ -1,0 +1,70 @@
+<?php
+
+{% for name, referenceMany in config_class.referencesMany %}
+{# normal, no polymorphic #}
+{% if referenceMany.class is defined %}
+    /**
+     * Returns the "{{ name }}" reference.
+     *
+     * @return Mandango\Group\ReferenceGroup The reference.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        if (!isset($this->data['referencesMany']['{{ name }}'])) {
+{% if not config_class.isEmbedded %}
+            if (!$this->isNew()) {
+                $this->addReferenceCache('{{ name }}');
+            }
+{% endif %}
+            $this->data['referencesMany']['{{ name }}'] = new \Mandango\Group\ReferenceGroup('{{ referenceMany.class }}', $this, '{{ referenceMany.field }}');
+        }
+
+        return $this->data['referencesMany']['{{ name }}'];
+    }
+{# polymorphic #}
+{% else %}
+    /**
+     * Returns the "{{ name }}" polymorphic reference.
+     *
+     * @return Mandango\Group\PolymorphicReferenceGroup The reference.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        if (!isset($this->data['referencesMany']['{{ name }}'])) {
+            $this->data['referencesMany']['{{ name }}'] = new \Mandango\Group\PolymorphicReferenceGroup('{{ referenceMany.discriminatorField }}', $this, '{{ referenceMany.field }}', {{ referenceMany.discriminatorMap ? referenceMany.discriminatorMap|var_export : 'false' }});
+        }
+
+        return $this->data['referencesMany']['{{ name }}'];
+    }
+{% endif %}
+
+{# add #}
+    /**
+     * Adds documents to the "{{ name }}" reference many.
+     *
+     * @param mixed $documents A document or an array or documents.
+     *
+     * @return {{ class }} The document (fluent interface).
+     */
+    public function add{{ name|ucfirst }}($documents)
+    {
+        $this->get{{ name|ucfirst }}()->add($documents);
+
+        return $this;
+    }
+
+{# remove #}
+    /**
+     * Removes documents to the "{{ name }}" reference many.
+     *
+     * @param mixed $documents A document or an array or documents.
+     *
+     * @return {{ class }} The document (fluent interface).
+     */
+    public function remove{{ name|ucfirst }}($documents)
+    {
+        $this->get{{ name|ucfirst }}()->remove($documents);
+
+        return $this;
+    }
+{% endfor %}

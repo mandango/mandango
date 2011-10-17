@@ -21,28 +21,12 @@ namespace Mandango;
 abstract class Repository
 {
     /*
-     * abstract string The document class.
-     *
-     * protected $documentClass;
+     * Setted by the generator.
      */
-
-    /*
-     * abstract boolean If the document is a file (if it uses GridFS).
-     *
-     * protected $isFile;
-     */
-
-    /*
-     * abstract string|null The connection name.
-     *
-     * protected $connectionName;
-     */
-
-    /*
-     * abstract string The collection name.
-     *
-     * protected $collectionName;
-     */
+    protected $documentClass;
+    protected $isFile;
+    protected $connectionName;
+    protected $collectionName;
 
     private $mandango;
     private $identityMap;

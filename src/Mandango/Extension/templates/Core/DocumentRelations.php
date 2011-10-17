@@ -1,0 +1,56 @@
+<?php
+
+{% for name, relation in config_class.relationsOne %}
+    /**
+     * Returns the "{{ name }}" relation one.
+     *
+     * @return {{ relation.class }} The "{{ name }}" relation one.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        return $this->getMandango()->getRepository('{{ relation.class }}')->createQuery(array('{{ relation.reference }}' => $this->getId()))->one();
+    }
+{% endfor %}
+
+{% for name, relation in config_class.relationsManyOne %}
+    /**
+     * Returns the "{{ name }}" relation many-one.
+     *
+     * @return Mandango\Query The "{{ name }}" relation many-one.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        return $this->getMandango()->getRepository('{{ relation.class }}')->createQuery(array('{{ relation.reference }}' => $this->getId()));
+    }
+{% endfor %}
+
+{% for name, relation in config_class.relationsManyMany %}
+    /**
+     * Returns the "{{ name }}" relation many-many.
+     *
+     * @return Mandango\Query The "{{ name }}" relation many-many.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        return $this->getMandango()->getRepository('{{ relation.class }}')->createQuery(array('{{ relation.reference }}' => $this->getId()));
+    }
+{% endfor %}
+
+{% for name, relation in config_class.relationsManyThrough %}
+    /**
+     * Returns the "{{ name }}" relation many-through.
+     *
+     * @return Mandango\Query The "{{ name }}" relation many-through.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        $ids = array();
+        foreach ($this->getMandango()->getRepository('{{ relation.through }}')->getCollection()
+            ->find(array('{{ relation.local }}' => $this->getId()), array('{{ relation.foreign }}' => 1))
+        as $value) {
+            $ids[] = $value['{{ relation.foreign }}'];
+        }
+
+        return $this->getMandango()->getRepository('{{ relation.class }}')->createQuery(array('_id' => array('$in' => $ids)));
+    }
+{% endfor %}

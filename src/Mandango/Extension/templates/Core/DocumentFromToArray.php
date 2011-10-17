@@ -1,0 +1,83 @@
+<?php
+
+    /**
+     * Imports data from an array.
+     *
+     * @param array $data An array.
+     *
+     * @return {$this->class} The document (fluent interface).
+     */
+    public function fromArray(array $array)
+    {
+{# inheritance #}
+{% if config_class.inheritance %}
+        parent::fromArray($array);
+{% endif %}
+{# fields #}
+{% for name, field in config_class.fields %}
+{% if field.inherited is not defined or not field.inherited %}
+        if (isset($array['{{ name }}'])) {
+            $this->set{{ name|ucfirst }}($array['{{ name }}']);
+        }
+{% endif %}
+{% endfor %}
+{# embeddeds one #}
+{% for name, embedded in config_class.embeddedsOne %}
+{% if embedded.inherited is not defined or not embedded.inherited %}
+        if (isset($array['{{ name }}'])) {
+            $embedded = new \{{ embedded.class }}($this->getMandango());
+            $embedded->fromArray($array['{{ name }}']);
+            $this->set{{ name|ucfirst }}($embedded);
+        }
+{% endif %}
+{% endfor %}
+{# embeddeds many #}
+{% for name, embedded in config_class.embeddedsMany %}
+{% if embedded.inherited is not defined or not embedded.inherited %}
+        if (isset($array['{{ name }}'])) {
+            $embeddeds = array();
+            foreach ($array['{{ name }}'] as $documentData) {
+                $embeddeds[] = $embedded = new \{{ embedded.class }}($this->getMandango());
+                $embedded->setDocumentData($documentData);
+            }
+            $this->get{{ name|ucfirst }}()->replace($embeddeds);
+        }
+{% endif %}
+{% endfor %}
+
+        return $this;
+    }
+
+    /**
+     * Export the document data to an array.
+     *
+     * @param Boolean \$withReferenceFields Whether include the fields of references or not (false by default).
+     *
+     * @return array An array with the document data.
+     */
+    public function toArray($withReferenceFields = false)
+    {
+{# inheritance #}
+{% if config_class.inheritance %}
+        $array = parent::toArray($withReferenceFields);
+{% else %}
+        $array = array();
+{% endif %}
+
+{# fields #}
+{% for name, field in config_class.fields %}
+{% if field.inherited is not defined or not field.inherited %}
+{# no reference field #}
+{% if field.referenceField is not defined %}
+        $array['{{ name }}'] = $this->get{{ name|ucfirst }}();
+{# reference field #}
+{% else %}
+        if ($withReferenceFields) {
+            $array['{{ name }}'] = $this->get{{ name|ucfirst }}();
+        }
+{% endif %}
+{% endif %}
+{% endfor %}
+
+        return $array;
+    }

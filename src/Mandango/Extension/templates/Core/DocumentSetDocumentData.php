@@ -1,0 +1,89 @@
+<?php
+
+    /**
+     * Set the document data (hydrate).
+     *
+     * @param array $data  The document data.
+     * @param bool  $clean Whether clean the document.
+     *
+     * @return {{ class }} The document (fluent interface).
+     */
+    public function setDocumentData($data, $clean = false)
+    {
+{# inheritance #}
+{% if config_class.inheritance and 'single' == config_class.inheritance.type %}
+        parent::setDocumentData($data);
+
+{% else %}
+{% set force_clean = false %}
+{% for name, field in config_class.fields %}
+{% if field.default is defined %}
+{% set force_clean = true %}
+{% endif %}
+{% endfor %}
+        if ({% if force_clean %}true || {% endif %}$clean) {
+            $this->data = array();
+            $this->fieldsModified = array();
+        }
+
+{% endif %}
+{# query hash #}
+{% if not config_class.isEmbedded %}
+        if (isset($data['_query_hash'])) {
+            $this->addQueryHash($data['_query_hash']);
+        }
+{% endif %}
+{# id #}
+{% if not config_class.isEmbedded %}
+        if (isset($data['_id'])) {
+            $this->id = $data['_id'];
+        }
+{% endif %}
+{# fields #}
+{% for name, field in config_class.fields %}
+        if (isset($data['{{ field.dbName }}'])) {
+            {{ mandango_type_to_php(field.type, "$data['" ~ field.dbName ~ "']", "$this->data['fields']['" ~ name ~ "']") }}
+        } elseif (isset($data['_fields']['{{ field.dbName }}'])) {
+            $this->data['fields']['{{ name }}'] = null;
+        }
+{% endfor %}
+{# embeddeds one #}
+{% for name, embedded_one in config_class.embeddedsOne %}
+{% if embedded_one.inherited is not defined or not embedded_one.inherited %}
+        if (isset($data['{{ name }}'])) {
+            $embedded = new \{{ embedded_one.class }}($this->getMandango());
+{% if config_class.isEmbedded %}
+            if ($rap = $this->getRootAndPath()) {
+                $embedded->setRootAndPath($rap['root'], $rap['path'].'.{{ name }}');
+            }
+{% else %}
+            $embedded->setRootAndPath($this, '{{ name }}');
+{% endif %}
+            if (isset($data['_fields']['{{ name }}'])) {
+                $data['{{ name }}']['_fields'] = $data['_fields']['{{ name }}'];
+            }
+            $embedded->setDocumentData($data['{{ name }}']);
+            $this->data['embeddedsOne']['{{ name }}'] = $embedded;
+        }
+{% endif %}
+{% endfor %}
+{# embeddeds many #}
+{% for name, embedded_many in config_class.embeddedsMany %}
+{% if embedded_many.inherited is not defined or not embedded_many.inherited %}
+        if (isset($data['{{ name }}'])) {
+            $embedded = new \Mandango\Group\EmbeddedGroup('{{ embedded_many.class }}');
+{% if config_class.isEmbedded %}
+            if ($rap = $this->getRootAndPath()) {
+                $embedded->setRootAndPath($rap['root'], $rap['path'].'.{{ name }}');
+            }
+{% else %}
+            $embedded->setRootAndPath($this, '{{ name }}');
+{% endif %}
+            $embedded->setSavedData($data['{{ name }}']);
+            $this->data['embeddedsMany']['{{ name }}'] = $embedded;
+        }
+{% endif %}
+{% endfor %}
+
+        return $this;
+    }

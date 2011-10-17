@@ -1,0 +1,128 @@
+<?php
+
+    /**
+     * Update the value of the reference fields.
+     */
+    public function updateReferenceFields()
+    {
+{# inheritance #}
+{% if config_class.inheritance %}
+        parent::updateReferenceFields();
+
+{% endif %}
+{# references one #}
+{% for name, reference in config_class.referencesOne %}
+{% if reference.inherited is not defined or not reference.inherited %}
+{# normal (not polymorphic) #}
+{% if reference.class is defined %}
+        if (isset($this->data['referencesOne']['{{ name }}']) && !isset($this->data['fields']['{{ reference.field }}'])) {
+            $this->set{{ reference.field|ucfirst }}($this->data['referencesOne']['{{ name }}']->getId());
+        }
+{# polymorphic #}
+{% else %}
+        if (isset($this->data['referencesOne']['{{ name }}']) && !isset($this->data['fields']['{{ reference.field }}'])) {
+            $document = $this->data['referencesOne']['{{ name }}'];
+{% if reference.discriminatorMap %}
+            if (false === $discriminatorValue = array_search(get_class($document), {{ reference.discriminatorMap|var_export }})) {
+                throw new \RuntimeException(sprintf('The class "%s" is not a possible reference in the reference "{{ name }}" of the class "{{ class }}".', get_class($document)));
+            }
+{% else %}
+            $discriminatorValue = get_class($document);
+{% endif %}
+            $this->set{{ reference.field|ucfirst }}(array(
+                '{{ reference.discriminatorField }}' => $discriminatorValue,
+                'id' => $document->getId(),
+            ));
+        }
+{% endif %}
+{% endif %}
+{% endfor %}
+{# references many #}
+{% for name, reference in config_class.referencesMany %}
+{% if reference.inherited is not defined or not reference.inherited %}
+{# normal (not polymorphic) #}
+{% if reference.class is defined %}
+        if (isset($this->data['referencesMany']['{{ name }}'])) {
+            $group = $this->data['referencesMany']['{{ name }}'];
+            $add = $group->getAdd();
+            $remove = $group->getRemove();
+            if ($add || $remove) {
+                $ids = $this->get{{ reference.field|ucfirst }}();
+                foreach ($add as $document) {
+                    $ids[] = $document->getId();
+                }
+                foreach ($remove as $document) {
+                    unset($ids[array_search($document->getId(), $ids)]);
+                }
+                $this->set{{ reference.field|ucfirst }}($ids ? array_values($ids) : null);
+            }
+        }
+{# polymorphic #}
+{% else %}
+        if (isset($this->data['referencesMany']['{{ name }}'])) {
+            $group = $this->data['referencesMany']['{{ name }}'];
+            $add = $group->getAdd();
+            $remove = $group->getRemove();
+            if ($add || $remove) {
+{% if reference.discriminatorMap %}
+                $discriminatorMapValues = {{ reference.discriminatorMap|var_export }};
+{% endif %}
+                $ids = $this->get{{ reference.field|ucfirst }}();
+                foreach ($add as $document) {
+{% if reference.discriminatorMap %}
+                    if (false === $discriminatorValue = array_search(get_class($document), $discriminatorMapValues)) {
+                        throw new \RuntimeException(sprintf('The class "%s" is not a possible reference in the reference "{{ name }}" of the class "{{ class }}".', get_class($document)));
+                    }
+{% else %}
+                    $discriminatorValue = get_class($document);
+{% endif %}
+                    $ids[] = array(
+                        '{{ reference.discriminatorField }}' => $discriminatorValue,
+                        'id' => $document->getId(),
+                    );
+                }
+                foreach ($remove as $document) {
+{% if reference.discriminatorMap %}
+                    if (false === $discriminatorValue = array_search(get_class($document), $discriminatorMapValues)) {
+                        throw new \RuntimeException(sprintf('The class "%s" is not a possible reference in the reference "{{ name }}" of the class "{{ class }}".', get_class($value)));
+                    }
+{% else %}
+                    $discriminatorValue = get_class($document);
+{% endif %}
+                    if (false !== $key = array_search($search = array(
+                        '{{ reference.discriminatorField }}' => $discriminatorValue,
+                        'id' => $document->getId(),
+                    ), $ids)) {
+                        unset($ids[$key]);
+                    }
+                }
+                $this->set{{ reference.field|ucfirst }}($ids ? array_values($ids) : null);
+            }
+        }
+{% endif %}
+{% endif %}
+{% endfor %}
+{# embeddeds one #}
+{% for name, embedded in config_class.embeddedsOne %}
+{% if embedded.inherited is not defined or not embedded.inherited %}
+{% if config_classes[embedded.class]['_has_references'] %}
+        if (isset($this->data['embeddedsOne']['{{ name }}'])) {
+            $this->data['embeddedsOne']['{{ name }}']->updateReferenceFields();
+        }
+{% endif %}
+{% endif %}
+{% endfor %}
+{# embeddeds many #}
+{% for name, embedded in config_class.embeddedsMany %}
+{% if embedded.inherited is not defined or not embedded.inherited %}
+{% if config_classes[embedded.class]['_has_references'] %}
+        if (isset($this->data['embeddedsMany']['{{ name }}'])) {
+            $group = $this->data['embeddedsMany']['{{ name }}'];
+            foreach ($group->getSaved() as $document) {
+                $document->updateReferenceFields();
+            }
+        }
+{% endif %}
+{% endif %}
+{% endfor %}
+    }

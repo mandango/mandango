@@ -1,0 +1,91 @@
+<?php
+
+{% for name, embedded in config_class.embeddedsOne %}
+{# not inherited #}
+{% if embedded.inherited is not defined or not embedded.inherited %}
+    /**
+     * Set the "{{ name }}" embedded one.
+     *
+     * @param {{ embedded.class }}|null $value The "{{ name }}" embedded one.
+     *
+     * @return {{ class }} The document (fluent interface).
+     *
+     * @throws \InvalidArgumentException If the value is not an instance of {{ embedded.class }} or null.
+     */
+    public function set{{ name|ucfirst }}($value)
+    {
+        if (null !== $value && !$value instanceof \{{ embedded.class }}) {
+            throw new \InvalidArgumentException('The "{{ name }}" embedded one is not an instance of {{ embedded.class }}.');
+        }
+        if (null !== $value) {
+            if ($this instanceof \Mandango\Document\Document) {
+                $value->setRootAndPath($this, '{{ name }}');
+            } elseif ($rap = $this->getRootAndPath()) {
+                $value->setRootAndPath($rap['root'], $rap['path'].'.{{ name }}');
+            }
+        }
+
+        if (!\Mandango\Archive::has($this, 'embedded_one.{{ name }}')) {
+            $originalValue = isset($this->data['embeddedsOne']['{{ name }}']) ? $this->data['embeddedsOne']['{{ name }}'] : null;
+            \Mandango\Archive::set($this, 'embedded_one.{{ name }}', $originalValue);
+        } elseif (\Mandango\Archive::get($this, 'embedded_one.{{ name }}') === $value) {
+            \Mandango\Archive::remove($this, 'embedded_one.{{ name }}');
+        }
+
+        $this->data['embeddedsOne']['{{ name }}'] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Returns the "{{ name }}" embedded one.
+     *
+     * @return {{ embedded.class }}|null The "{{ name }}" embedded one.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        if (!isset($this->data['embeddedsOne']['{{ name }}'])) {
+{# not embedded #}
+{% if not config_class.isEmbedded %}
+            if ($this->isNew()) {
+                $this->data['embeddedsOne']['{{ name }}'] = null;
+            } elseif (!isset($this->data['embeddedsOne']) || !array_key_exists('{{ name }}', $this->data['embeddedsOne'])) {
+                $exists = $this->getRepository()->getCollection()->findOne(array('_id' => $this->id, '{{ name }}' => array('$exists' => 1)));
+                if ($exists) {
+                    $embedded = new \{{ embedded.class }}($this->getMandango());
+                    $embedded->setRootAndPath($this, '{{ name }}');
+                    $this->data['embeddedsOne']['{{ name }}'] = $embedded;
+                } else {
+                    $this->data['embeddedsOne']['{{ name }}'] = null;
+                }
+            }
+{# embedded #}
+{% else %}
+            if (
+                (!isset($this->data['embeddedsOne']) || !array_key_exists('{{ name }}', $this->data['embeddedsOne']))
+                &&
+                ($rap = $this->getRootAndPath())
+                &&
+                !$this->isEmbeddedOneChangedInParent()
+                &&
+                false === strpos($rap['path'], '._add')
+            ) {
+                $collection = $this->getMandango()->getRepository(get_class($rap['root']))->getCollection();
+                $field = $rap['path'].'.{{ name }}';
+                $result = $collection->findOne(array('_id' => $rap['root']->getId(), $field => array('$exists' => 1)));
+                if ($result) {
+                    $embedded = new \{{ embedded.class }}($this->getMandango());
+                    $embedded->setRootAndPath($rap['root'], $field);
+                    $this->data['embeddedsOne']['{{ name }}'] = $embedded;
+                }
+            }
+            if (!isset($this->data['embeddedsOne']['{{ name }}'])) {
+                $this->data['embeddedsOne']['{{ name }}'] = null;
+            }
+{% endif %}
+        }
+
+        return $this->data['embeddedsOne']['{{ name }}'];
+    }
+{% endif %}
+{% endfor %}

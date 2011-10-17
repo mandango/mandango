@@ -1,0 +1,56 @@
+<?php
+
+    /**
+     * Save the references.
+     */
+    public function saveReferences()
+    {
+{# references one #}
+{% for name, reference in config_class.referencesOne %}
+{# not inherited #}
+{% if reference.inherited is not defined or not reference.inherited %}
+{# not polymorphic #}
+{% if reference.class is defined %}
+        if (isset($this->data['referencesOne']['{{ name }}'])) {
+            $this->data['referencesOne']['{{ name }}']->save();
+        }
+{% endif %}
+{% endif %}
+{% endfor %}
+{# references many #}
+{% for name, reference in config_class.referencesMany %}
+{# not inherited #}
+{% if reference.inherited is not defined or not reference.inherited %}
+{# not polymorphic #}
+{% if reference.class is defined %}
+        if (isset($this->data['referencesMany']['{{ name }}'])) {
+            $group = $this->data['referencesMany']['{{ name }}'];
+            $documents = array();
+            foreach ($group->getAdd() as $document) {
+                $documents[] = $document;
+            }
+            if ($group->isSavedInitialized()) {
+                foreach ($group->getSaved() as $document) {
+                    $documents[] = $document;
+                }
+            }
+            if ($documents) {
+                $this->getMandango()->getRepository('{{ reference.class }}')->save($documents);
+            }
+        }
+{% endif %}
+{% endif %}
+{% endfor %}
+{# embeddeds one #}
+{% for name, embedded in config_class.embeddedsOne %}
+{# not inherited #}
+{% if embedded.inherited is not defined or not embedded.inherited %}
+{# has references #}
+{% if config_classes[embedded.class]['_has_references'] %}
+        if (isset($this->data['embeddedsOne']['{{ name }}'])) {
+            $this->data['embeddedsOne']['{{ name }}']->saveReferences();
+        }
+{% endif %}
+{% endif %}
+{% endfor %}
+    }

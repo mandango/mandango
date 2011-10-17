@@ -1,0 +1,57 @@
+<?php
+
+{% for name, embedded in config_class.embeddedsMany %}
+{# not inherited #}
+{% if embedded.inherited is not defined or not embedded.inherited %}
+    /**
+     * Returns the "{{ name }}" embedded many.
+     *
+     * @return Mandango\Group\EmbeddedGroup The "{{ name }}" embedded many.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        if (!isset($this->data['embeddedsMany']['{{ name }}'])) {
+            $this->data['embeddedsMany']['{{ name }}'] = $embedded = new \Mandango\Group\EmbeddedGroup('{{ embedded.class }}');
+{# not embedded #}
+{% if not config_class.isEmbedded %}
+            $embedded->setRootAndPath($this, '{{ name }}');
+{# embedded #}
+{% else %}
+            if ($rap = $this->getRootAndPath()) {
+                $embedded->setRootAndPath($rap['root'], $rap['path'].'.{{ name }}');
+            }
+{% endif %}
+        }
+
+        return $this->data['embeddedsMany']['{{ name }}'];
+    }
+
+    /**
+     * Adds documents to the "{{ name }}" embeddeds many.
+     *
+     * @param mixed $documents A document or an array or documents.
+     *
+     * @return {{ class }} The document (fluent interface).
+     */
+    public function add{{ name|ucfirst }}($documents)
+    {
+        $this->get{{ name|ucfirst }}()->add($documents);
+
+        return $this;
+    }
+
+    /**
+     * Removes documents to the "{{ name }}" embeddeds many.
+     *
+     * @param mixed $documents A document or an array or documents.
+     *
+     * @return {{ class }} The document (fluent interface).
+     */
+    public function remove{{ name|ucfirst }}($documents)
+    {
+        $this->get{{ name|ucfirst }}()->remove($documents);
+
+        return $this;
+    }
+{% endif %}
+{% endfor %}
