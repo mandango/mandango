@@ -1,0 +1,101 @@
+<?php
+
+    /**
+     * Set a document data value by data name as string.
+     *
+     * @param string $name  The data name.
+     * @param mixed  $vaule The value.
+     *
+     * @return mixed the data name setter return value.
+     *
+     * @throws \InvalidArgumentException If the data name is not valid.
+     */
+    public function set($name, $value)
+    {
+{# fields #}
+{% for name in config_class.fields|keys %}
+        if ('{{ name }}' == $name) {
+            return $this->set{{ name|ucfirst }}($value);
+        }
+{% endfor %}
+{# referencesOne #}
+{% for name in config_class.referencesOne|keys %}
+        if ('{{ name }}' == $name) {
+            return $this->set{{ name|ucfirst }}($value);
+        }
+{% endfor %}
+{# embeddedsOne #}
+{% for name in config_class.embeddedsOne|keys %}
+        if ('{{ name }}' == $name) {
+            return $this->set{{ name|ucfirst }}($value);
+        }
+{% endfor %}
+{# inheritance #}
+{% if config_class.inheritance %}
+        try {
+            return parent::set($name, $value);
+        } catch (\InvalidArgumentException $e) {
+        }
+{% endif %}
+{# inheritance #}
+{% if config_class.inheritance %}
+        try {
+            return parent::get($name);
+        } catch (\InvalidArgumentException $e) {
+        }
+{% endif %}
+
+        throw new \InvalidArgumentException(sprintf('The document data "%s" is not valid.', $name));
+    }
+
+    /**
+     * Returns a document data by data name as string.
+     *
+     * @param string $name The data name.
+     *
+     * @return mixed The data name getter return value.
+     *
+     * @throws \InvalidArgumentException If the data name is not valid.
+     */
+    public function get($name)
+    {
+{# fields #}
+{% for name in config_class.fields|keys %}
+        if ('{{ name }}' == $name) {
+            return $this->get{{ name|ucfirst }}();
+        }
+{% endfor %}
+{# referencesOne #}
+{% for name in config_class.referencesOne|keys %}
+        if ('{{ name }}' == $name) {
+            return $this->get{{ name|ucfirst }}();
+        }
+{% endfor %}
+{# referencesMany #}
+{% for name in config_class.referencesMany|keys %}
+        if ('{{ name }}' == $name) {
+            return $this->get{{ name|ucfirst }}();
+        }
+{% endfor %}
+{# embeddedsOne #}
+{% for name in config_class.embeddedsOne|keys %}
+        if ('{{ name }}' == $name) {
+            return $this->get{{ name|ucfirst }}();
+        }
+{% endfor %}
+{# embeddedsMany #}
+{% for name in config_class.embeddedsMany|keys %}
+        if ('{{ name }}' == $name) {
+            return $this->get{{ name|ucfirst }}();
+        }
+{% endfor %}
+{# inheritance #}
+{% if config_class.inheritance %}
+        try {
+            return parent::get($name);
+        } catch (\InvalidArgumentException $e) {
+        }
+{% endif %}
+
+        throw new \InvalidArgumentException(sprintf('The document data "%s" is not valid.', $name));
+    }

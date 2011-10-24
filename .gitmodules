@@ -4,3 +4,6 @@
 [submodule "vendor/symfony/src/Symfony/Component/ClassLoader"]
 	path = vendor/symfony/src/Symfony/Component/ClassLoader
 	url = git://github.com/symfony/ClassLoader.git
+[submodule "vendor/twig"]
+	path = vendor/twig
+	url = http://github.com/fabpot/Twig.git

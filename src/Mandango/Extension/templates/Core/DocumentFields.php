@@ -1,0 +1,99 @@
+<?php
+
+{% for name, field in config_class.fields %}
+    /**
+     * Set the "{{ name }}" field.
+     *
+     * @param mixed $value The value.
+     *
+     * @return {{ class }} The document (fluent interface).
+     */
+    public function set{{ name|ucfirst }}($value)
+    {
+        if (!isset($this->data['fields']['{{ name }}'])) {
+{% if config_class.isEmbedded %}
+            if (($rap = $this->getRootAndPath()) && !$rap['root']->isNew()) {
+{% else %}
+            if (null !== $this->id) {
+{% endif %}
+                $this->get{{ name | ucfirst }}();
+                if ($value === $this->data['fields']['{{ name }}']) {
+                    return $this;
+                }
+            } else {
+                if (null === $value) {
+                    return $this;
+                }
+                $this->fieldsModified['{{ name }}'] = null;
+                $this->data['fields']['{{ name }}'] = $value;
+                return $this;
+            }
+        } elseif ($value === $this->data['fields']['{{ name }}']) {
+            return $this;
+        }
+
+        if (!isset($this->fieldsModified['{{ name }}']) && !array_key_exists('{{ name }}', $this->fieldsModified)) {
+            $this->fieldsModified['{{ name }}'] = $this->data['fields']['{{ name }}'];
+        } elseif ($value === $this->fieldsModified['{{ name }}']) {
+            unset($this->fieldsModified['{{ name }}']);
+        }
+
+        $this->data['fields']['{{ name }}'] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Returns the "{{ name }}" field.
+     *
+     * @return mixed The $name field.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        if (!isset($this->data['fields']['{{ name }}'])) {
+{% if config_class.isEmbedded %}
+            if (
+                (!isset($this->data['fields']) || !array_key_exists('{{ name }}', $this->data['fields']))
+                &&
+                ($rap = $this->getRootAndPath())
+                &&
+                !$this->isEmbeddedOneChangedInParent()
+                &&
+                !$this->isEmbeddedManyNew()
+            ) {
+                $field = $rap['path'].'.{{ field.dbName }}';
+                $rap['root']->addFieldCache($field);
+                $collection = $this->getMandango()->getRepository(get_class($rap['root']))->getCollection();
+                $data = $collection->findOne(array('_id' => $rap['root']->getId()), array($field => 1));
+                foreach (explode('.', $field) as $key) {
+                    if (!isset($data[$key])) {
+                        $data = null;
+                        break;
+                    }
+                    $data = $data[$key];
+                }
+                if (null !== $data) {
+                    {{ mandango_type_to_php(field.type, "$data", "$this->data['fields']['" ~ name ~ "']") }}
+                }
+            }
+            if (!isset($this->data['fields']['{{ name }}'])) {
+                $this->data['fields']['{{ name }}'] = null;
+            }
+{% else %}
+            if ($this->isNew()) {
+                $this->data['fields']['{{ name }}'] = null;
+            } elseif (!isset($this->data['fields']) || !array_key_exists('{{ name }}', $this->data['fields'])) {
+                $this->addFieldCache('{{ field.dbName }}');
+                $data = $this->getRepository()->getCollection()->findOne(array('_id' => $this->id), array('{{ field.dbName }}' => 1));
+                if (isset($data['{{ field.dbName }}'])) {
+                    {{ mandango_type_to_php(field.type, "$data['" ~ field.dbName ~ "']", "$this->data['fields']['" ~ name ~ "']") }}
+                } else {
+                    $this->data['fields']['{{ name }}'] = null;
+                }
+            }
+{% endif %}
+        }
+
+        return $this->data['fields']['{{ name }}'];
+    }
+{% endfor %}

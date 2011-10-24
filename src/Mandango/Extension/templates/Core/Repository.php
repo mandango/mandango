@@ -1,0 +1,263 @@
+<?php
+
+{% if config_class.inheritable %}
+    private $inheritableValues;
+{% endif %}
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(\Mandango\Mandango $mandango)
+    {
+        $this->documentClass = '{{ class }}';
+        $this->isFile = {{ config_class.isFile ? 'true' : 'false' }};
+{% if config_class.connection %}
+        $this->connectionName = '{{ config_class.connection }}';
+{% endif %}
+        $this->collectionName = '{{ config_class.collection }}';
+
+        parent::__construct($mandango);
+    }
+
+{% if config_class.inheritance and 'single' == config_class.inheritance.type %}
+    /**
+     * {@inheritdoc}
+     */
+    public function count(array $query = array())
+    {
+{% if config_class.inheritable %}
+        $types = $this->getInheritableTypes();
+        $types[] = '{{ config_class.inheritance.value }}';
+        $query = array_merge($query, array('{{ config_class.inheritance.field }}' => array('$in' => $types)));
+{% else %}
+        $query = array_merge($query, array('{{ config_class.inheritance.field }}' => '{{ config_class.inheritance.value }}'));
+{% endif %}
+
+        return parent::count($query);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove(array $query = array(), array $options = array())
+    {
+        {% if config_class.inheritable %}
+                $types = $this->getInheritableTypes();
+                $types[] = '{{ config_class.inheritance.value }}';
+                $query = array_merge($query, array('{{ config_class.inheritance.field }}' => array('$in' => $types)));
+        {% else %}
+                $query = array_merge($query, array('{{ config_class.inheritance.field }}' => '{{ config_class.inheritance.value }}'));
+        {% endif %}
+
+        return parent::remove($query, $options);
+    }
+{% endif %}
+
+    /**
+     * Save documents.
+     *
+     * @param mixed $documents          A document or an array of documents.
+     * @param array $batchInsertOptions The options for the batch insert operation (optional).
+     * @param array $updateOptions      The options for the update operation (optional).
+     */
+    public function save($documents, array $batchInsertOptions = array(), array $updateOptions = array())
+    {
+        if (!is_array($documents)) {
+            $documents = array($documents);
+        }
+
+        $identityMap =& $this->getIdentityMap()->allByReference();
+        $collection = $this->getCollection();
+
+        $inserts = array();
+        $updates = array();
+        foreach ($documents as $document) {
+{% if config_class._has_references %}
+            $document->saveReferences();
+            $document->updateReferenceFields();
+{% endif %}
+            if ($document->isNew()) {
+                $inserts[spl_object_hash($document)] = $document;
+            } else {
+                $updates[] = $document;
+            }
+        }
+
+        // insert
+        if ($inserts) {
+            $a = array();
+            foreach ($inserts as $oid => $document) {
+{% if config_class._has_references %}
+                if (!$document->isModified()) {
+                    continue;
+                }
+{% endif %}
+{% if config_class.events.preInsert or config_class._parent_events.preInsert %}
+                $document->preInsertEvent();
+{% endif %}
+                $a[$oid] = $document->queryForSave();
+            }
+
+            if ($a) {
+                $collection->batchInsert($a, $batchInsertOptions);
+
+                foreach ($a as $oid => $data) {
+                    $document = $inserts[$oid];
+
+                    $document->setId($data['_id']);
+                    $document->clearModified();
+                    $identityMap[$data['_id']->__toString()] = $document;
+{% if config_class._has_groups %}
+                    $document->resetGroups();
+{% endif %}
+{% if config_class.events.postInsert or config_class._parent_events.postInsert %}
+                $document->postInsertEvent();
+{% endif %}
+                }
+            }
+        }
+
+        // updates
+        foreach ($updates as $document) {
+            if ($document->isModified()) {
+{% if config_class.events.preUpdate or config_class._parent_events.preUpdate %}
+                $document->preUpdateEvent();
+{% endif %}
+                $query = $document->queryForSave();
+                $collection->update(array('_id' => $document->getId()), $query, $updateOptions);
+                $document->clearModified();
+{% if config_class._has_groups %}
+                $document->resetGroups();
+{% endif %}
+{% if config_class.events.postUpdate or config_class._parent_events.postUpdate %}
+                $document->postUpdateEvent();
+{% endif %}
+            }
+        }
+    }
+
+    /**
+     * Delete documents.
+     *
+     * @param mixed $documents A document or an array of documents.
+     */
+    public function delete($documents)
+    {
+        if (!is_array($documents)) {
+            $documents = array($documents);
+        }
+
+        $identityMap =& $this->getIdentityMap()->allByReference();
+
+        $ids = array();
+        foreach ($documents as $document) {
+{% if config_class.events.preDelete or config_class._parent_events.preDelete %}
+            $document->preDeleteEvent();
+{% endif %}
+            $ids[] = $id = $document->getAndRemoveId();
+            unset($identityMap[$id->__toString()]);
+        }
+
+        $this->getCollection()->remove(array('_id' => array('$in' => $ids)));
+
+{% if config_class.events.postDelete or config_class._parent_events.postDelete %}
+        foreach ($documents as $document) {
+            $document->postDeleteEvent();
+        }
+{% endif %}
+    }
+
+    /**
+     * Ensure the inexes.
+     */
+    public function ensureIndexes()
+    {
+{% for index in config_class._indexes %}
+         $this->getCollection()->ensureIndex({{ index.keys|var_export }}, {{ index.options is defined ? index.options|var_export : 'array()' }});
+{% endfor %}
+    }
+
+{% if config_class.inheritable %}
+    /**
+     * Returns the inheritable classes.
+     *
+     * @return array The inheritable classes.
+     */
+    public function getInheritableClasses()
+    {
+        $this->initInheritableValues();
+
+        return $this->inheritableValues;
+    }
+
+    /**
+     * Returns a inheritable class by type.
+     *
+     * @param string $type The type.
+     *
+     * return array the inheritable class.
+     *
+     * @throws \InvalidArgumentException If the type does not exist.
+     */
+    public function getInheritableClass($type)
+    {
+        $this->initInheritableValues();
+
+        if (!$this->hasInheritableType($type)) {
+            throw new \InvalidArgumentException(sprintf('The inheritable type "%s" does not exist.', $type));
+        }
+
+        return $this->inheritableValues[$type];
+    }
+
+    /**
+     * Returns the inheritable type for a class.
+     *
+     * @param string $class The class.
+     *
+     * @return string The inheritable type for the class.
+     *
+     * @throws InvalidArgumentException If the class is not a type class.
+     */
+    public function getInheritableTypeForClass($class)
+    {
+        $this->initInheritableValues();
+
+        if (false === $type = array_search($class, $this->inheritableValues)) {
+            throw new \InvalidArgumentException(sprintf('The class "%s" is not a type class.', $class));
+        }
+
+        return $type;
+    }
+
+    /**
+     * Returns the inheritable types.
+     *
+     * @return array The inheritable types.
+     */
+    public function getInheritableTypes()
+    {
+        $this->initInheritableValues();
+
+        return array_keys($this->inheritableValues);
+    }
+
+    /**
+     * Returns whether there is or not an inheritable type.
+     *
+     * @return Boolean Whether there is or not an inheritable type.
+     */
+    public function hasInheritableType($type)
+    {
+        $this->initInheritableValues();
+
+        return isset($this->inheritableValues[$type]);
+    }
+
+    private function initInheritableValues()
+    {
+        if (null === $this->inheritableValues) {
+            $this->inheritableValues = {{ config_class.inheritable.values|var_export }};
+        }
+    }
+{% endif %}

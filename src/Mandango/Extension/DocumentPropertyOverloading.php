@@ -26,58 +26,6 @@ class DocumentPropertyOverloading extends Extension
      */
     protected function doClassProcess()
     {
-        $this->__setMethodProcess();
-        $this->__getMethodProcess();
-    }
-
-    /*
-     * "__set" method
-     */
-    private function __setMethodProcess()
-    {
-        $method = new Method('public', '__set', '$name, $value', <<<EOF
-        \$this->set(\$name, \$value);
-EOF
-        );
-        $method->setDocComment(<<<EOF
-    /**
-     * Set data in the document.
-     *
-     * @param string \$name  The data name.
-     * @param mixed  \$value The value.
-     *
-     * @return void
-     *
-     * @throws \InvalidArgumentException If the data name does not exists.
-     */
-EOF
-        );
-
-        $this->definitions['document_base']->addMethod($method);
-    }
-
-    /*
-     * "__get" method
-     */
-    private function __getMethodProcess()
-    {
-        $method = new Method('public', '__get', '$name', <<<EOF
-        return \$this->get(\$name);
-EOF
-        );
-        $method->setDocComment(<<<EOF
-    /**
-     * Returns data of the document.
-     *
-     * @param string \$name The data name.
-     *
-     * @return mixed Some data.
-     *
-     * @throws \InvalidArgumentException If the data name does not exists.
-     */
-EOF
-        );
-
-        $this->definitions['document_base']->addMethod($method);
+        $this->processTemplate($this->definitions['document_base'], file_get_contents(__DIR__.'/templates/DocumentPropertyOverloading.php'));
     }
 }

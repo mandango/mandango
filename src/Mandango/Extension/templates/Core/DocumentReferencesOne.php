@@ -1,0 +1,117 @@
+<?php
+
+{% for name, referenceOne in config_class.referencesOne %}
+{# normal: not polymorphic #}
+{% if referenceOne.class is defined %}
+    /**
+     * Set the "{{ name }}" reference.
+     *
+     * @param {{ referenceOne.class }}|null $value The reference, or null.
+     *
+     * @return {{ class }} The document (fluent interface).
+     *
+     * @throws \InvalidArgumentException If the class is not an instance of {{ referenceOne.class }}.
+     */
+    public function set{{ name|ucfirst }}($value)
+    {
+        if (null !== $value && !$value instanceof \{{ referenceOne.class }}) {
+            throw new \InvalidArgumentException('The "{{ name }}" reference is not an instance of {{ referenceOne.class }}.');
+        }
+
+        $this->set{{ referenceOne.field|ucfirst }}((null === $value || $value->isNew()) ? null : $value->getId());
+
+        $this->data['referencesOne']['{{ name }}'] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Returns the "{{ name }}" reference.
+     *
+     * @return {{ referenceOne.class }}|null The reference or null if it does not exist.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        if (!isset($this->data['referencesOne']['{{ name }}'])) {
+{% if not config_class.isEmbedded %}
+            if (!$this->isNew()) {
+                $this->addReferenceCache('{{ name }}');
+            }
+{% endif %}
+            if (!$id = $this->get{{ referenceOne.field|ucfirst }}()) {
+                return null;
+            }
+            if (!$document = $this->getMandango()->getRepository('{{ referenceOne.class }}')->findOneById($id)) {
+                throw new \RuntimeException('The reference "{{ name }}" does not exist.');
+            }
+            $this->data['referencesOne']['{{ name }}'] = $document;
+        }
+
+        return $this->data['referencesOne']['{{ name }}'];
+    }
+{# polymorphic #}
+{% else %}
+    /**
+     * Set the "{{ name }}" polymorphic reference.
+     *
+     * @param Mandango\Document\Document|null $value The reference, or null.
+     *
+     * @return {{ class }} The document (fluent interface).
+     *
+     * @throws \InvalidArgumentException If the class is not an instance of Mandango\Document\Document.
+     */
+    public function set{{ name|ucfirst }}($value)
+    {
+        if (!$value instanceof \Mandango\Document\Document) {
+            throw new \InvalidArgumentException('The reference is not a mandango document.');
+        }
+
+        if (null === $value || $value->isNew()) {
+            $fieldValue = null;
+        } else {
+{% if referenceOne.discriminatorMap %}
+            if (false === $discriminatorValue = array_search(get_class($value), {{ referenceOne.discriminatorMap|var_export }})) {
+                throw new \InvalidArgumentException(sprintf('The class "%s" is not a possible reference in the reference "{{ name }}" of the class "{{ class }}".', get_class($value)));
+            }
+{% else %}
+            $discriminatorValue = get_class($value);
+{% endif %}
+            $fieldValue = array(
+                '{{ referenceOne.discriminatorField }}' => $discriminatorValue,
+                'id' => $value->getId(),
+            );
+        }
+        $this->set{{ referenceOne.field|ucfirst }}($fieldValue);
+
+        $this->data['referencesOne']['{{ name }}'] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Returns the "{{ name }}" polymorphic reference.
+     *
+     * @return Mandango\Document\Document|null The reference or null if it does not exist.
+     */
+    public function get{{ name|ucfirst }}()
+    {
+        if (!isset($this->data['referencesOne']['{{ name }}'])) {
+            if (!$ref = $this->get{{ referenceOne.field|ucfirst }}()) {
+                return null;
+            }
+{% if referenceOne.discriminatorMap %}
+            $discriminatorMapValues = {{ referenceOne.discriminatorMap|var_export }};
+            $discriminatorValue = $discriminatorMapValues[$ref['{{ referenceOne.discriminatorField }}']];
+{% else %}
+            $discriminatorValue = $ref['{{ referenceOne.discriminatorField }}'];
+{% endif %}
+            if (!$document = $this->getMandango()->getRepository($discriminatorValue)->findOneById($ref['id'])) {
+                throw new \RuntimeException('The reference "{{ name }}" does not exist.');
+            }
+            $this->data['referencesOne']['{{ name }}'] = $document;
+        }
+
+        return $this->data['referencesOne']['{{ name }}'];
+    }
+{% endif %}
+{% endfor %}
