@@ -14,7 +14,7 @@
 {% if config_class.isEmbedded %}
             if (($rap = $this->getRootAndPath()) && !$rap['root']->isNew()) {
 {% else %}
-            if (null !== $this->id) {
+            if (!$this->isNew()) {
 {% endif %}
                 $this->get{{ name | ucfirst }}();
                 if ($value === $this->data['fields']['{{ name }}']) {
@@ -84,7 +84,7 @@
                 $this->data['fields']['{{ name }}'] = null;
             } elseif (!isset($this->data['fields']) || !array_key_exists('{{ name }}', $this->data['fields'])) {
                 $this->addFieldCache('{{ field.dbName }}');
-                $data = $this->getRepository()->getCollection()->findOne(array('_id' => $this->id), array('{{ field.dbName }}' => 1));
+                $data = $this->getRepository()->getCollection()->findOne(array('_id' => $this->getId()), array('{{ field.dbName }}' => 1));
                 if (isset($data['{{ field.dbName }}'])) {
                     {{ mandango_type_to_php(field.type, "$data['" ~ field.dbName ~ "']", "$this->data['fields']['" ~ name ~ "']") }}
                 } else {

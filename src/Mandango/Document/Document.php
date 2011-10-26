@@ -22,7 +22,8 @@ use Mandango\Archive;
  */
 abstract class Document extends AbstractDocument
 {
-    protected $id;
+    private $isNew = true;
+    private $id;
 
     /**
      * Returns the repository.
@@ -39,11 +40,11 @@ abstract class Document extends AbstractDocument
     /**
      * Set the id of the document.
      *
-     * @param MongoId $id The id.
+     * @param mixed $id The id.
      *
      * @return Mandango\Document\Document The document (fluent interface).
      */
-    public function setId(\MongoId $id)
+    public function setId($id)
     {
         $this->id = $id;
 
@@ -76,6 +77,20 @@ abstract class Document extends AbstractDocument
     }
 
     /**
+     * INTERNAL. Returns if the document is new.
+     *
+     * @param Boolean If the document is new.
+     *
+     * @return Mandango\Document\Document The document (fluent interface).
+     */
+    public function setIsNew($isNew)
+    {
+        $this->isNew = (Boolean) $isNew;
+
+        return $this;
+    }
+
+    /**
      * Returns if the document is new.
      *
      * @return bool Returns if the document is new.
@@ -84,7 +99,7 @@ abstract class Document extends AbstractDocument
      */
     public function isNew()
     {
-        return null === $this->id;
+        return $this->isNew;
     }
 
     /**

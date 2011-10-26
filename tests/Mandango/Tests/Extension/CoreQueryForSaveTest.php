@@ -60,7 +60,7 @@ class CoreQueryForSaveTest extends TestCase
     public function testDocumentReferencesOneInsert()
     {
         $article = $this->mandango->create('Model\Article')
-            ->setAuthor($this->mandango->create('Model\Author')->setId($id = new \MongoId('123')))
+            ->setAuthor($this->mandango->create('Model\Author')->setId($id = new \MongoId('123'))->setIsNew(false))
         ;
 
         $this->assertSame(array(
@@ -74,7 +74,7 @@ class CoreQueryForSaveTest extends TestCase
             '_id' => new \MongoId('123'),
             'author' => new \MongoId('234'),
         ));
-        $article->setAuthor($this->mandango->create('Model\Author')->setId($id = new \MongoId('345')));
+        $article->setAuthor($this->mandango->create('Model\Author')->setId($id = new \MongoId('345'))->setIsNew(false));
 
         $this->assertSame(array(
             '$set' => array(

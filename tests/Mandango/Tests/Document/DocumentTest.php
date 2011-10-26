@@ -115,7 +115,7 @@ class DocumentTest extends TestCase
         $document = new Document($this->mandango);
         $this->assertTrue($document->isNew());
 
-        $document->setId(new \MongoId('123'));
+        $document->setIsNew(false);
         $this->assertFalse($document->isNew());
     }
 }

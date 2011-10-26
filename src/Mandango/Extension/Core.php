@@ -16,6 +16,7 @@ use Mandango\Mondator\Definition;
 use Mandango\Mondator\Definition\Method;
 use Mandango\Mondator\Definition\Property;
 use Mandango\Mondator\Output;
+use Mandango\Id\IdGeneratorContainer;
 use Mandango\Type\Container as TypeContainer;
 use Mandango\Twig\Mandango as MandangoTwig;
 
@@ -97,6 +98,9 @@ class Core extends Extension
     protected function doClassProcess()
     {
         // parse and check
+        if (!$this->configClass['isEmbedded']) {
+            $this->parseAndCheckIdGeneratorProcess();
+        }
         $this->parseAndCheckFieldsProcess();
         $this->parseAndCheckReferencesProcess();
         $this->parseAndCheckEmbeddedsProcess();
@@ -302,6 +306,31 @@ class Core extends Extension
     /*
      * class
      */
+    private function parseAndCheckIdGeneratorProcess()
+    {
+        if (!isset($this->configClass['idGenerator'])) {
+            $this->configClass['idGenerator'] = 'none';
+        }
+
+        if (!is_array($this->configClass['idGenerator'])) {
+            if (!is_string($this->configClass['idGenerator'])) {
+                throw new \RuntimeException(sprintf('The idGenerator of the class "%s" is not neither an array nor a string.', $this->class));
+            }
+
+            $this->configClass['idGenerator'] = array('name' => $this->configClass['idGenerator']);
+        }
+
+        if (!isset($this->configClass['idGenerator']['options'])) {
+            $this->configClass['idGenerator']['options'] = array();
+        } elseif (!is_array($this->configClass['idGenerator']['options'])) {
+            throw new \RuntimeException(sprintf('The options key of the idGenerator of the class "%s" is not an array.', $this->class));
+        }
+
+        if (!IdGeneratorContainer::has($this->configClass['idGenerator']['name'])) {
+            throw new \RuntimeException(sprintf('The id generator "%s" of the class "%s" does not exist.', $this->configClass['idGenerator']['name'], $this->class));
+        }
+    }
+
     private function parseAndCheckFieldsProcess()
     {
         foreach ($this->configClass['fields'] as $name => &$field) {

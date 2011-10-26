@@ -11,6 +11,7 @@
 
 namespace Mandango\Twig;
 
+use Mandango\Id\IdGeneratorContainer;
 use Mandango\Type\Container as TypeContainer;
 
 /**
@@ -31,9 +32,20 @@ class Mandango extends \Twig_Extension
     public function getFunctions()
     {
         return array(
+            'mandango_id_generator'  => new \Twig_Function_Method($this, 'mandangoIdGenerator'),
             'mandango_type_to_mongo' => new \Twig_Function_Method($this, 'mandangoTypeToMongo'),
-            'mandango_type_to_php' => new \Twig_Function_Method($this, 'mandangoTypeToPHP'),
+            'mandango_type_to_php'   => new \Twig_Function_Method($this, 'mandangoTypeToPHP'),
         );
+    }
+
+    public function mandangoIdGenerator($configClass, $id, $indent = 8)
+    {
+        $idGenerator = IdGeneratorContainer::get($configClass['idGenerator']['name']);
+        $code = $idGenerator->getCode($configClass['idGenerator']['options']);
+        $code = str_replace('%id%', $id, $code);
+        $code = static::indentCode($code, $indent);
+
+        return $code;
     }
 
     public function mandangoTypeToMongo($type, $from, $to)
@@ -55,5 +67,10 @@ class Mandango extends \Twig_Extension
     public function getName()
     {
         return 'mandango';
+    }
+
+    static private function indentCode($code, $indent)
+    {
+        return str_replace("\n", "\n".str_repeat(' ', $indent), $code);
     }
 }

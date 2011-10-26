@@ -46,6 +46,7 @@ class CoreDocumentTest extends TestCase
 
         $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
+        $article->setIsNew(false);
         $this->assertSame($article, $article->setTitle('foo'));
         $this->assertFalse($article->isFieldModified('title'));
         $this->assertSame($article, $article->setTitle('foo'));
@@ -62,6 +63,7 @@ class CoreDocumentTest extends TestCase
 
         $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
+        $article->setIsNew(false);
         $this->assertSame('foo', $article->getTitle());
         $this->assertSame('123', $article->getContent());
         $this->assertNull($article->getNote());
@@ -100,6 +102,7 @@ class CoreDocumentTest extends TestCase
 
         $author = $this->mandango->create('Model\Author');
         $author->setId($id = new \MongoId('123'));
+        $author->setIsNew(false);
         $article->setAuthor($author);
         $this->assertSame($author, $article->getAuthor());
         $this->assertSame($id, $article->getAuthorId());
@@ -197,6 +200,7 @@ class CoreDocumentTest extends TestCase
         $author = $this->mandango->create('Model\Author');
         $article = $this->mandango->create('Model\Article')->setAuthor($author);
         $author->setId(new \MongoId('123'));
+        $author->setIsNew(false);
         $article->updateReferenceFields();
         $this->assertSame($author->getId(), $article->getAuthorId());
     }
@@ -207,7 +211,7 @@ class CoreDocumentTest extends TestCase
         $categories = $article->getCategories();
         $ids = array();
         for ($i = 1; $i <= 5; $i ++) {
-            $categories->add($this->mandango->create('Model\Category')->setId($ids[] = new \MongoId($i)));
+            $categories->add($this->mandango->create('Model\Category')->setId($ids[] = new \MongoId($i))->setIsNew(false));
         }
         $article->updateReferenceFields();
         $this->assertSame($ids, $article->getCategoryIds());
@@ -230,25 +234,25 @@ class CoreDocumentTest extends TestCase
         $categories = $article->getCategories();
         $addIds = array();
         for ($i = 1; $i <= 3; $i++) {
-            $categories->add($this->mandango->create('Model\Category')->setId($addIds[] = new \MongoId('10'.$i)));
+            $categories->add($this->mandango->create('Model\Category')->setId($addIds[] = new \MongoId('10'.$i))->setIsNew(false));
         }
-        $categories->remove($this->mandango->create('Model\Category')->setId($baseIds[1]));
-        $categories->remove($this->mandango->create('Model\Category')->setId($baseIds[3]));
+        $categories->remove($this->mandango->create('Model\Category')->setId($baseIds[1])->setIsNew(false));
+        $categories->remove($this->mandango->create('Model\Category')->setId($baseIds[3])->setIsNew(false));
 
         $categories = $article->getSource()->getCategories();
         $sourceAddIds = array();
         for ($i = 1; $i <= 2; $i++) {
-            $categories->add($this->mandango->create('Model\Category')->setId($sourceAddIds[] = new \MongoId('101'.$i)));
+            $categories->add($this->mandango->create('Model\Category')->setId($sourceAddIds[] = new \MongoId('101'.$i))->setIsNew(false));
         }
-        $categories->remove($this->mandango->create('Model\Category')->setId($sourceBaseIds[1]));
+        $categories->remove($this->mandango->create('Model\Category')->setId($sourceBaseIds[1])->setIsNew(false));
 
         $comments = $article->getComments()->getSaved();
         $categories = $comments[0]->getCategories();
         $commentAddIds = array();
         for ($i = 1; $i <= 3; $i++) {
-            $categories->add($this->mandango->create('Model\Category')->setId($commentAddIds[] = new \MongoId('102'.$i)));
+            $categories->add($this->mandango->create('Model\Category')->setId($commentAddIds[] = new \MongoId('102'.$i))->setIsNew(false));
         }
-        $categories->remove($this->mandango->create('Model\Category')->setId($commentBaseIds[1]));
+        $categories->remove($this->mandango->create('Model\Category')->setId($commentBaseIds[1])->setIsNew(false));
 
         $article->updateReferenceFields();
         $this->assertSame(array(
@@ -371,6 +375,7 @@ class CoreDocumentTest extends TestCase
 
         $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
+        $article->setIsNew(false);
 
         $source = $article->getSource();
         $this->assertNotNull($source);
@@ -402,6 +407,7 @@ class CoreDocumentTest extends TestCase
 
         $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
+        $article->setIsNew(false);
         $source = $this->mandango->create('Model\Source');
         $article->setSource($source);
         $this->assertNull($source->getName());
@@ -411,6 +417,7 @@ class CoreDocumentTest extends TestCase
         // deep
         $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
+        $article->setIsNew(false);
         $source = $article->getSource();
         $info = $this->mandango->create('Model\Info');
         $source->setInfo($info);
@@ -791,7 +798,7 @@ class CoreDocumentTest extends TestCase
             ->save()
         ;
 
-        $article = $this->mandango->create('Model\Article')->setId($article->getId());
+        $article = $this->mandango->create('Model\Article')->setId($article->getId())->setIsNew(false);
 
         $this->assertSame(array(
             'title'    => 'foo',
@@ -858,7 +865,7 @@ class CoreDocumentTest extends TestCase
         $this->mandango->getRepository('Model\Article')->getCollection()->insert($articleRaw);
 
         $article = $this->mandango->create('Model\Article');
-        $article->setId($articleRaw['_id']);
+        $article->setId($articleRaw['_id'])->setIsnew(false);
 
         $comments = $article->getComments()->getSaved();
 
@@ -953,7 +960,7 @@ class CoreDocumentTest extends TestCase
         $this->mandango->getRepository('Model\Article')->getCollection()->insert($articleRaw);
 
         $article = $this->mandango->create('Model\Article');
-        $article->setId($articleRaw['_id']);
+        $article->setId($articleRaw['_id'])->setIsnew(false);
 
         $this->assertSame(3, $article->getComments()->count());
     }
@@ -977,7 +984,9 @@ class CoreDocumentTest extends TestCase
         );
         $this->mandango->getRepository('Model\Article')->getCollection()->insert($articleRaw);
 
-        $article = $this->mandango->create('Model\Article')->setId($articleRaw['_id'])->setTitle('ups')->setNote('bump');
+        $article = $this->mandango->create('Model\Article')->setId($articleRaw['_id']);
+        $article->setIsNew(false);
+        $article->setTitle('ups')->setNote('bump');
         $article->refresh();
         $this->assertFalse($article->isModified());
         $this->assertSame('foo', $article->getTitle());
@@ -1629,6 +1638,7 @@ class CoreDocumentTest extends TestCase
     {
         $article = $this->mandango->create('Model\Article');
         $article->setId(new \MongoId('123'));
+        $article->setIsNew(false);
         $article->setTitle('foo');
         $article->setNote('bar');
 

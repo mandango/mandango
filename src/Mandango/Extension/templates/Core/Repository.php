@@ -62,6 +62,8 @@
      */
     public function save($documents, array $batchInsertOptions = array(), array $updateOptions = array())
     {
+        $repository = $this;
+
         if (!is_array($documents)) {
             $documents = array($documents);
         }
@@ -96,6 +98,7 @@
                 $document->preInsertEvent();
 {% endif %}
                 $a[$oid] = $document->queryForSave();
+                {{ mandango_id_generator(config_class, "$a[$oid]['_id']", 16) }}
             }
 
             if ($a) {
@@ -105,8 +108,9 @@
                     $document = $inserts[$oid];
 
                     $document->setId($data['_id']);
+                    $document->setIsNew(false);
                     $document->clearModified();
-                    $identityMap[$data['_id']->__toString()] = $document;
+                    $identityMap[(string) $data['_id']] = $document;
 {% if config_class._has_groups %}
                     $document->resetGroups();
 {% endif %}
@@ -155,7 +159,8 @@
             $document->preDeleteEvent();
 {% endif %}
             $ids[] = $id = $document->getAndRemoveId();
-            unset($identityMap[$id->__toString()]);
+            $document->setIsNew(true);
+            unset($identityMap[(string) $id]);
         }
 
         $this->getCollection()->remove(array('_id' => array('$in' => $ids)));

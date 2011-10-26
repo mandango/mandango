@@ -50,7 +50,7 @@
             if ($this->isNew()) {
                 $this->data['embeddedsOne']['{{ name }}'] = null;
             } elseif (!isset($this->data['embeddedsOne']) || !array_key_exists('{{ name }}', $this->data['embeddedsOne'])) {
-                $exists = $this->getRepository()->getCollection()->findOne(array('_id' => $this->id, '{{ name }}' => array('$exists' => 1)));
+                $exists = $this->getRepository()->getCollection()->findOne(array('_id' => $this->getId(), '{{ name }}' => array('$exists' => 1)));
                 if ($exists) {
                     $embedded = new \{{ embedded.class }}($this->getMandango());
                     $embedded->setRootAndPath($this, '{{ name }}');

@@ -32,6 +32,7 @@ class CoreFieldAliasTest extends TestCase
 
         $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
+        $article->setIsNew(false);
         $this->assertSame('123', $article->getDatabase());
     }
 
@@ -46,6 +47,7 @@ class CoreFieldAliasTest extends TestCase
 
         $article = $this->mandango->create('Model\Article');
         $article->setId($articleRaw['_id']);
+        $article->setIsNew(false);
         $this->assertSame('123', $article->getSource()->getFrom());
     }
 

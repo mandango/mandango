@@ -136,6 +136,7 @@ class CoreSingleInheritanceTest extends TestCase
         ), $formElement->queryForSave());
         $formElement->clearModified();
         $formElement->setId(new \MongoId('123'));
+        $formElement->setIsNew(false);
         $this->assertSame(array(), $formElement->queryForSave());
 
         $textareaFormElement = $this->mandango->create('Model\TextareaFormElement')->setLabel(345)->setDefault(456);
@@ -146,6 +147,7 @@ class CoreSingleInheritanceTest extends TestCase
         ), $textareaFormElement->queryForSave());
         $textareaFormElement->clearModified();
         $textareaFormElement->setId(new \MongoId('123'));
+        $textareaFormElement->setIsNew(false);
         $this->assertSame(array(), $textareaFormElement->queryForSave());
 
         $options = array('foobar' => 'foo', 'barfoo' => 'bar');

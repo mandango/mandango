@@ -351,6 +351,42 @@ $configClasses = array(
             'commentsLocal' => array('class' => 'Model\Comment'),
         ),
     ),
+    // id generators
+    'Model\NoneIdGenerator' => array(
+        'fields' => array(
+            'name' => 'string',
+        )
+    ),
+    'Model\NativeIdGenerator' => array(
+        'idGenerator' => 'native',
+        'fields' => array(
+            'name' => 'string',
+        )
+    ),
+    'Model\SequenceIdGenerator' => array(
+        'idGenerator' => 'sequence',
+        'fields' => array(
+            'name' => 'string',
+        )
+    ),
+    'Model\SequenceIdGenerator2' => array(
+        'idGenerator' => 'sequence',
+        'fields' => array(
+            'name' => 'string',
+        )
+    ),
+    'Model\SequenceIdGeneratorDescending' => array(
+        'idGenerator' => array('name' => 'sequence', 'options' => array('increment' => -1)),
+        'fields' => array(
+            'name' => 'string',
+        )
+    ),
+    'Model\SequenceIdGeneratorStart' => array(
+        'idGenerator' => array('name' => 'sequence', 'options' => array('start' => 2000)),
+        'fields' => array(
+            'name' => 'string',
+        )
+    ),
 );
 
 use Mandango\Mondator\Mondator;

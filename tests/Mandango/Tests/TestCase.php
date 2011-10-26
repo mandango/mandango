@@ -15,6 +15,7 @@ use Mandango\Cache\ArrayCache;
 use Mandango\Connection;
 use Mandango\Mandango;
 use Mandango\Archive;
+use Mandango\Id\IdGeneratorContainer;
 use Mandango\Type\Container as TypeContainer;
 
 class TestCase extends \PHPUnit_Framework_TestCase
@@ -77,6 +78,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         Archive::clear();
+        IdGeneratorContainer::reset();
         TypeContainer::reset();
     }
 
@@ -84,7 +86,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     {
         $articles = array();
         foreach ($this->createArticlesRaw($nb) as $articleRaw) {
-            $article = $this->mandango->create('Model\Article')->setId($articleRaw['_id']);
+            $article = $this->mandango->create('Model\Article')->setId($articleRaw['_id'])->setIsNew(false);
             if ($idAsKey) {
                 $articles[$article->getId()->__toString()] = $article;
             } else {

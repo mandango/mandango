@@ -36,7 +36,8 @@
 {# id #}
 {% if not config_class.isEmbedded %}
         if (isset($data['_id'])) {
-            $this->id = $data['_id'];
+            $this->setId($data['_id']);
+            $this->setIsNew(false);
         }
 {% endif %}
 {# fields #}
