@@ -28,6 +28,6 @@ class DocumentArrayAccess extends Extension
     {
         $this->definitions['document_base']->addInterface('\ArrayAccess');
 
-        $this->processTemplate($this->definitions['document_base'], file_get_contents(__DIR__.'/templates/DocumentArrayAccess.php'));
+        $this->processTemplate($this->definitions['document_base'], file_get_contents(__DIR__.'/templates/DocumentArrayAccess.php.twig'));
     }
 }

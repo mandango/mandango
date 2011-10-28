@@ -138,15 +138,15 @@ class Core extends Extension
         $templates[] = 'DocumentQueryForSave';
 
         foreach ($templates as $template) {
-            $this->processTemplate($this->definitions['document_base'], file_get_contents(__DIR__.'/templates/Core/'.$template.'.php'));
+            $this->processTemplate($this->definitions['document_base'], file_get_contents(__DIR__.'/templates/Core/'.$template.'.php.twig'));
         }
 
         if (!$this->configClass['isEmbedded']) {
             // repository
-            $this->processTemplate($this->definitions['repository_base'], file_get_contents(__DIR__.'/templates/Core/Repository.php'));
+            $this->processTemplate($this->definitions['repository_base'], file_get_contents(__DIR__.'/templates/Core/Repository.php.twig'));
 
             // query
-            $this->processTemplate($this->definitions['query_base'], file_get_contents(__DIR__.'/templates/Core/Query.php'));
+            $this->processTemplate($this->definitions['query_base'], file_get_contents(__DIR__.'/templates/Core/Query.php.twig'));
         }
     }
 
