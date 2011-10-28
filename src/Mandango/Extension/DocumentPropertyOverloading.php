@@ -26,6 +26,6 @@ class DocumentPropertyOverloading extends Extension
      */
     protected function doClassProcess()
     {
-        $this->processTemplate($this->definitions['document_base'], file_get_contents(__DIR__.'/templates/DocumentPropertyOverloading.php'));
+        $this->processTemplate($this->definitions['document_base'], file_get_contents(__DIR__.'/templates/DocumentPropertyOverloading.php.twig'));
     }
 }
