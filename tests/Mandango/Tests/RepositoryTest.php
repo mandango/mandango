@@ -155,6 +155,19 @@ class RepositoryTest extends TestCase
         $this->assertSame($criteria, $query->getCriteria());
     }
 
+    public function testIdsToMongo()
+    {
+        $ids = $this->mandango->getRepository('Model\Article')->idsToMongo(array(
+            '123',
+            $id1 = new \MongoId('234'),
+            '345',
+        ));
+        $this->assertSame(3, count($ids));
+        $this->assertInstanceOf('MongoId', $ids[0]);
+        $this->assertSame($id1, $ids[1]);
+        $this->assertInstanceOf('MongoId', $ids[2]);
+    }
+
     public function testFindByIdAndFindOneById()
     {
         $articles = array();

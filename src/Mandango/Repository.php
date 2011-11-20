@@ -200,6 +200,22 @@ abstract class Repository
     abstract public function idToMongo($id);
 
     /**
+     * Converts an array of ids to use in Mongo.
+     *
+     * @param array $ids An array of ids.
+     *
+     * @return array The array of ids converted.
+     */
+    public function idsToMongo(array $ids)
+    {
+        foreach ($ids as &$id) {
+            $id = $this->idToMongo($id);
+        }
+
+        return $ids;
+    }
+
+    /**
      * Find documents by id.
      *
      * @param array $ids An array of ids.
@@ -210,10 +226,7 @@ abstract class Repository
      */
     public function findById(array $ids)
     {
-        foreach ($ids as &$id) {
-            $id = $this->idToMongo($id);
-        }
-        unset($id);
+        $ids = $this->idsToMongo($ids);
 
         $documents = array();
         foreach ($ids as $id) {
