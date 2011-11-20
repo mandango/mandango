@@ -15,6 +15,13 @@ use Mandango\Tests\TestCase;
 
 class CoreRepositoryTest extends TestCase
 {
+    public function testIdToMongo()
+    {
+        $id = '123';
+        $idToMongo = $this->mandango->getRepository('Model\Article')->idToMongo($id);
+        $this->assertInstanceOf('MongoId', $idToMongo);
+    }
+
     public function testSaveInsertingNotModified()
     {
         $article = $this->mandango->create('Model\Article');

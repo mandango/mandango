@@ -191,6 +191,15 @@ abstract class Repository
     }
 
     /**
+     * Converts an id to use in Mongo.
+     *
+     * @param mixed $id An id.
+     *
+     * @return mixed The id to use in Mongo.
+     */
+    abstract public function idToMongo($id);
+
+    /**
      * Find documents by id.
      *
      * @param array $ids An array of ids.
@@ -202,9 +211,7 @@ abstract class Repository
     public function findById(array $ids)
     {
         foreach ($ids as &$id) {
-            if (!is_string($id)) {
-                $id = new \MongoId($id);
-            }
+            $id = $this->idToMongo($id);
         }
         unset($id);
 
@@ -233,9 +240,7 @@ abstract class Repository
      */
     public function findOneById($id)
     {
-        if (is_string($id)) {
-            $id = new \MongoId($id);
-        }
+        $id = $this->idToMongo($id);
 
         if ($this->identityMap->has($id)) {
             return $this->identityMap->get($id);

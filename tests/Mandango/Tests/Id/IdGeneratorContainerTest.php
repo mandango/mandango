@@ -20,6 +20,10 @@ class TestingIdGenerator extends BaseIdGenerator
     public function getCode(array $options)
     {
     }
+
+    public function getToMongoCode()
+    {
+    }
 }
 
 class IdGeneratorContainerTest extends TestCase

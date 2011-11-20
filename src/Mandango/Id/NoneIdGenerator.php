@@ -33,4 +33,12 @@ if (null !== \$document->getId()) {
 }
 EOF;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getToMongoCode()
+    {
+        return '';
+    }
 }

@@ -309,7 +309,7 @@ class Core extends Extension
     private function parseAndCheckIdGeneratorProcess()
     {
         if (!isset($this->configClass['idGenerator'])) {
-            $this->configClass['idGenerator'] = 'none';
+            $this->configClass['idGenerator'] = 'native';
         }
 
         if (!is_array($this->configClass['idGenerator'])) {

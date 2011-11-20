@@ -19,6 +19,16 @@
         parent::__construct($mandango);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function idToMongo($id)
+    {
+        {{ mandango_id_generator_to_mongo(config_class, "$id", 8) }}
+
+        return $id;
+    }
+
 {% if config_class.inheritance and 'single' == config_class.inheritance.type %}
     /**
      * {@inheritdoc}

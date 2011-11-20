@@ -23,6 +23,11 @@ class Repository extends BaseRepository
     protected $isFile = true;
     protected $connectionName = 'foo';
     protected $collectionName = 'bar';
+
+    public function idToMongo($id)
+    {
+        return $id;
+    }
 }
 
 class RepositoryMock extends Repository

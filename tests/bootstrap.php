@@ -353,6 +353,7 @@ $configClasses = array(
     ),
     // id generators
     'Model\NoneIdGenerator' => array(
+        'idGenerator' => 'none',
         'fields' => array(
             'name' => 'string',
         )

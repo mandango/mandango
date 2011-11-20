@@ -28,4 +28,9 @@ abstract class BaseIdGenerator
      * @return string The code to generate.
      */
     abstract public function getCode(array $options);
+
+    /**
+     * Returns the code to convert an id to the mongo value.
+     */
+    abstract public function getToMongoCode();
 }

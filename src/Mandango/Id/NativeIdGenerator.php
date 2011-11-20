@@ -27,4 +27,16 @@ class NativeIdGenerator extends BaseIdGenerator
     {
         return '%id% = new \MongoId();';
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getToMongoCode()
+    {
+        return <<<EOF
+if (!%id% instanceof \MongoId) {
+    %id% = new \MongoId(%id%);
+}
+EOF;
+    }
 }

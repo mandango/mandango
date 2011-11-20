@@ -60,4 +60,14 @@ if (\$commandResult['ok']) {
 }
 EOF;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getToMongoCode()
+    {
+        return <<<EOF
+%id% = (int) %id%;
+EOF;
+    }
 }
