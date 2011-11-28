@@ -7,33 +7,6 @@ namespace Model;
  */
 class FormElement extends \Model\Base\FormElement
 {
-    protected $events = array();
-    protected $eventPrefix;
-
-    public function getEvents()
-    {
-        return $this->events;
-    }
-
-    public function clearEvents()
-    {
-        $this->events = array();
-
-        return $this;
-    }
-
-    public function setEventPrefix($prefix)
-    {
-        $this->eventPrefix = $prefix;
-
-        return $this;
-    }
-
-    public function getEventPrefix()
-    {
-        return $this->eventPrefix;
-    }
-
     protected function formElementPreInsert()
     {
         $this->events[] = $this->eventPrefix.'FormElementPreInserting';

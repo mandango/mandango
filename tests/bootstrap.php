@@ -281,6 +281,14 @@ $configClasses = array(
         'embeddedsOne' => array(
             'source' => array('class' => 'Model\Source'),
         ),
+        'events' => array(
+            'preInsert'  => array('elementPreInsert'),
+            'postInsert' => array('elementPostInsert'),
+            'preUpdate'  => array('elementPreUpdate'),
+            'postUpdate' => array('elementPostUpdate'),
+            'preDelete'  => array('elementPreDelete'),
+            'postDelete' => array('elementPostDelete'),
+        ),
     ),
     'Model\TextElement' => array(
         'inheritable' => array('type' => 'single'),

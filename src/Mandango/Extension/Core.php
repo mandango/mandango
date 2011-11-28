@@ -755,12 +755,12 @@ EOF
             );
             $loopClass = $inheritableClass;
             do {
-                $parentEvents = array_merge($parentEvents, $this->configClasses[$loopClass]['events']);
-                if ($this->configClasses[$loopClass]['inheritable']) {
-                    $continue = false;
-                } else {
+                $parentEvents = array_merge_recursive($this->configClasses[$loopClass]['events'], $parentEvents);
+                if ($this->configClasses[$loopClass]['inheritance']) {
+                    $loopClass = $this->configClasses[$loopClass]['inheritance']['class'];
                     $continue = true;
-                    $loopClass = $this->configClass[$loopClass]['inheritance']['class'];
+                } else {
+                    $continue = false;
                 }
             } while ($continue);
             $configClass['_parent_events'] = $parentEvents;

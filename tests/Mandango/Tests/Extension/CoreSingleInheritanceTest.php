@@ -373,23 +373,33 @@ class CoreSingleInheritanceTest extends TestCase
         $this->assertSame(1, $this->mandango->getRepository('Model\RadioFormElement')->createQuery()->count());
     }
 
-    public function testEvents()
+    public function testParentEvents()
     {
         $formElement = $this->mandango->create('Model\FormElement')->setLabel('Element')->save();
         $this->assertSame(array(
+            'ElementPreInserting',
             'FormElementPreInserting',
+            'ElementPostInserting',
             'FormElementPostInserting',
         ), $formElement->getEvents());
 
         $formElement = $this->mandango->create('Model\TextTextElement')->setLabel('Element')->save();
         $this->assertSame(array(
+            'ElementPreInserting',
             'TextTextElementPreInsert',
+            'ElementPostInserting',
         ), $formElement->getEvents());
+    }
+
+    public function testGrandParentEvents()
+    {
 
         $textareaFormElement = $this->mandango->create('Model\TextareaFormElement')->setLabel('Textarea')->save();
         $this->assertSame(array(
+            'ElementPreInserting',
             'FormElementPreInserting',
             'TextareaPreInserting',
+            'ElementPostInserting',
             'FormElementPostInserting',
             'TextareaPostInserting',
         ), $textareaFormElement->getEvents());
