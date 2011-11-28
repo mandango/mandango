@@ -108,4 +108,15 @@ class CoreIdGeneratorTest extends TestCase
         $document3->save();
         $this->assertSame(2002, $document3->getId());
     }
+
+    public function testIdGeneratorSingleInheritance()
+    {
+        $grandParent = $this->mandango->create('Model\IdGeneratorSingleInheritanceGrandParent')->setName('foo')->save();
+        $parent = $this->mandango->create('Model\IdGeneratorSingleInheritanceParent')->setName('foo')->save();
+        $child = $this->mandango->create('Model\IdGeneratorSingleInheritanceChild')->setName('foo')->save();
+
+        $this->assertSame(1, $grandParent->getId());
+        $this->assertSame(2, $parent->getId());
+        $this->assertSame(3, $child->getId());
+    }
 }

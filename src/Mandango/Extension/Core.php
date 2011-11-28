@@ -744,6 +744,20 @@ EOF
             unset($embeddedMany);
             $configClass['embeddedsMany'] = array_merge($inheritedEmbeddedsMany, $configClass['embeddedsMany']);
 
+            // id generator (always the same as the last parent)
+            $loopClass = $inheritableClass;
+            do {
+                if ($this->configClasses[$loopClass]['inheritance']) {
+                    $loopClass = $this->configClasses[$loopClass]['inheritance']['class'];
+                    $continue = true;
+                } else {
+                    if (isset($this->configClasses[$loopClass]['idGenerator'])) {
+                        $configClass['idGenerator'] = $this->configClasses[$loopClass]['idGenerator'];
+                    }
+                    $continue = false;
+                }
+            } while($continue);
+
             // parent events
             $parentEvents = array(
                 'preInsert'  => array(),

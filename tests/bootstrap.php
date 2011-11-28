@@ -396,6 +396,20 @@ $configClasses = array(
             'name' => 'string',
         )
     ),
+    'Model\IdGeneratorSingleInheritanceGrandParent' => array(
+        'inheritable' => array('type' => 'single'),
+        'idGenerator' => 'sequence',
+        'fields' => array(
+            'name' => 'string',
+        ),
+    ),
+    'Model\IdGeneratorSingleInheritanceParent' => array(
+        'inheritance' => array('class' => 'Model\IdGeneratorSingleInheritanceGrandParent', 'value' => 'parent'),
+        'inheritable' => array('type' => 'single'),
+    ),
+    'Model\IdGeneratorSingleInheritanceChild' => array(
+        'inheritance' => array('class' => 'Model\IdGeneratorSingleInheritanceParent', 'value' => 'child'),
+    ),
 );
 
 use Mandango\Mondator\Mondator;
