@@ -65,7 +65,7 @@ class FilesystemCache implements CacheInterface
 return $valueExport;
 EOF;
 
-        if (false === @file_put_contents($file, $content)) {
+        if (false === @file_put_contents($file, $content, LOCK_EX)) {
             throw new \RuntimeException(sprintf('Unable to write the "%s" file.', $file));
         }
     }
