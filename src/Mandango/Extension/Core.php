@@ -773,7 +773,7 @@ EOF
                 }
 
                 if (!isset($configClass['inheritance']['value'])) {
-                    throw new \RuntimeException(sprintf('The inheritable configuration in the class "%s" does not have value.', $class));
+                    throw new \RuntimeException(sprintf('The inheritance configuration in the class "%s" does not have value.', $class));
                 }
                 $value = $configClass['inheritance']['value'];
                 if (isset($this->configClasses[$inheritableClass]['inheritable']['values'][$value])) {
