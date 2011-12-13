@@ -47,7 +47,7 @@ class SequenceIdGenerator extends BaseIdGenerator
     'update'        => array('\$inc' => array('sequence' => $increment)),
     'new'           => true,
 ));
-if (\$commandResult['ok']) {
+if (null !== \$commandResult['value']) {
     %id% = \$commandResult['value']['sequence'];
 } else {
     \$repository
