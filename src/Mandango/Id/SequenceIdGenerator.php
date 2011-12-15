@@ -41,13 +41,20 @@ class SequenceIdGenerator extends BaseIdGenerator
         }
 
         return <<<EOF
+\$serverInfo = \$repository->getConnection()->getMongo()->selectDB('admin')->command(array('buildinfo' => true));
+\$mongoVersion = \$serverInfo['version'];
+
 \$commandResult = \$repository->getConnection()->getMongoDB()->command(array(
     'findandmodify' => 'mandango_sequence_id_generator',
     'query'         => array('_id' => \$repository->getCollectionName()),
     'update'        => array('\$inc' => array('sequence' => $increment)),
     'new'           => true,
 ));
-if (null !== \$commandResult['value']) {
+if (
+    (version_compare(\$mongoVersion, '2.0', '<') && \$commandResult['ok'])
+    ||
+    (version_compare(\$mongoVersion, '2.0', '>=') && null !== \$commandResult['value'])
+) {
     %id% = \$commandResult['value']['sequence'];
 } else {
     \$repository
