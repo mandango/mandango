@@ -1,5 +1,6 @@
 package.xml
 phpunit.xml
-tests/model_no_namespaced/Base
-tests/Model/Base
-tests/Model/Mapping
+/tests/model_no_namespaced/Base/
+/tests/Model/Base/
+/tests/Model/Mapping/
+/vendor/
