@@ -12,6 +12,10 @@
 {# inheritance #}
 {% if config_class.inheritance %}
         parent::fromArray($array);
+{% else %}
+        if (isset($array['id'])) {
+            $this->setId($array['id']);
+        }
 {% endif %}
 {# fields #}
 {% for name, field in config_class.fields %}
@@ -61,7 +65,7 @@
 {% if config_class.inheritance %}
         $array = parent::toArray($withReferenceFields);
 {% else %}
-        $array = array();
+        $array = array('id' => $this->getId());
 {% endif %}
 
 {# fields #}

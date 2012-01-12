@@ -710,6 +710,7 @@ class CoreDocumentTest extends TestCase
     {
         $article = $this->mandango->create('Model\Article');
         $this->assertSame($article, $article->fromArray(array(
+            'id'       => 123,
             'title'    => 'foo',
             'content'  => 'bar',
             'isActive' => true,
@@ -743,6 +744,9 @@ class CoreDocumentTest extends TestCase
             ),
         )));
 
+        // id
+        $this->assertSame(123, $article->getId());
+
         // fields
         $this->assertSame('foo', $article->getTitle());
         $this->assertSame('bar', $article->getContent());
@@ -772,12 +776,14 @@ class CoreDocumentTest extends TestCase
     public function testToArray()
     {
         $article = $this->mandango->create('Model\Article')
+            ->setId(123)
             ->setTitle('foo')
             ->setContent('bar')
             ->setNote(null)
             ->setIsActive(false)
         ;
         $this->assertSame(array(
+            'id'       => 123,
             'title'    => 'foo',
             'content'  => 'bar',
             'note'     => null,
@@ -801,6 +807,7 @@ class CoreDocumentTest extends TestCase
         $article = $this->mandango->create('Model\Article')->setId($article->getId())->setIsNew(false);
 
         $this->assertSame(array(
+            'id'       => $article->getId(),
             'title'    => 'foo',
             'content'  => 'bar',
             'note'     => null,
