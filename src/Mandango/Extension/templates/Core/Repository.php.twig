@@ -49,6 +49,22 @@
     /**
      * {@inheritdoc}
      */
+    public function update(array $query, array $newObject, array $options = array())
+    {
+        {% if config_class.inheritable %}
+                $types = $this->getInheritableTypes();
+                $types[] = '{{ config_class.inheritance.value }}';
+                $query = array_merge($query, array('{{ config_class.inheritance.field }}' => array('$in' => $types)));
+        {% else %}
+                $query = array_merge($query, array('{{ config_class.inheritance.field }}' => '{{ config_class.inheritance.value }}'));
+        {% endif %}
+
+        return parent::update($query, $newObject, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function remove(array $query = array(), array $options = array())
     {
         {% if config_class.inheritable %}

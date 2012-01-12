@@ -239,6 +239,26 @@ class RepositoryTest extends TestCase
         $this->assertSame($count, $repository->count($criteria));
     }
 
+    public function testUpdate()
+    {
+        $criteria = array('is_active' => false);
+        $newObject = array('$set' => array('title' => 'ups'));
+
+        $collection = $this->getMockBuilder('MongoCollection')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $collection
+            ->expects($this->any())
+            ->method('update')
+            ->with($criteria, $newObject)
+        ;
+
+        $repository = new RepositoryMock($this->mandango);
+        $repository->setCollection($collection);
+        $repository->update($criteria, $newObject);
+    }
+
     public function testRemove()
     {
         $criteria = array('is_active' => false);

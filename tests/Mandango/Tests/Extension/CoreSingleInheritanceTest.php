@@ -112,6 +112,7 @@ class CoreSingleInheritanceTest extends TestCase
     {
         $document = $this->mandango->create('Model\TextareaFormElement')->setLabel('foo')->setDefault('bar');
         $this->assertSame(array(
+            'id'      => null,
             'label'   => 'foo',
             'default' => null,
             'default' => 'bar',
@@ -120,6 +121,7 @@ class CoreSingleInheritanceTest extends TestCase
         $options = array('foo' => 'bar');
         $document = $this->mandango->create('Model\RadioFormElement')->setLabel('foo')->setOptions($options);
         $this->assertSame(array(
+            'id'      => null,
             'label'   => 'foo',
             'default' => null,
             'options' => $options,
@@ -205,6 +207,39 @@ class CoreSingleInheritanceTest extends TestCase
         $this->assertSame(0, $this->mandango->getRepository('Model\TextareaFormElement')->count(array('label' => new \MongoRegex('/^R/'))));
         $this->assertSame(1, $this->mandango->getRepository('Model\RadioFormElement')->count());
         $this->assertSame(5, $this->mandango->getRepository('Model\TextElement')->count());
+    }
+
+    public function testRepositoryUpdate()
+    {
+        $elements = array();
+        for ($i = 0; $i < 2; $i++) {
+            $elements[] = $this->mandango->create('Model\Element')->setLabel('Element'.$i)->save();
+        }
+
+        $formElements = array();
+        for ($i = 0; $i < 5; $i++) {
+            $formElements[] = $this->mandango->create('Model\FormElement')->setLabel('FormElement'.$i)->save();
+        }
+
+        $textareaFormElements = array();
+        for ($i = 0; $i < 3; $i++) {
+            $textareaFormElements[] = $this->mandango->create('Model\TextareaFormElement')->setLabel('Textarea'.$i)->save();
+        }
+
+        $radioFormElements = array();
+        for ($i = 0; $i < 1; $i++) {
+            $radioFormElements[] = $this->mandango->create('Model\RadioFormElement')->setLabel('Radio'.$i)->save();
+        }
+
+        $newObject = array('$set' => array('label' => 'ups'));
+        $criteria = array('label' => 'ups');
+        $this->mandango->getRepository('Model\FormElement')->update(array('label' => 'Textarea0'), $newObject);
+        $this->assertSame(1, $this->mandango->getRepository('Model\Element')->getCollection()->count($criteria));
+        $this->assertSame(1, $this->mandango->getRepository('Model\FormElement')->getCollection()->count($criteria));
+        $this->mandango->getRepository('Model\TextareaFormElement')->update(array('label' => new \MongoRegex('/^FormElement/')), $newObject);
+        $this->assertSame(1, $this->mandango->getRepository('Model\FormElement')->getCollection()->count($criteria));
+        $this->mandango->getRepository('Model\TextareaFormElement')->update(array(), $newObject);
+        $this->assertSame(1, $this->mandango->getRepository('Model\TextareaFormElement')->getCollection()->count($criteria));
     }
 
     public function testRepositoryRemove()

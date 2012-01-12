@@ -277,6 +277,20 @@ abstract class Repository
     }
 
     /**
+     * Updates documents.
+     *
+     * @param array $query     The query.
+     * @param array $newObject The new object.
+     * @param array $options   The options for the update operation (optional).
+     *
+     * @return mixed The result of the update collection method.
+     */
+    public function update(array $query, array $newObject, array $options = array())
+    {
+        return $this->getCollection()->update($query, $newObject, $options);
+    }
+
+    /**
      * Remove documents.
      *
      * @param array $query   The query (optional, by default an empty array).
