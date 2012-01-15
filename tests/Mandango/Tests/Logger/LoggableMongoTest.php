@@ -17,6 +17,13 @@ class LoggableMongoTest extends \PHPUnit_Framework_TestCase
 {
     protected $log;
 
+    protected function setUp()
+    {
+        if (!class_exists('Mongo')) {
+            $this->markTestSkipped('Mongo is not available.');
+        }
+    }
+
     public function testLoggerCallable()
     {
         $mongo = new LoggableMongo();
