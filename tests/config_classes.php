@@ -2,7 +2,7 @@
 
 return array(
     'Model\Article' => array(
-        'useBatchInsert' => false,
+        'useBatchInsert' => true,
         'collection' => 'articles',
         'fields' => array(
             'title'    => 'string',
