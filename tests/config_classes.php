@@ -2,6 +2,7 @@
 
 return array(
     'Model\Article' => array(
+        'useBatchInsert' => false,
         'collection' => 'articles',
         'fields' => array(
             'title'    => 'string',

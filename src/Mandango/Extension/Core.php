@@ -76,6 +76,7 @@ class Core extends Extension
 
         $this->initMandangoProcess();
         if (!$this->configClass['isEmbedded']) {
+            $this->initUseBatchInsertProcess();
             $this->initConnectionNameProcess();
             $this->initCollectionNameProcess();
         }
@@ -205,6 +206,15 @@ class Core extends Extension
     {
         if (!isset($this->configClass['mandango'])) {
             $this->configClass['mandango'] = null;
+        }
+    }
+
+    private function initUseBatchInsertProcess()
+    {
+        if (isset($this->configClass['useBatchInsert'])) {
+            $this->configClass['useBatchInsert'] = (Boolean) $this->configClass['useBatchInsert'];
+        } else {
+            $this->configClass['useBatchInsert'] = false;
         }
     }
 

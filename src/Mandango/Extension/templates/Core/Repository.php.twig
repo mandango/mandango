@@ -113,6 +113,8 @@
 
         // insert
         if ($inserts) {
+{# Using batch insert #}
+{% if config_class.useBatchInsert %}
             $a = array();
             foreach ($inserts as $oid => $document) {
 {% if config_class._has_references %}
@@ -145,6 +147,35 @@
 {% endif %}
                 }
             }
+{# Without using batch insert #}
+{% else %}
+            foreach ($inserts as $oid => $document) {
+{% if config_class._has_references %}
+                if (!$document->isModified()) {
+                    continue;
+                }
+{% endif %}
+{% if config_class.events.preInsert or config_class._parent_events.preInsert %}
+                $document->preInsertEvent();
+{% endif %}
+                $data = $document->queryForSave();
+                {{ mandango_id_generator(config_class, "$data['_id']", 16) }}
+
+                $collection->insert($data);
+
+                $document->setId($data['_id']);
+                $document->setIsNew(false);
+                $document->clearModified();
+                $identityMap[(string) $data['_id']] = $document;
+
+                {% if config_class._has_groups %}
+                                    $document->resetGroups();
+                {% endif %}
+                {% if config_class.events.postInsert or config_class._parent_events.postInsert %}
+                                $document->postInsertEvent();
+                {% endif %}
+            }
+{% endif %}
         }
 
         // updates
