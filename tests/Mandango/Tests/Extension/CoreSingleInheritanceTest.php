@@ -439,4 +439,28 @@ class CoreSingleInheritanceTest extends TestCase
             'TextareaPostInserting',
         ), $textareaFormElement->getEvents());
     }
+
+    public function testRepositoryGetParentRepository()
+    {
+        $elementRepository = $this->mandango->getRepository('Model\Element');
+        $textElementRepository = $this->mandango->getRepository('Model\TextElement');
+        $formElementRepository = $this->mandango->getRepository('Model\FormElement');
+        $textareaFormElementRepository = $this->mandango->getRepository('Model\TextareaFormElement');
+
+        $this->assertSame($elementRepository, $textElementRepository->getParentRepository());
+        $this->assertSame($elementRepository, $formElementRepository->getParentRepository());
+        $this->assertSame($formElementRepository, $textareaFormElementRepository->getParentRepository());
+    }
+
+    public function testRepositoryGetLastParentRepository()
+    {
+        $elementRepository = $this->mandango->getRepository('Model\Element');
+        $textElementRepository = $this->mandango->getRepository('Model\TextElement');
+        $formElementRepository = $this->mandango->getRepository('Model\FormElement');
+        $textareaFormElementRepository = $this->mandango->getRepository('Model\TextareaFormElement');
+
+        $this->assertSame($elementRepository, $textElementRepository->getLastParentRepository());
+        $this->assertSame($elementRepository, $formElementRepository->getLastParentRepository());
+        $this->assertSame($elementRepository, $textareaFormElementRepository->getLastParentRepository());
+    }
 }

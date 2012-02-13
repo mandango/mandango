@@ -239,6 +239,36 @@
 {% endfor %}
     }
 
+{% if config_class.inheritance and 'single' == config_class.inheritance.type %}
+    /**
+     * Returns the parent repository.
+     *
+     * @return Repository The parent repository.
+     */
+    public function getParentRepository()
+    {
+        return $this->getMandango()->getRepository('{{ config_class.inheritance.class }}');
+    }
+
+    /**
+     * Returns the last parent repository.
+     *
+     * @return Repository The last parent repository.
+     */
+    public function getLastParentRepository()
+    {
+        $parentClass = '{{ config_class.inheritance.class }}';
+        do {
+            $metadata = $this->getMandango()->getMetadata($parentClass);
+            if (false !== $metadata['inheritance']) {
+                $parentClass = $metadata['inheritance']['class'];
+            }
+        } while (false !== $metadata['inheritance']);
+
+        return $this->getMandango()->getRepository($parentClass);
+    }
+{% endif %}
+
 {% if config_class.inheritable %}
     /**
      * Returns the inheritable classes.
