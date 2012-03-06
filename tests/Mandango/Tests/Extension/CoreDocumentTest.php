@@ -153,6 +153,13 @@ class CoreDocumentTest extends TestCase
         $article->getAuthor();
     }
 
+    public function testReferencesOneGetterOnMissingReturnNull()
+    {
+        $article = $this->mandango->create('Model\Article');
+        $article->setInformationId(new \MongoId('123'));
+        $this->assertNull($article->getInformation());
+    }
+
     public function testReferencesManyGetter()
     {
         $article = $this->mandango->create('Model\Article');

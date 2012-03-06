@@ -23,7 +23,7 @@ return array(
         ),
         'referencesOne' => array(
             'author'      => array('class' => 'Model\Author', 'field' => 'authorId'),
-            'information' => array('class' => 'Model\ArticleInformation', 'field' => 'informationId'),
+            'information' => array('class' => 'Model\ArticleInformation', 'field' => 'informationId', 'onMissing' => 'returnNull'),
             'like'        => array('polymorphic' => true, 'field' => 'likeRef'),
             'friend'      => array('polymorphic' => true, 'field' => 'friendRef', 'discriminatorField' => 'name', 'discriminatorMap' => array(
                 'au' => 'Model\Author',
