@@ -1,22 +1,29 @@
 <?php
 
-$vendorDir = __DIR__.'/../vendor';
-require_once $vendorDir.'/symfony/src/Symfony/Component/ClassLoader/UniversalClassLoader.php';
-
 use Symfony\Component\ClassLoader\UniversalClassLoader;
 
-$loader = new UniversalClassLoader();
-$loader->registerNamespaces(array(
-    'Mandango'          => __DIR__.'/../src',
-    'Mandango\Tests'    => __DIR__,
-    'Mandango\Mondator' => $vendorDir.'/mondator/src',
-    'Model'             => __DIR__,
-));
-$loader->registerPrefixes(array(
-    'Twig_' => $vendorDir.'/twig/lib',
-));
-$loader->register();
+$vendorDir = __DIR__.'/../vendor';
 
+if (file_exists($vendorDir . '/.composer/autoload.php')) {
+    $loader = require_once $vendorDir . '/.composer/autoload.php';
+    /* @var $loader Composer\Autoload\ClassLoader */
+    $loader->add('Mandango\Tests', __DIR__);
+    $loader->add('Model', __DIR__);
+} else {
+    require_once $vendorDir.'/symfony/src/Symfony/Component/ClassLoader/UniversalClassLoader.php';
+
+    $loader = new UniversalClassLoader();
+    $loader->registerNamespaces(array(
+        'Mandango' => __DIR__ . '/../src',
+        'Mandango\Tests' => __DIR__,
+        'Mandango\Mondator' => $vendorDir . '/mondator/src',
+        'Model' => __DIR__,
+    ));
+    $loader->registerPrefixes(array(
+        'Twig_' => $vendorDir . '/twig/lib',
+    ));
+    $loader->register();
+}
 // mondator
 $configClasses = require __DIR__.'/config_classes.php';
 

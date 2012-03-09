@@ -1,0 +1,54 @@
+{
+    "name": "mandango/mandango",
+    "description": "Mandango",
+    "keywords": ["odm","mongodb"],
+    "homepage": "http://mandango.org/",
+    "type": "library",
+    "license": "MIT",
+    "version": "1.0.0",
+    "authors": [
+    {
+        "name": "Pablo Díez",
+        "email": "pablodip@gmail.com",
+        "homepage": "http://mandango.org/"
+    }
+    ]
+    ,
+    
+    "require":
+    {
+        "php": ">=5.3.0",
+        "symfony/class-loader": ">=2.0.0",
+        "twig/twig": ">=1.2",
+        "mandango/mondator": "*"
+        
+    },
+    "autoload": {
+        "psr-0": { 
+            "Mandango": "src"
+        }
+    },
+    "repositories": [
+    {
+        "type":"package",
+        "package": {
+            "name":"mandango/mondator",
+            "version":"master",
+            "dist":{
+                "url":"https://github.com/mandango/mondator/zipball/5685054409a76b41c27573e4bc17523f8236551a",
+                "type":"zip"
+            },
+            "source": {
+                "url":"git://github.com/mandango/mondator.git",
+                "type":"git",
+                "reference": "master"
+            },
+            "autoload": {
+                "psr-0": {
+                    "Mandango\\Mondator":"src"
+                }
+            }
+        }
+    }
+    ]
+}
