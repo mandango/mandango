@@ -1,0 +1,21 @@
+{
+    "name": "mandango/mandango",
+    "type": "library",
+    "description": "Simple, poweful and ultrafast Object Document Mapper (ODM) for PHP and MongoDB",
+    "keywords": ["odm", "mongodb"],
+    "homepage": "http://mandango.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name":  "Pablo Díez",
+            "email": "pablodip@gmail.com"
+        }
+    ],
+    "require": {
+        "php":               ">=5.3.0",
+        "mandango/mondator": "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "Mandango\\": "src/" }
+    }
+}

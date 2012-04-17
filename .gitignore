@@ -1,4 +1,5 @@
 package.xml
+composer.lock
 phpunit.xml
 /tests/model_no_namespaced/Base/
 /tests/Model/Base/
