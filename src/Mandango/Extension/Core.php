@@ -90,6 +90,7 @@ class Core extends Extension
         }
 
         $this->initEventsProcess();
+        $this->initOnDeleteProcess();
         $this->initIsFileProcess();
     }
 
@@ -109,6 +110,7 @@ class Core extends Extension
             $this->parseAndCheckRelationsProcess();
         }
         $this->checkDataNamesProcess();
+        $this->parseOnDeleteProcess();
 
         // definitions
         $this->initDefinitionsProcess();
@@ -120,6 +122,7 @@ class Core extends Extension
             'DocumentFields',
             'DocumentReferencesOne',
             'DocumentReferencesMany',
+            'DocumentProcessOnDelete',
         );
         if ($this->configClass['_has_references']) {
             $templates[] = 'DocumentUpdateReferenceFields';
@@ -158,6 +161,7 @@ class Core extends Extension
     {
         $this->globalInheritableAndInheritanceProcess();
         $this->globalHasReferencesProcess();
+        $this->globalOnDeleteProcess();
         $this->globalHasGroupsProcess();
         $this->globalIndexesProcess();
     }
@@ -299,6 +303,13 @@ class Core extends Extension
 
         if (!isset($this->configClass['events'])) {
             $this->configClass['events'] = array();
+        }
+    }
+
+    private function initOnDeleteProcess()
+    {
+        if (!isset($this->configClass['onDelete'])) {
+            $this->configClass['onDelete'] = array();
         }
     }
 
@@ -500,6 +511,18 @@ class Core extends Extension
         ) as $name) {
             if (in_array($name, array('mandango', 'repository', 'collection', 'id', 'query_for_save', 'fields_modified', 'document_data'))) {
                 throw new \RuntimeException(sprintf('The document cannot be a data with the name "%s".', $name));
+            }
+        }
+    }
+
+    private function parseOnDeleteProcess()
+    {
+        foreach ($this->configClass['onDelete'] as &$onDelete) {
+            if ($onDelete['polymorphic']) {
+                $referenceTypeKey = 'references'.ucfirst($onDelete['referenceType']);
+                $reference = $this->configClasses[$onDelete['class']][$referenceTypeKey][$onDelete['referenceName']];
+                $onDelete['discriminatorField'] = $reference['discriminatorField'];
+                $onDelete['discriminatorMap'] = $reference['discriminatorMap'];
             }
         }
     }
@@ -841,6 +864,49 @@ EOF
                  $configClass['_has_references'] = $hasReferences;
              }
          } while ($continue);
+    }
+
+    private function globalOnDeleteProcess()
+    {
+        foreach ($this->configClasses as $class => $configClass) {
+            foreach ($configClass['referencesOne'] as $name => $reference) {
+                $this->globalOnDeleteProcessReference($class, $name, $reference, 'one', array('unset', 'cascade'));
+            }
+            foreach ($configClass['referencesMany'] as $name => $reference) {
+                $this->globalOnDeleteProcessReference($class, $name, $reference, 'many', array('unset'));
+            }
+        }
+    }
+
+    private function globalOnDeleteProcessReference($class, $name, $reference, $type, array $valid)
+    {
+        if (isset($reference['onDelete'])) {
+            if (!in_array($reference['onDelete'], $valid)) {
+                throw new \RuntimeException(sprintf('The onDelete value "%s" of the reference "%s" of the class "%s" is not valid.', $reference['onDelete'], $name, $class));
+            }
+
+            $onDelete = array(
+                'class'         => $class,
+                'referenceName' => $name,
+                'referenceType' => $type,
+                'polymorphic'   => !empty($reference['polymorphic']),
+                'type'          => $reference['onDelete'],
+            );
+
+            if (!empty($reference['class'])) {
+                $this->configClasses[$reference['class']]['onDelete'][] = $onDelete;
+            } elseif (!empty($reference['polymorphic'])) {
+                if (!empty($reference['discriminatorMap'])) {
+                    foreach (array_values($reference['discriminatorMap']) as $discriminatorClass) {
+                        $this->configClasses[$discriminatorClass]['onDelete'][] = $onDelete;
+                    }
+                } else {
+                    foreach ($this->configClasses as &$configClass) {
+                        $configClass['onDelete'][] = $onDelete;
+                    }
+                }
+            }
+        }
     }
 
     private function globalHasGroupsProcess()

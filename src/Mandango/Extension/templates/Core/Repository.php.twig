@@ -208,16 +208,16 @@
             $documents = array($documents);
         }
 
-        $identityMap =& $this->getIdentityMap()->allByReference();
-
         $ids = array();
         foreach ($documents as $document) {
 {% if config_class.events.preDelete or config_class._parent_events.preDelete %}
             $document->preDeleteEvent();
 {% endif %}
-            $ids[] = $id = $document->getAndRemoveId();
-            $document->setIsNew(true);
-            unset($identityMap[(string) $id]);
+            $ids[] = $id = $document->getId();
+        }
+
+        foreach ($documents as $document) {
+            $document->processOnDelete();
         }
 
         $this->getCollection()->remove(array('_id' => array('$in' => $ids)));
@@ -227,6 +227,13 @@
             $document->postDeleteEvent();
         }
 {% endif %}
+
+        $identityMap =& $this->getIdentityMap()->allByReference();
+        foreach ($documents as $document) {
+            unset($identityMap[(string) $document->getId()]);
+            $document->setIsNew(true);
+            $document->setId(null);
+        }
     }
 
     /**

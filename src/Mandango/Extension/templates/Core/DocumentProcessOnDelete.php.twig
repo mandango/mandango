@@ -1,0 +1,68 @@
+<?php
+
+    /**
+     * Process onDelete.
+     */
+    public function processOnDelete()
+    {
+{% for onDelete in config_class.onDelete %}
+        // {{ onDelete.class }}: {{ onDelete.referenceName }}
+{% if onDelete.type == 'cascade' %}
+{% if onDelete.polymorphic %}
+{% if onDelete.discriminatorMap %}
+        if (false === $discriminatorValue = array_search(get_class($this), {{ onDelete.discriminatorMap|var_export }})) {
+            throw new \InvalidArgumentException(sprintf('The class "%s" is not a possible reference in the reference "{{ onDelete.referenceName }}" of the class "{{ onDelete.class }}".', get_class($this)));
+        }
+{% else %}
+        $discriminatorValue = get_class($this);
+{% endif %}
+        $this->processOnDeleteCascade('{{ onDelete.class }}', array('{{ onDelete.referenceName }}' => array('{{ onDelete.discriminatorField }}' => $discriminatorValue, 'id' => $this->getId())));
+{% else %}
+        $this->processOnDeleteCascade('{{ onDelete.class }}', array('{{ onDelete.referenceName }}' => $this->getId()));
+{% endif %}
+{% elseif onDelete.type == 'unset' %}
+{% if onDelete.polymorphic %}
+{% if onDelete.discriminatorMap %}
+        if (false === $discriminatorValue = array_search(get_class($this), {{ onDelete.discriminatorMap|var_export }})) {
+            throw new \InvalidArgumentException(sprintf('The class "%s" is not a possible reference in the reference "{{ onDelete.referenceName }}" of the class "{{ onDelete.class }}".', get_class($this)));
+        }
+{% else %}
+        $discriminatorValue = get_class($this);
+{% endif %}
+{% endif %}
+{% if onDelete.polymorphic %}
+{% if onDelete.referenceType == 'one' %}
+        $criteria = array('{{ onDelete.referenceName }}' => array('{{ onDelete.discriminatorField }}' => $discriminatorValue, 'id' => $this->getId()));
+        $update = array('$unset' => array('{{ onDelete.referenceName }}' => 1));
+{% else %}
+        $criteria = array();
+        $update = array('$pull' => array('{{ onDelete.referenceName }}' => array('{{ onDelete.discriminatorField }}' => $discriminatorValue, 'id' => $this->getId())));
+{% endif %}
+{% else %}
+{% if onDelete.referenceType == 'one' %}
+        $criteria = array('{{ onDelete.referenceName }}' => $this->getId());
+        $update = array('$unset' => array('{{ onDelete.referenceName }}' => 1));
+{% else %}
+        $criteria = array();
+        $update = array('$pull' => array('{{ onDelete.referenceName }}' => $this->getId()));
+{% endif %}
+{% endif %}
+        $this->processOnDeleteUnset('{{ onDelete.class }}', $criteria, $update);
+{% endif %}
+
+{% endfor %}
+    }
+
+    private function processOnDeleteCascade($class, array $criteria)
+    {
+        $repository = $this->getMandango()->getRepository($class);
+        $documents = $repository->createQuery($criteria)->all();
+        if (count($documents)) {
+            $repository->delete($documents);
+        }
+    }
+
+    private function processOnDeleteUnset($class, array $criteria, array $update)
+    {
+        $this->getMandango()->getRepository($class)->update($criteria, $update, array('multiple' => true));
+    }

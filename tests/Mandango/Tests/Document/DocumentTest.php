@@ -28,9 +28,6 @@ class DocumentTest extends TestCase
         $id = new \MongoId('123');
         $this->assertSame($document, $document->setId($id));
         $this->assertSame($id, $document->getId());
-
-        $this->assertSame($id, $document->getAndRemoveId());
-        $this->assertNull($document->getId());
     }
 
     public function testQueryHashes()

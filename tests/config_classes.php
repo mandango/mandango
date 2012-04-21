@@ -22,18 +22,24 @@ return array(
             'comments' => array('class' => 'Model\Comment'),
         ),
         'referencesOne' => array(
-            'author'      => array('class' => 'Model\Author', 'field' => 'authorId'),
-            'information' => array('class' => 'Model\ArticleInformation', 'field' => 'informationId', 'onMissing' => 'returnNull'),
-            'like'        => array('polymorphic' => true, 'field' => 'likeRef'),
-            'friend'      => array('polymorphic' => true, 'field' => 'friendRef', 'discriminatorField' => 'name', 'discriminatorMap' => array(
+            'author'      => array('class' => 'Model\Author', 'field' => 'authorId', 'onDelete' => 'cascade'),
+            'information' => array('class' => 'Model\ArticleInformation', 'field' => 'informationId', 'onDelete' => 'unset'),
+            'like'        => array('polymorphic' => true, 'field' => 'likeRef', 'onDelete' => 'cascade'),
+            'likeUnset'   => array('polymorphic' => true, 'onDelete' => 'unset'),
+            'friend'      => array('polymorphic' => true, 'field' => 'friendRef', 'onDelete' => 'cascade', 'discriminatorField' => 'name', 'discriminatorMap' => array(
+                'au' => 'Model\Author',
+                'ct' => 'Model\Category',
+                'us' => 'Model\User',
+            )),
+            'friendUnset' => array('polymorphic' => true, 'onDelete' => 'unset', 'discriminatorField' => 'name', 'discriminatorMap' => array(
                 'au' => 'Model\Author',
                 'ct' => 'Model\Category',
                 'us' => 'Model\User',
             )),
         ),
         'referencesMany' => array(
-            'categories' => array('class' => 'Model\Category', 'field' => 'categoryIds'),
-            'related'    => array('polymorphic' => true, 'field' => 'relatedRef'),
+            'categories' => array('class' => 'Model\Category', 'field' => 'categoryIds', 'onDelete' => 'unset'),
+            'related'    => array('polymorphic' => true, 'field' => 'relatedRef', 'onDelete' => 'unset'),
             'elements'   => array('polymorphic' => true, 'field' => 'elementsRef', 'discriminatorField' => 'type', 'discriminatorMap' => array(
                 'element'  => 'Model\FormElement',
                 'textarea' => 'Model\TextareaFormElement',

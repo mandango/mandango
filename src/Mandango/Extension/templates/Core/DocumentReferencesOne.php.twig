@@ -42,11 +42,7 @@
                 return null;
             }
             if (!$document = $this->getMandango()->getRepository('{{ referenceOne.class }}')->findOneById($id)) {
-{% if referenceOne.onMissing is defined and referenceOne.onMissing == 'returnNull' %}
-                $document = null;
-{% else %}
                 throw new \RuntimeException('The reference "{{ name }}" does not exist.');
-{% endif %}
             }
             $this->data['referencesOne']['{{ name }}'] = $document;
         }

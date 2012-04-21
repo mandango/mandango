@@ -64,19 +64,6 @@ abstract class Document extends AbstractDocument
     }
 
     /**
-     * Returns and remove the id.
-     *
-     * @return \MongoId|null The id of the document or null if it is new.
-     */
-    public function getAndRemoveId()
-    {
-        $id = $this->id;
-        $this->id = null;
-
-        return $id;
-    }
-
-    /**
      * INTERNAL. Returns if the document is new.
      *
      * @param Boolean If the document is new.
