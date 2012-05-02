@@ -246,6 +246,56 @@
 {% endfor %}
     }
 
+    /**
+     * Fixes the missing references.
+     */
+    public function fixMissingReferences($documentsPerBatch = 1000)
+    {
+{% for name, reference in config_class.referencesOne %}
+{% if reference.class is defined %}
+        $skip = 0;
+        do {
+            $cursor = $this->getCollection()->find(array('{{ name }}' => array('$exists' => 1)), array('{{ name }}' => 1))->limit($documentsPerBatch)->skip($skip);
+            $ids = array_unique(array_values(array_map(function ($result) { return $result['{{ name }}']; }, iterator_to_array($cursor))));
+            if (count($ids)) {
+                $collection = $this->getMandango()->getRepository('{{ reference.class }}')->getCollection();
+                $referenceCursor = $collection->find(array('_id' => array('$in' => $ids)), array('_id' => 1));
+                $referenceIds =  array_values(array_map(function ($result) { return $result['_id']; }, iterator_to_array($referenceCursor)));
+
+                if ($idsDiff = array_diff($ids, $referenceIds)) {
+                    $this->remove(array('{{ name }}' => array('$in' => $idsDiff)), array('multiple' => 1));
+                }
+            }
+
+            $skip += $documentsPerBatch;
+        } while(count($ids));
+{% endif %}
+{% endfor %}
+
+{% for name, reference in config_class.referencesMany %}
+{% if reference.class is defined %}
+        $skip = 0;
+        do {
+            $cursor = $this->getCollection()->find(array('{{ name }}' => array('$exists' => 1)), array('{{ name }}' => 1))->limit($documentsPerBatch)->skip($skip);
+            $ids = array_unique(array_reduce(
+                array_values(array_map(function ($result) { return $result['{{ name }}']; }, iterator_to_array($cursor)))
+            , 'array_merge', array()));
+            if (count($ids)) {
+                $collection = $this->getMandango()->getRepository('{{ reference.class }}')->getCollection();
+                $referenceCursor = $collection->find(array('_id' => array('$in' => $ids)), array('_id' => 1));
+                $referenceIds =  array_values(array_map(function ($result) { return $result['_id']; }, iterator_to_array($referenceCursor)));
+
+                if ($idsDiff = array_diff($ids, $referenceIds)) {
+                    $this->update(array(), array('$pull' => array('{{ name }}' => array('$in' => $idsDiff))), array('multiple' => 1));
+                }
+            }
+
+            $skip += $documentsPerBatch;
+        } while(count($ids));
+{% endif %}
+{% endfor %}
+    }
+
 {% if config_class.inheritance and 'single' == config_class.inheritance.type %}
     /**
      * Returns the parent repository.

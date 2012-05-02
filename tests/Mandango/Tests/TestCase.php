@@ -86,6 +86,11 @@ class TestCase extends \PHPUnit_Framework_TestCase
         TypeContainer::reset();
     }
 
+    protected function createArticle()
+    {
+        return $this->mandango->create('Model\Article')->setTitle('foo')->save();
+    }
+
     protected function createArticles($nb, $idAsKey = true)
     {
         $articles = array();
@@ -113,5 +118,30 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->mandango->getRepository('Model\Article')->getCollection()->batchInsert($articles);
 
         return $articles;
+    }
+
+    protected function removeFromCollection($document)
+    {
+        $document
+            ->getRepository()
+            ->getCollection()
+            ->remove(array('_id' => $document->getId()));
+    }
+
+    protected function documentExists($document)
+    {
+        return (Boolean) $document
+            ->getRepository()
+            ->getCollection()
+            ->findOne(array('_id' => $document->getId()));
+    }
+
+    public function fixMissingReferencesDataProvider()
+    {
+        return array(
+            array(1),
+            array(2),
+            array(100),
+        );
     }
 }

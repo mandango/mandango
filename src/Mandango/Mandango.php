@@ -349,6 +349,16 @@ class Mandango
     }
 
     /**
+     * Fixes all the missing references.
+     */
+    public function fixAllMissingReferences($documentsPerBatch = 1000)
+    {
+        foreach ($this->getAllRepositories() as $repository) {
+            $repository->fixMissingReferences($documentsPerBatch);
+        }
+    }
+
+    /**
      * Access to UnitOfWork ->persist() method.
      *
      * @see UnitOfWork::persist()

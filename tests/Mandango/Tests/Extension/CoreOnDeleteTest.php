@@ -213,9 +213,4 @@ class CoreOnDeleteTest extends TestCase
         $this->assertEquals(array($element2), iterator_to_array($article2->getElements()));
         $this->assertEquals(array(), iterator_to_array($article3->getElements()));
     }
-
-    private function createArticle()
-    {
-        return $this->mandango->create('Model\Article')->setTitle('foo')->save();
-    }
 }

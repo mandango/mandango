@@ -209,6 +209,43 @@ class MandangoTest extends TestCase
     }
 
     /**
+     * @dataProvider fixMissingReferencesDataProvider
+     */
+    public function testFixAllMissingReferences($documentsPerBatch)
+    {
+        $author1 = $this->mandango->create('Model\Author')->setName('foo')->save();
+        $author2 = $this->mandango->create('Model\Author')->setName('foo')->save();
+
+        $category1 = $this->mandango->create('Model\Category')->setName('foo')->save();
+        $category2 = $this->mandango->create('Model\Category')->setName('foo')->save();
+        $category3 = $this->mandango->create('Model\Category')->setName('foo')->save();
+
+        $article1 = $this->createArticle()->setAuthor($author1)->save();
+        $article2 = $this->createArticle()->setAuthor($author2)->save();
+        $article3 = $this->createArticle()->setAuthor($author1)->save();
+        $article4 = $this->createArticle()->addCategories(array($category1, $category3))->save();
+        $article5 = $this->createArticle()->addCategories($category2)->save();
+        $article6 = $this->createArticle()->addCategories($category1)->save();
+
+        $this->removeFromCollection($author1);
+        $this->removeFromCollection($category1);
+
+        $this->mandango->fixAllMissingReferences($documentsPerBatch);
+
+        $this->assertFalse($this->documentExists($article1));
+        $this->assertTrue($this->documentExists($article2));
+        $this->assertFalse($this->documentExists($article3));
+
+        $article4->refresh();
+        $article5->refresh();
+        $article6->refresh();
+
+        $this->assertEquals(array($category3->getId()), $article4->getCategoryIds());
+        $this->assertEquals(array($category2->getId()), $article5->getCategoryIds());
+        $this->assertEquals(array(), $article6->getCategoryIds());
+    }
+
+    /**
      * @expectedException \InvalidArgumentException
      */
     public function testGetRepositoryNotValidEmbeddedDocumentClass()
