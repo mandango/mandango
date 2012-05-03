@@ -60,6 +60,9 @@ class LoggableMongoCollection extends \MongoCollection
     /**
      * batchInsert.
      */
+/*
+    Waiting for this: https://github.com/mandango/mandango/issues/17
+
     public function batchInsert(array $a, array $options = array())
     {
         $this->time->start();
@@ -76,6 +79,7 @@ class LoggableMongoCollection extends \MongoCollection
 
         return $return;
     }
+*/
 
     /**
      * count.
