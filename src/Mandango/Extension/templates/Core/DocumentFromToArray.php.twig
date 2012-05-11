@@ -25,6 +25,23 @@
         }
 {% endif %}
 {% endfor %}
+{# references one #}
+{% for name, reference in config_class.referencesOne %}
+{% if reference.inherited is not defined or not reference.inherited %}
+        if (isset($array['{{ name }}'])) {
+            $this->set{{ name|ucfirst }}($array['{{ name }}']);
+        }
+{% endif %}
+{% endfor %}
+{# references Many #}
+{% for name, reference in config_class.referencesMany %}
+{% if reference.inherited is not defined or not reference.inherited %}
+        if (isset($array['{{ name }}'])) {
+            $this->remove{{ name|ucfirst }}($this->get{{ name|ucfirst }}()->all());
+            $this->add{{ name|ucfirst }}($array['{{ name }}']);
+        }
+{% endif %}
+{% endfor %}
 {# embeddeds one #}
 {% for name, embedded in config_class.embeddedsOne %}
 {% if embedded.inherited is not defined or not embedded.inherited %}

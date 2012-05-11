@@ -773,6 +773,39 @@ class CoreDocumentTest extends TestCase
         $infosAdd = $commentsAdd[0]->getInfos()->getAdd();
     }
 
+    public function testFromArrayReferencesOne()
+    {
+        $author = $this->mandango->create('Model\Author');
+        $article = $this->mandango->create('Model\Article');
+        $article->fromArray(array('author' => $author));
+
+        $this->assertSame($author, $article->getAuthor());
+    }
+
+    public function testFromArrayReferencesMany()
+    {
+        $categories = array(
+            $this->mandango->create('Model\Category'),
+            $this->mandango->create('Model\Category'),
+        );
+        $article = $this->mandango->create('Model\Article');
+        $article->fromArray(array('categories' => $categories));
+
+        $this->assertSame($categories, $article->getCategories()->all());
+    }
+
+    public function testFromArrayReferencesManyRemoveCurrent()
+    {
+        $category1 = $this->mandango->create('Model\Category');
+        $category2 = $this->mandango->create('Model\Category');
+
+        $article = $this->mandango->create('Model\Article');
+        $article->addCategories($category1);
+        $article->fromArray(array('categories' => array($category2)));
+
+        $this->assertSame(array($category2), $article->getCategories()->all());
+    }
+
     public function testToArray()
     {
         $article = $this->mandango->create('Model\Article')
