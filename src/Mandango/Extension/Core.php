@@ -225,7 +225,7 @@ class Core extends Extension
     private function initConnectionNameProcess()
     {
         if (!isset($this->configClass['connection'])) {
-            $this->configClass['connection'] = null;
+            $this->configClass['connection'] = '';
         }
     }
 
