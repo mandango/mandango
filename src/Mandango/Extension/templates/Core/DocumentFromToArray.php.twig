@@ -13,9 +13,11 @@
 {% if config_class.inheritance %}
         parent::fromArray($array);
 {% else %}
+{% if not config_class.isEmbedded %}
         if (isset($array['id'])) {
             $this->setId($array['id']);
         }
+{% endif %}
 {% endif %}
 {# fields #}
 {% for name, field in config_class.fields %}
@@ -82,9 +84,12 @@
 {% if config_class.inheritance %}
         $array = parent::toArray($withReferenceFields);
 {% else %}
+{% if config_class.isEmbedded %}
+    $array = array();
+{% else %}
         $array = array('id' => $this->getId());
 {% endif %}
-
+{% endif %}
 {# fields #}
 {% for name, field in config_class.fields %}
 {% if field.inherited is not defined or not field.inherited %}
