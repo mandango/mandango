@@ -60,10 +60,10 @@ class LoggableMongoDB extends \MongoDB
     /**
      * command.
      */
-    public function command($data)
+    public function command($command, array $options = array())
     {
         $this->time->start();
-        $return = parent::command($data);
+        $return = parent::command($command, $options);
         $time = $this->time->stop();
 
         $this->log(array(
@@ -171,10 +171,10 @@ class LoggableMongoDB extends \MongoDB
     /**
      * listCollections.
      */
-    public function listCollections()
+    public function listCollections($includeSystemCollections = false)
     {
         $this->time->start();
-        $return = parent::listCollections();
+        $return = parent::listCollections($includeSystemCollections);
         $time = $this->time->stop();
 
         $this->log(array(

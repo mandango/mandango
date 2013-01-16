@@ -44,17 +44,17 @@ class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         if (!static::$staticConnection) {
-            static::$staticConnection = new Connection($this->server, $this->dbName, array('profile' => 1));
+            static::$staticConnection = new Connection($this->server, $this->dbName);
         }
         $this->connection = static::$staticConnection;
 
         if (!static::$staticGlobalConnection) {
-            static::$staticGlobalConnection = new Connection($this->server, $this->dbName.'_global', array('profile' => 1));
+            static::$staticGlobalConnection = new Connection($this->server, $this->dbName.'_global');
         }
         $this->globalConnection = static::$staticGlobalConnection;
 
         if (!static::$staticMandango) {
-            static::$staticMandango = new Mandango(new $this->metadataClass, new ArrayCache(), function($log) {});
+            static::$staticMandango = new Mandango(new $this->metadataClass, new ArrayCache());
             static::$staticMandango->setConnection('default', $this->connection);
             static::$staticMandango->setConnection('global', $this->globalConnection);
             static::$staticMandango->setDefaultConnectionName('default');

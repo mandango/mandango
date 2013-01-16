@@ -60,9 +60,6 @@ class LoggableMongoCollection extends \MongoCollection
     /**
      * batchInsert.
      */
-/*
-    Waiting for this: https://github.com/mandango/mandango/issues/17
-
     public function batchInsert(array $a, array $options = array())
     {
         $this->time->start();
@@ -79,12 +76,11 @@ class LoggableMongoCollection extends \MongoCollection
 
         return $return;
     }
-*/
 
     /**
      * count.
      */
-    public function count(array $query = array(), $limit = 0, $skip = 0)
+    public function count($query = array(), $limit = 0, $skip = 0)
     {
         $this->time->start();
         $return = parent::count($query, $limit, $skip);
@@ -156,7 +152,7 @@ class LoggableMongoCollection extends \MongoCollection
     /**
      * ensureIndex.
      */
-    public function ensureIndex(array $keys, array $options)
+    public function ensureIndex($keys, array $options = array())
     {
         $this->time->start();
         $return = parent::ensureIndex($keys, $options);
@@ -175,7 +171,7 @@ class LoggableMongoCollection extends \MongoCollection
     /**
      * find.
      */
-    public function find(array $query = array(), array $fields = array())
+    public function find($query = array(), $fields = array())
     {
         return new LoggableMongoCursor($this, $query, $fields);
     }
@@ -183,7 +179,7 @@ class LoggableMongoCollection extends \MongoCollection
     /**
      * findOne.
      */
-    public function findOne(array $query = array(), array $fields = array())
+    public function findOne($query = array(), $fields = array())
     {
         $cursor = new LoggableMongoCursor($this, $query, $fields, 'findOne');
         $cursor->limit(-1);
@@ -229,7 +225,7 @@ class LoggableMongoCollection extends \MongoCollection
     /**
      * group.
      */
-    public function group($keys, $initial, $reduce, $options = array())
+    public function group($keys, $initial, $reduce, array $options = array())
     {
         $this->time->start();
         $return = parent::group($keys, $initial, $reduce, $options);
@@ -250,7 +246,7 @@ class LoggableMongoCollection extends \MongoCollection
     /**
      * insert.
      */
-    public function insert(array $a, array $options = array())
+    public function insert($a, array $options = array())
     {
         $this->time->start();
         $return = parent::insert($a, $options);
@@ -269,7 +265,7 @@ class LoggableMongoCollection extends \MongoCollection
     /**
      * remove.
      */
-    public function remove(array $criteria = array(), array $options = array())
+    public function remove($criteria = array(), array $options = array())
     {
         $this->time->start();
         $return = parent::remove($criteria, $options);
@@ -288,7 +284,7 @@ class LoggableMongoCollection extends \MongoCollection
     /**
      * save.
      */
-    public function save(&$a, array $options = array())
+    public function save($a, array $options = array())
     {
         $this->time->start();
         $return = parent::save($a, $options);
@@ -307,7 +303,7 @@ class LoggableMongoCollection extends \MongoCollection
     /**
      * update.
      */
-    public function update(array $criteria, array $newobj, array $options = array())
+    public function update($criteria, $newobj, array $options = array())
     {
         $this->time->start();
         $return = parent::update($criteria, $newobj, $options);

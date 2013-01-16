@@ -174,9 +174,6 @@ class LoggableMongoGridFS extends \MongoGridFS
     /**
      * batchInsert.
      */
-/*
-    Waiting for this: https://github.com/mandango/mandango/issues/17
-
     public function batchInsert(array $a, array $options = array())
     {
         $this->time->start();
@@ -193,12 +190,11 @@ class LoggableMongoGridFS extends \MongoGridFS
 
         return $return;
     }
-*/
 
     /**
      * count.
      */
-    public function count(array $query = array(), $limit = 0, $skip = 0)
+    public function count($query = array(), $limit = 0, $skip = 0)
     {
         $this->time->start();
         $return = parent::count($query, $limit, $skip);
@@ -270,7 +266,7 @@ class LoggableMongoGridFS extends \MongoGridFS
     /**
      * ensureIndex.
      */
-    public function ensureIndex(array $keys, array $options)
+    public function ensureIndex($keys, array $options = array())
     {
         $this->time->start();
         $return = parent::ensureIndex($keys, $options);
@@ -289,7 +285,7 @@ class LoggableMongoGridFS extends \MongoGridFS
     /*
      * find.
      */
-    public function find(array $query = array(), array $fields = array())
+    public function find($query = array(), $fields = array())
     {
         return new LoggableMongoGridFSCursor($this, $query, $fields);
     }
@@ -297,7 +293,7 @@ class LoggableMongoGridFS extends \MongoGridFS
     /*
      * findOne.
      */
-    public function findOne(array $query = array(), array $fields = array())
+    public function findOne($query = array(), $fields = array())
     {
         $cursor = new LoggableMongoGridFSCursor($this, $query, $fields, 'findOne');
         $cursor->limit(-1);
@@ -344,7 +340,7 @@ class LoggableMongoGridFS extends \MongoGridFS
     /**
      * group.
      */
-    public function group($keys, $initial, $reduce, $options = array())
+    public function group($keys, $initial, $reduce, array $options = array())
     {
         $this->time->start();
         $return = parent::group($keys, $initial, $reduce, $options);
@@ -365,7 +361,7 @@ class LoggableMongoGridFS extends \MongoGridFS
     /**
      * insert.
      */
-    public function insert(array $a, array $options = array())
+    public function insert($a, array $options = array())
     {
         $this->time->start();
         $return = parent::insert($a, $options);
@@ -384,7 +380,7 @@ class LoggableMongoGridFS extends \MongoGridFS
     /**
      * remove.
      */
-    public function remove(array $criteria = array(), array $options = array())
+    public function remove($criteria = array(), array $options = array())
     {
         $this->time->start();
         $return = parent::remove($criteria, $options);
@@ -403,7 +399,7 @@ class LoggableMongoGridFS extends \MongoGridFS
     /**
      * save.
      */
-    public function save(&$a, array $options = array())
+    public function save($a, array $options = array())
     {
         $this->time->start();
         $return = parent::save($a, $options);
@@ -422,7 +418,7 @@ class LoggableMongoGridFS extends \MongoGridFS
     /**
      * update.
      */
-    public function update(array $criteria, array $newobj, array $options = array())
+    public function update($criteria, $newobj, array $options = array())
     {
         $this->time->start();
         $return = parent::update($criteria, $newobj, $options);

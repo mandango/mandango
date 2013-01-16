@@ -18,14 +18,14 @@ class BinDataTypeTest extends TestCase
     public function testToMongo()
     {
         $type = new BinDataType();
-        $this->assertEquals(new \MongoBinData('123'), $type->toMongo('123'));
-        $this->assertEquals(new \MongoBinData(file_get_contents(__FILE__)), $type->toMongo(__FILE__));
+        $this->assertEquals(new \MongoBinData('123', \MongoBinData::BYTE_ARRAY), $type->toMongo('123'));
+        $this->assertEquals(new \MongoBinData(file_get_contents(__FILE__), \MongoBinData::BYTE_ARRAY), $type->toMongo(__FILE__));
     }
 
     public function testToPHP()
     {
         $type = new BinDataType();
-        $this->assertSame('123', $type->toPHP(new \MongoBinData('123')));
+        $this->assertSame('123', $type->toPHP(new \MongoBinData('123', \MongoBinData::BYTE_ARRAY)));
     }
 
     public function testToMongoInString()
@@ -33,8 +33,8 @@ class BinDataTypeTest extends TestCase
         $type = new BinDataType();
         $function = $this->getTypeFunction($type->toMongoInString());
 
-        $this->assertEquals(new \MongoBinData('123'), $function('123'));
-        $this->assertEquals(new \MongoBinData(file_get_contents(__FILE__)), $function(__FILE__));
+        $this->assertEquals(new \MongoBinData('123', \MongoBinData::BYTE_ARRAY), $function('123'));
+        $this->assertEquals(new \MongoBinData(file_get_contents(__FILE__), \MongoBinData::BYTE_ARRAY), $function(__FILE__));
     }
 
     public function testToPHPInString()
@@ -42,6 +42,6 @@ class BinDataTypeTest extends TestCase
         $type = new BinDataType();
         $function = $this->getTypeFunction($type->toPHPInString());
 
-        $this->assertSame('123', $function(new \MongoBinData('123')));
+        $this->assertSame('123', $function(new \MongoBinData('123', \MongoBinData::BYTE_ARRAY)));
     }
 }
