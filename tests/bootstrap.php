@@ -1,6 +1,6 @@
 <?php
 
-$loader = require __DIR__.'/../vendor/.composer/autoload.php';
+$loader = require __DIR__.'/../vendor/autoload.php';
 $loader->add('Mandango\Tests', __DIR__);
 $loader->add('Model', __DIR__);
 
