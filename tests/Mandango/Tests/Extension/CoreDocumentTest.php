@@ -773,6 +773,17 @@ class CoreDocumentTest extends TestCase
         $infosAdd = $commentsAdd[0]->getInfos()->getAdd();
     }
 
+    public function testFromArrayIgnoresIdInEmbeddedDocuments()
+    {
+        $source = $this->mandango->create('Model\Source');
+        $source->fromArray(array(
+            'id'   => 2,
+            'name' => 'foo',
+        ));
+
+        $this->assertSame('foo', $source->getName());
+    }
+
     public function testFromArrayReferencesOne()
     {
         $author = $this->mandango->create('Model\Author');
@@ -850,6 +861,20 @@ class CoreDocumentTest extends TestCase
             'date'     => null,
             'database' => null,
         ), $article->toArray());
+    }
+
+    public function testToArrayIgnoresIdInEmbeddedDocuments()
+    {
+        $source = $this->mandango->create('Model\Source');
+        $source->setName('foo');
+
+        $this->assertSame(array(
+            'name' => 'foo',
+            'text' => null,
+            'note' => null,
+            'line' => null,
+            'from' => null
+        ), $source->toArray());
     }
 
     /*
