@@ -52,7 +52,7 @@
 {% for name, embedded_one in config_class.embeddedsOne %}
 {% if embedded_one.inherited is not defined or not embedded_one.inherited %}
         if (isset($data['{{ name }}'])) {
-            $embedded = new \{{ embedded_one.class }}($this->getMandango());
+            $embedded = $this->getMandango()->create('{{ embedded_one.class }}');
 {% if config_class.isEmbedded %}
             if ($rap = $this->getRootAndPath()) {
                 $embedded->setRootAndPath($rap['root'], $rap['path'].'.{{ name }}');
