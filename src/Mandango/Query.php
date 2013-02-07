@@ -562,6 +562,10 @@ abstract class Query implements \Countable, \IteratorAggregate
 
     protected function mapFieldNames(array $fields = array())
     {
+        if (empty($fields)) {
+            return array();
+        }
+
         $mandango = $this->getRepository()->getMandango();
         $metadata = $mandango->getMetadataFactory()->getClass($this->getRepository()->getDocumentClass());
 
