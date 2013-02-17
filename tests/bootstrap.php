@@ -14,7 +14,7 @@ $mondator->setConfigClasses($configClasses);
 $mondator->setExtensions(array(
     new Mandango\Extension\Core(array(
         'metadata_factory_class'  => 'Model\Mapping\Metadata',
-        'metadata_factory_output' => __DIR__.'/Model/Mapping',
+        'metadata_factory_output' => __DIR__.'/Model',
         'default_output'          => __DIR__.'/Model',
     )),
     new Mandango\Extension\DocumentArrayAccess(),
