@@ -8,7 +8,7 @@
      *
      * @param {{ referenceOne.class }}|null $value The reference, or null.
      *
-     * @return {{ class }} The document (fluent interface).
+     * @return \{{ class }} The document (fluent interface).
      *
      * @throws \InvalidArgumentException If the class is not an instance of {{ referenceOne.class }}.
      */
@@ -28,7 +28,7 @@
     /**
      * Returns the "{{ name }}" reference.
      *
-     * @return {{ referenceOne.class }}|null The reference or null if it does not exist.
+     * @return \{{ referenceOne.class }}|null The reference or null if it does not exist.
      */
     public function get{{ name|ucfirst }}()
     {
@@ -56,7 +56,7 @@
      *
      * @param Mandango\Document\Document|null $value The reference, or null.
      *
-     * @return {{ class }} The document (fluent interface).
+     * @return \{{ class }} The document (fluent interface).
      *
      * @throws \InvalidArgumentException If the class is not an instance of Mandango\Document\Document.
      */
@@ -91,7 +91,7 @@
     /**
      * Returns the "{{ name }}" polymorphic reference.
      *
-     * @return Mandango\Document\Document|null The reference or null if it does not exist.
+     * @return \Mandango\Document\Document|null The reference or null if it does not exist.
      */
     public function get{{ name|ucfirst }}()
     {
