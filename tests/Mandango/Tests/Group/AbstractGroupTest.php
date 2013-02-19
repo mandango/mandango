@@ -88,6 +88,16 @@ class AbstractGroupTest extends TestCase
         $this->assertSame(array('foo', 'foobar', 'barfoo', 'ups'), $group->all());
     }
 
+    public function testOne()
+    {
+        $group = new AbstractGroup('Model\Comment');
+        $group->forSaved = array('foo', 'bar', 'foobar', 'barfoo');
+        $group->add(array('ups', 'spu'));
+        $group->remove(array('bar', 'spu'));
+
+        $this->assertSame('foo', $group->one());
+    }
+
     public function testSavedIteratorAggregateInterface()
     {
         $forSaved = array('foo', 'bar');

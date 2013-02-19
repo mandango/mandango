@@ -140,6 +140,18 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
     }
 
     /**
+     * Returns the first element from all()
+     *
+     * @api
+     */
+    public function one()
+    {
+        $documents = $this->all();
+        if ( count($documents) == 0 ) return null;
+        return $documents[0];
+    }
+
+    /**
      * Implements the \IteratorAggregate interface.
      *
      * @api
