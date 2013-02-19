@@ -6,7 +6,7 @@
     /**
      * Returns the "{{ name }}" embedded many.
      *
-     * @return Mandango\Group\EmbeddedGroup The "{{ name }}" embedded many.
+     * @return \Mandango\Group\EmbeddedGroup The "{{ name }}" embedded many.
      */
     public function get{{ name|ucfirst }}()
     {
@@ -31,7 +31,7 @@
      *
      * @param mixed $documents A document or an array or documents.
      *
-     * @return {{ class }} The document (fluent interface).
+     * @return \{{ class }} The document (fluent interface).
      */
     public function add{{ name|ucfirst }}($documents)
     {
@@ -45,7 +45,7 @@
      *
      * @param mixed $documents A document or an array or documents.
      *
-     * @return {{ class }} The document (fluent interface).
+     * @return \{{ class }} The document (fluent interface).
      */
     public function remove{{ name|ucfirst }}($documents)
     {
