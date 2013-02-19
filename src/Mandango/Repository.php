@@ -334,13 +334,16 @@ abstract class Repository
      *
      * @api
      */
-    public function distinct($field, array $query = array())
+    public function distinct($field, array $query = array(), $options = array())
     {
-        return $this->getConnection()->getMongoDB()->command(array(
-            'distinct' => $this->getCollectionName(),
-            'key'      => $field,
-            'query'    => $query,
-        ));
+        return $this->getConnection()->getMongoDB()->command(
+            array(
+                'distinct' => $this->getCollectionName(),
+                'key'      => $field,
+                'query'    => $query,
+            ),
+            $options
+        );
     }
 
     /**
@@ -356,9 +359,11 @@ abstract class Repository
      *
      * @throws \RuntimeException If the database returns an error.
      */
-    public function mapReduce($map, $reduce, array $out, array $query = array(), array $options = array())
+    public function mapReduce(
+            $map, $reduce, array $out, array $query = array(),
+            array $command = array(), $options = array())
     {
-        $command = array_merge($options, array(
+        $command = array_merge($command, array(
             'mapreduce' => $this->getCollectionName(),
             'map'       => is_string($map) ? new \MongoCode($map) : $map,
             'reduce'    => is_string($reduce) ? new \MongoCode($reduce) : $reduce,
@@ -366,7 +371,7 @@ abstract class Repository
             'query'     => $query,
         ));
 
-        $result = $this->getConnection()->getMongoDB()->command($command);
+        $result = $this->getConnection()->getMongoDB()->command($command, $options);
 
         if (!$result['ok']) {
             throw new \RuntimeException($result['errmsg']);
