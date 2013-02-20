@@ -52,7 +52,9 @@
                     $ids[] = $document->getId();
                 }
                 foreach ($remove as $document) {
-                    unset($ids[array_search($document->getId(), $ids)]);
+                    if (false !== $key = array_search($document->getId(), $ids)) {
+                        unset($ids[$key]);
+                    }
                 }
                 $this->set{{ reference.field|ucfirst }}($ids ? array_values($ids) : null);
             }
