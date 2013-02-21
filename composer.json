@@ -11,6 +11,12 @@
             "email": "pablodip@gmail.com"
         }
     ],
+    "repositories":[
+        {
+            "type": "vcs",
+            "url": "https://github.com/AntonStoeckl/mondator"
+        }
+    ],
     "require": {
         "php":               ">=5.3.0",
         "antonstoeckl/mondator": "dev-master"
