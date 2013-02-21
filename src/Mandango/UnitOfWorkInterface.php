@@ -23,7 +23,7 @@ interface UnitOfWorkInterface
     /**
      * Persist a document.
      *
-     * @param Mandango\Document\Document|array $documents A document or an array of documents.
+     * @param Document\Document|array $documents A document or an array of documents.
      *
      * @api
      */
