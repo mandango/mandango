@@ -35,9 +35,9 @@ class Mandango
     /**
      * Constructor.
      *
-     * @param Mandango\MetadataFactory      $metadataFactory The metadata factory.
-     * @param Mandango\Cache\CacheInterface $cache           The cache.
-     * @param mixed                         $loggerCallable  The logger callable (optional, null by default).
+     * @param MetadataFactory      $metadataFactory The metadata factory.
+     * @param Cache\CacheInterface $cache           The cache.
+     * @param mixed                $loggerCallable  The logger callable (optional, null by default).
      *
      * @api
      */
@@ -275,7 +275,7 @@ class Mandango
      * @param string $documentClass  The document class.
      * @param array  $initializeArgs The args to initialize method of the document (optional).
      *
-     * @return Document The document.
+     * @return Document\Document The document.
      *
      * @api
      */
@@ -295,7 +295,7 @@ class Mandango
      *
      * @param string $documentClass The document class.
      *
-     * @return Mandango\Repository The repository.
+     * @return Repository                The repository.
      *
      * @throws \InvalidArgumentException If the document class is not a valid document class.
      * @throws \RuntimeException         If the repository class build does not exist.
