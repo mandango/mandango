@@ -66,7 +66,7 @@ class IdGeneratorContainer
      *
      * @param string $name The name.
      *
-     * @return Mandango\Id\IdGenerator The id generator.
+     * @return BaseIdGenerator The id generator.
      *
      * @throws \InvalidArgumentException If the id generator does not exists.
      */
