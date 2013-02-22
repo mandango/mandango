@@ -25,9 +25,9 @@ class ReferenceGroup extends Group
     /**
      * Constructor.
      *
-     * @param string                             $documentClass The document class.
-     * @param Mandango\Document\AbstractDocument $parent The parent document.
-     * @param string                             $field  The reference field.
+     * @param string                              $documentClass The document class.
+     * @param \Mandango\Document\AbstractDocument $parent The parent document.
+     * @param string                              $field  The reference field.
      *
      * @api
      */
@@ -42,7 +42,7 @@ class ReferenceGroup extends Group
     /**
      * Returns the parent document.
      *
-     * @return Mandango\Document\AbstractDocument The parent document.
+     * @return \Mandango\Document\AbstractDocument The parent document.
      *
      * @api
      */
