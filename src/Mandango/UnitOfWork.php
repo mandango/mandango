@@ -29,7 +29,7 @@ class UnitOfWork implements UnitOfWorkInterface
     /**
      * Constructor.
      *
-     * @param Mandango\Mandango $mandango The mandango.
+     * @param \Mandango\Mandango $mandango The mandango.
      *
      * @api
      */
@@ -43,7 +43,7 @@ class UnitOfWork implements UnitOfWorkInterface
     /**
      * Returns the mandango.
      *
-     * @return Mandango\Mandango The mandango.
+     * @return \Mandango\Mandango The mandango.
      *
      * @api
      */
@@ -76,7 +76,7 @@ class UnitOfWork implements UnitOfWorkInterface
     /**
      * Returns if a document is pending for persist.
      *
-     * @param Mandango\Document\Document A document.
+     * @param \Mandango\Document\Document A document.
      *
      * @return bool If the document is pending for persist.
      *
