@@ -709,6 +709,9 @@ EOF
             $inheritedEmbeddedsMany = $this->configClasses[$inheritanceClass]['embeddedsMany'];
 
             // inheritable
+            $inheritableClass = null;
+            $inheritable = null;
+
             if ($this->configClasses[$inheritanceClass]['inheritable']) {
                 $inheritableClass = $inheritanceClass;
                 $inheritable = $this->configClasses[$inheritanceClass]['inheritable'];
@@ -720,7 +723,7 @@ EOF
                     // inherited
                     $inheritedFields = array_merge($inheritedFields, $this->configClasses[$parentInheritance['class']]['fields']);
                     $inheritedReferencesOne = array_merge($inheritedReferencesOne, $this->configClasses[$parentInheritance['class']]['referencesOne']);
-                    $inheritedReferencesMany = array_merge($inheritanceReferencesMany, $this->configClasses[$parentInheritance['class']]['referencesMany']);
+                    $inheritedReferencesMany = array_merge($inheritedReferencesMany, $this->configClasses[$parentInheritance['class']]['referencesMany']);
                     $inheritedEmbeddedsOne = array_merge($inheritedEmbeddedsOne, $this->configClasses[$parentInheritance['class']]['embeddedsOne']);
                     $inheritedEmbeddedsMany = array_merge($inheritedEmbeddedsMany, $this->configClasses[$parentInheritance['class']]['embeddedsMany']);
 

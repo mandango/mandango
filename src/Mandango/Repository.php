@@ -247,7 +247,7 @@ abstract class Repository
      *
      * @param mixed $id An id.
      *
-     * @return Document|null The document or null if it does not exist.
+     * @return Document\Document|null The document or null if it does not exist.
      *
      * @api
      */
@@ -310,7 +310,7 @@ abstract class Repository
      *
      * @param mixed $keys    The keys.
      * @param array $initial The initial value.
-     * @param mixes $reduce  The reduce function.
+     * @param mixed $reduce  The reduce function.
      * @param array $options The options (optional).
      *
      * @return array The result

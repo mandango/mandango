@@ -1,5 +1,5 @@
 {
-    "name": "mandango/mandango",
+    "name": "antonstoeckl/mandango",
     "type": "library",
     "description": "Simple, poweful and ultrafast Object Document Mapper (ODM) for PHP and MongoDB",
     "keywords": ["odm", "mongodb"],
@@ -11,9 +11,15 @@
             "email": "pablodip@gmail.com"
         }
     ],
+    "repositories":[
+        {
+            "type": "vcs",
+            "url": "https://github.com/AntonStoeckl/mondator"
+        }
+    ],
     "require": {
         "php":               ">=5.3.0",
-        "mandango/mondator": "dev-master"
+        "antonstoeckl/mondator": "dev-master"
     },
     "autoload": {
         "psr-0": { "Mandango\\": "src/" }
