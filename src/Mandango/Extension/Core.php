@@ -709,6 +709,9 @@ EOF
             $inheritedEmbeddedsMany = $this->configClasses[$inheritanceClass]['embeddedsMany'];
 
             // inheritable
+            $inheritableClass = null;
+            $inheritable = null;
+
             if ($this->configClasses[$inheritanceClass]['inheritable']) {
                 $inheritableClass = $inheritanceClass;
                 $inheritable = $this->configClasses[$inheritanceClass]['inheritable'];
