@@ -48,7 +48,6 @@
             $remove = $group->getRemove();
             if ($add || $remove) {
                 $ids = $this->get{{ reference.field|ucfirst }}();
-                //var_dump($ids);
                 foreach ($add as $document) {
                     $ids[] = $document->getId();
                 }
