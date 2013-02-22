@@ -277,6 +277,21 @@ class CoreDocumentTest extends TestCase
         ), $comments[0]->getCategoryIds());
     }
 
+    public function testUpdateEreferenceFieldsShouldDoNothingWhenRemovingNotContainedDocuments()
+    {
+        $c1 = $this->createCategory('c1');
+        $c2 = $this->createCategory('c2');
+        $c3 = $this->createCategory('c3');
+
+        $article = $this->createArticle()
+            ->addCategories(array($c1, $c2))
+            ->removeCategories($c3);
+
+        $article->updateReferenceFields();
+
+        $this->assertSame(array($c1->getId(), $c2->getId()), $article->getCategoryIds());
+    }
+
     public function testSaveReferencesReferencesOne()
     {
         $article = $this->mandango->create('Model\Article');

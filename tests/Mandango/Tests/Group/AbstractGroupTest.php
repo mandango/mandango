@@ -88,6 +88,15 @@ class AbstractGroupTest extends TestCase
         $this->assertSame(array('foo', 'foobar', 'barfoo', 'ups'), $group->all());
     }
 
+    public function testAllShouldDoNothingWithNotExistingDocuments()
+    {
+        $group = new AbstractGroup('Model\Comment');
+        $group->forSaved = array('foo', 'bar');
+        $group->remove(array('ups'));
+
+        $this->assertSame(array('foo', 'bar'), $group->all());
+    }
+
     public function testSavedIteratorAggregateInterface()
     {
         $forSaved = array('foo', 'bar');
@@ -102,10 +111,10 @@ class AbstractGroupTest extends TestCase
     public function testCount()
     {
         $group = new AbstractGroup('Model\Comment');
-        $group->forSaved = array(array('foo' => 'bar'), array('bar' => 'foo'));
-        $group->add(array('ups', 'foobar', 'barfoo'));
-        $group->remove(array('bar', 'ups'));
-        $this->assertSame(3, $group->count());
+        $group->forSaved = array('foo', 'bar');
+        $group->add(array('ups'));
+        $group->remove(array('bar'));
+        $this->assertSame(2, $group->count());
     }
 
     public function testCountableInterface()
