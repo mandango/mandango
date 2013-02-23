@@ -133,7 +133,9 @@ abstract class AbstractGroup implements \Countable, \IteratorAggregate
         $documents = array_merge($this->getSaved(), $this->getAdd());
 
         foreach ($this->getRemove() as $document) {
-            unset($documents[array_search($document, $documents)]);
+            if (false !== $key = array_search($document, $documents)) {
+                unset($documents[$key]);
+            }
         }
 
         return array_values($documents);

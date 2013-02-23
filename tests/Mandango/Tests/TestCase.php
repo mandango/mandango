@@ -86,9 +86,14 @@ class TestCase extends \PHPUnit_Framework_TestCase
         TypeContainer::reset();
     }
 
-    protected function createArticle()
+    protected function createCategory($name = 'foo')
     {
-        return $this->mandango->create('Model\Article')->setTitle('foo')->save();
+        return $this->mandango->create('Model\Category')->setName($name)->save();
+    }
+
+    protected function createArticle($title = 'foo')
+    {
+        return $this->mandango->create('Model\Article')->setTitle($title)->save();
     }
 
     protected function createArticles($nb, $idAsKey = true)
