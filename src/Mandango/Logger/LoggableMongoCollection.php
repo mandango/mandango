@@ -18,7 +18,7 @@ namespace Mandango\Logger;
  */
 class LoggableMongoCollection extends \MongoCollection
 {
-    private $db;
+    public $db;
     private $time;
 
     /**

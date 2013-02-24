@@ -67,9 +67,9 @@ class LoggableMongoDB extends \MongoDB
         $time = $this->time->stop();
 
         $this->log(array(
-            'type' => 'command',
-            'data' => $data,
-            'time' => $time,
+            'type'    => 'command',
+            'options' => $options,
+            'time'    => $time,
         ));
 
         return $return;
@@ -90,6 +90,7 @@ class LoggableMongoDB extends \MongoDB
             'capped' => $capped,
             'size'   => $size,
             'max'    => $max,
+            'time'   => $time,
         ));
 
         return $return;

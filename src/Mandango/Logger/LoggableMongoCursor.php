@@ -87,7 +87,7 @@ class LoggableMongoCursor extends \MongoCursor
     {
         $this->logQuery();
 
-        return parent::rewind();
+        parent::rewind();
     }
 
     /**
@@ -97,7 +97,7 @@ class LoggableMongoCursor extends \MongoCursor
     {
         $this->logQuery();
 
-        return parent::next();
+        parent::next();
     }
 
     /**
