@@ -26,8 +26,8 @@ abstract class EmbeddedDocument extends AbstractDocument
     /**
      * Set the root and path of the embedded document.
      *
-     * @param Mandango\Document\Document $root The root document.
-     * @param string                     $path The path.
+     * @param \Mandango\Document\Document $root The root document.
+     * @param string                      $path The path.
      *
      * @api
      */

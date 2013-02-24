@@ -25,10 +25,10 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
     /**
      * Constructor.
      *
-     * @param string                             $discriminatorField The discriminator field.
-     * @param Mandango\Document\AbstractDocument $parent             The parent document.
-     * @param string                             $field              The reference field.
-     * @param array|false                        $discriminatorMap   The discriminator map if exists, otherwise false.
+     * @param string                              $discriminatorField The discriminator field.
+     * @param \Mandango\Document\AbstractDocument $parent             The parent document.
+     * @param string                              $field              The reference field.
+     * @param array|Boolean                       $discriminatorMap   The discriminator map if exists, otherwise false.
      *
      * @api
      */
@@ -44,7 +44,7 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
     /**
      * Returns the parent document.
      *
-     * @return Mandango\Document\AbstractDocument The parent document.
+     * @return \Mandango\Document\AbstractDocument The parent document.
      *
      * @api
      */
@@ -68,7 +68,7 @@ class PolymorphicReferenceGroup extends PolymorphicGroup
     /**
      * Returns the discriminator map.
      *
-     * @return array|false The discriminator map.
+     * @return array|Boolean The discriminator map.
      *
      * @api
      */

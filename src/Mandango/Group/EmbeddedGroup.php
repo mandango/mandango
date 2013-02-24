@@ -26,8 +26,8 @@ class EmbeddedGroup extends Group
     /**
      * Set the root and path of the embedded group.
      *
-     * @param Mandango\Document\Docuemnt $root The root document.
-     * @param string                     $path The path.
+     * @param \Mandango\Document\Document $root The root document.
+     * @param string                      $path The path.
      *
      * @api
      */
