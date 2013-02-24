@@ -79,7 +79,7 @@ class Container
      *
      * @param string $name The type name.
      *
-     * @return Mandango\Type\Type The type.
+     * @return \Mandango\Type\Type The type.
      *
      * @throws \InvalidArgumentException If the type does not exists.
      *

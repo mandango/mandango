@@ -26,7 +26,7 @@ class Archive
      * @param object $object The object.
      * @param string $key    The key.
      *
-     * ®return bool If an object has a key in the archive.
+     * @return bool If an object has a key in the archive.
      */
     static public function has($object, $key)
     {

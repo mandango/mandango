@@ -36,7 +36,7 @@ abstract class Repository
     /**
      * Constructor.
      *
-     * @param Mandango $mandango The mandango.
+     * @param \Mandango\Mandango $mandango The mandango.
      *
      * @api
      */
@@ -49,7 +49,7 @@ abstract class Repository
     /**
      * Returns the Mandango.
      *
-     * @return Mandango The Mandango.
+     * @return \Mandango\Mandango The Mandango.
      *
      * @api
      */
@@ -61,7 +61,7 @@ abstract class Repository
     /**
      * Returns the identity map.
      *
-     * @return IdentityMapInterface The identity map.
+     * @return \Mandango\IdentityMapInterface The identity map.
      *
      * @api
      */
@@ -133,7 +133,7 @@ abstract class Repository
     /**
      * Returns the connection.
      *
-     * @return ConnectionInterface The connection.
+     * @return \Mandango\ConnectionInterface The connection.
      *
      * @api
      */
@@ -247,7 +247,7 @@ abstract class Repository
      *
      * @param mixed $id An id.
      *
-     * @return Document|null The document or null if it does not exist.
+     * @return \Mandango\Document\Document|null The document or null if it does not exist.
      *
      * @api
      */
@@ -310,7 +310,7 @@ abstract class Repository
      *
      * @param mixed $keys    The keys.
      * @param array $initial The initial value.
-     * @param mixes $reduce  The reduce function.
+     * @param mixed $reduce  The reduce function.
      * @param array $options The options (optional).
      *
      * @return array The result
