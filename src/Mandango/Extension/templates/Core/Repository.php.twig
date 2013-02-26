@@ -185,7 +185,7 @@
                 $document->preUpdateEvent();
 {% endif %}
                 $query = $document->queryForSave();
-                $collection->update(array('_id' => $document->getId()), $query, $updateOptions);
+                $collection->update(array('_id' => $this->idToMongo($document->getId())), $query, $updateOptions);
                 $document->clearModified();
 {% if config_class._has_groups %}
                 $document->resetGroups();
@@ -213,7 +213,7 @@
 {% if config_class.events.preDelete or config_class._parent_events.preDelete %}
             $document->preDeleteEvent();
 {% endif %}
-            $ids[] = $id = $document->getId();
+            $ids[] = $id = $this->idToMongo($document->getId());
         }
 
         foreach ($documents as $document) {
