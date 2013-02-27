@@ -86,6 +86,21 @@ class TestCase extends \PHPUnit_Framework_TestCase
         TypeContainer::reset();
     }
 
+    protected function getRepository($modelClass)
+    {
+        return $this->mandango->getRepository($modelClass);
+    }
+
+    protected function getCollection($modelClass)
+    {
+        return $this->getRepository($modelClass)->getCollection();
+    }
+
+    protected function create($modelClass)
+    {
+        return $this->mandango->create($modelClass);
+    }
+
     protected function createCategory($name = 'foo')
     {
         return $this->mandango->create('Model\Category')->setName($name)->save();

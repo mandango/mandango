@@ -112,31 +112,24 @@ class CoreRepositoryTest extends TestCase
         $this->assertSame(4, $this->mandango->getRepository('Model\Article')->getCollection()->find(array('title' => new \MongoRegex('/^foo/')))->count());
     }
 
-    public function testSaveUpdateSingleDocumentWithScalarId()
+    public function testSaveShouldConvertIdsToMongoWhenUpdating()
     {
-        $articles = array();
-        for ($i = 1; $i <= 1; $i++) {
-            $articles[$i] = $this->mandango->create('Model\Article')->fromArray(array(
-                    'title' => 'foo'.$i,
-                    'content' => 12345 + $i,
-                ));
-        }
-        $this->mandango->getRepository('Model\Article')->save($articles);
+        $article = $this->create('Model\Article')
+            ->setTitle('foo')
+            ->save();
 
-        $id1 = $articles[1]->getId()->__toString();
+        $id = $article->getId();
+        $article
+            ->setId($id->__toString())
+            ->setTitle('bar')
+            ->save();
 
-        $articles[1]->setId($id1);
-        $articles[1]->setTitle('updated!');
+        $collection = $this->getCollection('Model\Article');
 
-        $this->mandango->getRepository('Model\Article')->save($articles[1]);
+        $result = $collection->findOne(array('_id' => $id));
+        $expectedResult = array('_id' => $id, 'title' => 'bar');
 
-        $actual = $this->mandango
-            ->getRepository('Model\Article')
-            ->createQuery(array('_id' => new \MongoId($id1)))
-            ->one()
-        ;
-
-        $this->assertEquals($articles[1], $actual);
+        $this->assertEquals($expectedResult, $result);
     }
 
     public function testSaveUpdateMultipleDocument()
@@ -273,22 +266,21 @@ class CoreRepositoryTest extends TestCase
         }
     }
 
-    public function testDeleteSingleDocumentWithScalarId()
+    public function testDeleteShouldConvertIdsToMongo()
     {
-        $articles = array();
-        for ($i = 1; $i <= 5; $i++) {
-            $articles[$i] = $this->mandango->create('Model\Article')->setTitle('foo');
-        }
-        $this->mandango->getRepository('Model\Article')->save($articles);
+        $article = $this->create('Model\Article')
+            ->setTitle('foo')
+            ->save();
 
-        $id = $articles[2]->getId();
-        $articles[2]->setId((string) $id);
-        $this->mandango->getRepository('Model\Article')->delete($articles[2]);
+        $id = $article->getId();
+        $article
+            ->setId($id->__toString())
+            ->delete();
 
-        $this->assertTrue($articles[2]->isNew());
-        $this->assertNull($this->mandango->getRepository('Model\Article')->getCollection()->findOne(array('_id' => $id)));
-        $this->assertSame(4, $this->mandango->getRepository('Model\Article')->getCollection()->count());
-        $this->assertFalse($this->mandango->getRepository('Model\Article')->getIdentityMap()->has($id));
+        $collection = $this->getCollection('Model\Article');
+        $result = $collection->findOne(array('_id' => $id));
+
+        $this->assertNull($result);
     }
 
     public function testDeleteMultipleDocuments()
