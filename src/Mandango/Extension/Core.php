@@ -198,8 +198,8 @@ class Core extends Extension
     private function initIsEmbeddedProcess()
     {
         if (isset($this->configClass['isEmbedded'])) {
-            if (!is_bool($this->configClass['isEmbedded'])) {
-                throw new \RuntimeException(sprintf('The "isEmbedded" of the class "%s" is not a boolean.', $this->class));
+            if (in_array($this->configClass['isEmbedded'], array(true, 1, '1'), true)) {
+                $this->configClass['isEmbedded'] = true;
             }
         } else {
             $this->configClass['isEmbedded'] = false;
@@ -216,7 +216,9 @@ class Core extends Extension
     private function initUseBatchInsertProcess()
     {
         if (isset($this->configClass['useBatchInsert'])) {
-            $this->configClass['useBatchInsert'] = (Boolean) $this->configClass['useBatchInsert'];
+            if (in_array($this->configClass['useBatchInsert'], array(true, 1, '1'), true)) {
+                $this->configClass['useBatchInsert'] = true;
+            }
         } else {
             $this->configClass['useBatchInsert'] = false;
         }
@@ -316,8 +318,8 @@ class Core extends Extension
     private function initIsFileProcess()
     {
         if (isset($this->configClass['isFile'])) {
-            if (!is_bool($this->configClass['isFile'])) {
-                throw new \RuntimeException(sprintf('The "isFile" of the class "%s" is not a boolean.', $this->class));
+            if (in_array($this->configClass['isFile'], array(true, 1, '1'), true)) {
+                $this->configClass['isFile'] = true;
             }
         } else {
             $this->configClass['isFile'] = false;
