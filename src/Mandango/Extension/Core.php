@@ -197,11 +197,12 @@ class Core extends Extension
 
     private function initIsEmbeddedProcess()
     {
-        if (isset($this->configClass['isEmbedded'])) {
-            $this->configClass['isEmbedded'] = $this->mapToBoolean($this->configClass['isEmbedded']);
-        } else {
-            $this->configClass['isEmbedded'] = false;
-        }
+        $this->configClass['isEmbedded'] = $this->mapArrayKeyWithDefault(
+            $this->configClass,
+            'isEmbedded',
+            array($this, 'mapToBoolean'),
+            false
+        );
     }
 
     private function initMandangoProcess()
@@ -213,11 +214,12 @@ class Core extends Extension
 
     private function initUseBatchInsertProcess()
     {
-        if (isset($this->configClass['useBatchInsert'])) {
-            $this->configClass['useBatchInsert'] = $this->mapToBoolean($this->configClass['useBatchInsert']);
-        } else {
-            $this->configClass['useBatchInsert'] = false;
-        }
+        $this->configClass['useBatchInsert'] = $this->mapArrayKeyWithDefault(
+            $this->configClass,
+            'useBatchInsert',
+            array($this, 'mapToBoolean'),
+            false
+        );
     }
 
     private function initConnectionNameProcess()
@@ -313,11 +315,12 @@ class Core extends Extension
 
     private function initIsFileProcess()
     {
-        if (isset($this->configClass['isFile'])) {
-            $this->configClass['isFile'] = $this->mapToBoolean($this->configClass['isFile']);
-        } else {
-            $this->configClass['isFile'] = false;
-        }
+        $this->configClass['isFile'] = $this->mapArrayKeyWithDefault(
+            $this->configClass,
+            'isFile',
+            array($this, 'mapToBoolean'),
+            false
+        );
     }
 
     /*
@@ -1053,10 +1056,25 @@ EOF
         }
     }
 
-    protected function mapToBoolean($value)
+    private function mapArrayKeyWithDefault($array, $key, array $mapCallback, $default)
     {
-        if (in_array($value, array(true, 1, '1'), true)) {
+        if (!method_exists($mapCallback[0], $mapCallback[1])) {
+            throw new \RuntimeException(sprintf('The method "%s" of the class "%s" does not exist.', $mapCallback[0], $mapCallback[1]));
+        }
+
+        if (isset($array[$key])) {
+            return $mapCallback[0]->$mapCallback[1]($array, $key);
+        }
+
+        return $default;
+    }
+
+    private function mapToBoolean($array, $key)
+    {
+        if (in_array($array[$key], array(true, 1, '1'), true)) {
             return true;
+        } else if (!in_array($array[$key], array(false, 0, '0'), true)) {
+            throw new \RuntimeException(sprintf('The "isEmbedded" of the class "%s" is not a boolean.', $this->class));
         }
 
         return false;
