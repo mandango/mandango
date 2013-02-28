@@ -197,7 +197,11 @@ class Core extends Extension
 
     private function initIsEmbeddedProcess()
     {
-        $this->configClass['isEmbedded'] = $this->mapToBoolean($this->configClass['isEmbedded']);
+        if (isset($this->configClass['isEmbedded'])) {
+            $this->configClass['isEmbedded'] = $this->mapToBoolean($this->configClass['isEmbedded']);
+        } else {
+            $this->configClass['isEmbedded'] = false;
+        }
     }
 
     private function initMandangoProcess()
@@ -209,7 +213,11 @@ class Core extends Extension
 
     private function initUseBatchInsertProcess()
     {
-        $this->configClass['useBatchInsert'] = $this->mapToBoolean($this->configClass['useBatchInsert']);
+        if (isset($this->configClass['useBatchInsert'])) {
+            $this->configClass['useBatchInsert'] = $this->mapToBoolean($this->configClass['useBatchInsert']);
+        } else {
+            $this->configClass['useBatchInsert'] = false;
+        }
     }
 
     private function initConnectionNameProcess()
@@ -305,7 +313,11 @@ class Core extends Extension
 
     private function initIsFileProcess()
     {
+        if (isset($this->configClass['isFile'])) {
             $this->configClass['isFile'] = $this->mapToBoolean($this->configClass['isFile']);
+        } else {
+            $this->configClass['isFile'] = false;
+        }
     }
 
     /*
@@ -1043,10 +1055,8 @@ EOF
 
     protected function mapToBoolean($value)
     {
-        if (isset($value)) {
-            if (in_array($value, array(true, 1, '1'), true)) {
-                return true;
-            }
+        if (in_array($value, array(true, 1, '1'), true)) {
+            return true;
         }
 
         return false;
