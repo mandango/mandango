@@ -197,11 +197,11 @@ class Core extends Extension
 
     private function initIsEmbeddedProcess()
     {
+        $default = false;
         $this->configClass['isEmbedded'] = $this->mapArrayKeyWithDefault(
-            $this->configClass,
-            'isEmbedded',
+            $this->configClass, 'isEmbedded',
             array($this, 'mapToBoolean'),
-            false
+            $default
         );
     }
 
@@ -214,11 +214,12 @@ class Core extends Extension
 
     private function initUseBatchInsertProcess()
     {
+        $default = false;
         $this->configClass['useBatchInsert'] = $this->mapArrayKeyWithDefault(
             $this->configClass,
             'useBatchInsert',
             array($this, 'mapToBoolean'),
-            false
+            $default
         );
     }
 
@@ -315,11 +316,12 @@ class Core extends Extension
 
     private function initIsFileProcess()
     {
+        $default = false;
         $this->configClass['isFile'] = $this->mapArrayKeyWithDefault(
             $this->configClass,
             'isFile',
             array($this, 'mapToBoolean'),
-            false
+            $default
         );
     }
 
@@ -1058,25 +1060,33 @@ EOF
 
     private function mapArrayKeyWithDefault($array, $key, array $mapCallback, $default)
     {
-        if (!method_exists($mapCallback[0], $mapCallback[1])) {
-            throw new \RuntimeException(sprintf('The method "%s" of the class "%s" does not exist.', $mapCallback[0], $mapCallback[1]));
-        }
-
         if (array_key_exists($key, $array)) {
-            return $mapCallback[0]->$mapCallback[1]($array, $key);
+            return call_user_func($mapCallback, $array[$key]);
         }
 
         return $default;
     }
 
-    private function mapToBoolean($array, $key)
+    private function mapToBoolean($value)
     {
-        if (in_array($array[$key], array(true, 1, '1'), true)) {
+        if ($this->isBooleanTrueValue($value)) {
             return true;
-        } else if (!in_array($array[$key], array(false, 0, '0'), true)) {
-            throw new \RuntimeException(sprintf('The "isEmbedded" of the class "%s" is not a boolean.', $this->class));
         }
 
-        return false;
+        if ($this->isBooleanFalseValue($value)) {
+            return false;
+        }
+
+        throw new \InvalidArgumentException('The value is not a boolean value.');
+    }
+
+    private function isBooleanTrueValue($value)
+    {
+        return in_array($value, array(true, 1, '1'), true);
+    }
+
+    private function isBooleanFalseValue($value)
+    {
+        return in_array($value, array(false, 0, '0'), true);
     }
 }
