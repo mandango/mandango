@@ -1062,7 +1062,7 @@ EOF
             throw new \RuntimeException(sprintf('The method "%s" of the class "%s" does not exist.', $mapCallback[0], $mapCallback[1]));
         }
 
-        if (isset($array[$key])) {
+        if (array_key_exists($key, $array)) {
             return $mapCallback[0]->$mapCallback[1]($array, $key);
         }
 
