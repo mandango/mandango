@@ -197,13 +197,7 @@ class Core extends Extension
 
     private function initIsEmbeddedProcess()
     {
-        if (isset($this->configClass['isEmbedded'])) {
-            if (in_array($this->configClass['isEmbedded'], array(true, 1, '1'), true)) {
-                $this->configClass['isEmbedded'] = true;
-            }
-        } else {
-            $this->configClass['isEmbedded'] = false;
-        }
+        $this->configClass['isEmbedded'] = $this->mapToBoolean($this->configClass['isEmbedded']);
     }
 
     private function initMandangoProcess()
@@ -215,13 +209,7 @@ class Core extends Extension
 
     private function initUseBatchInsertProcess()
     {
-        if (isset($this->configClass['useBatchInsert'])) {
-            if (in_array($this->configClass['useBatchInsert'], array(true, 1, '1'), true)) {
-                $this->configClass['useBatchInsert'] = true;
-            }
-        } else {
-            $this->configClass['useBatchInsert'] = false;
-        }
+        $this->configClass['useBatchInsert'] = $this->mapToBoolean($this->configClass['useBatchInsert']);
     }
 
     private function initConnectionNameProcess()
@@ -317,13 +305,7 @@ class Core extends Extension
 
     private function initIsFileProcess()
     {
-        if (isset($this->configClass['isFile'])) {
-            if (in_array($this->configClass['isFile'], array(true, 1, '1'), true)) {
-                $this->configClass['isFile'] = true;
-            }
-        } else {
-            $this->configClass['isFile'] = false;
-        }
+            $this->configClass['isFile'] = $this->mapToBoolean($this->configClass['isFile']);
     }
 
     /*
@@ -1057,5 +1039,16 @@ EOF
         } else {
             throw new \RuntimeException(sprintf('The association "%s" of the class "%s" does not have class and it is not polymorphic.', $name, $this->class));
         }
+    }
+
+    protected function mapToBoolean($value)
+    {
+        if (isset($value)) {
+            if (in_array($value, array(true, 1, '1'), true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
