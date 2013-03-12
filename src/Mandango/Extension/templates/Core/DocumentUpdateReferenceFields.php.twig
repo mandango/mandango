@@ -120,7 +120,7 @@
 {% if config_classes[embedded.class]['_has_references'] %}
         if (isset($this->data['embeddedsMany']['{{ name }}'])) {
             $group = $this->data['embeddedsMany']['{{ name }}'];
-            foreach ($group->getSaved() as $document) {
+            foreach ($group->all() as $document) {
                 $document->updateReferenceFields();
             }
         }
