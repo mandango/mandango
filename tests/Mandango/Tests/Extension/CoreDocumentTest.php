@@ -326,24 +326,6 @@ class CoreDocumentTest extends TestCase
         $this->assertFalse($author2->isModified());
     }
     
-    public function testSaveReferencesReferencesOne_ReferenceInEmbeddedIsSaved()
-    {
-        $article = $this->mandango->create('Model\Article');
-        $category = $this->mandango->create('Model\Category')->setName('c1');
-        $comment = $this->mandango->create('Model\Comment')->setName('foo');
-        
-
-        $comment->addCategories($category);        
-        $article->addComments($comment);
-
-        $article->save();
-        
-        foreach($article->getComments() as $c)
-        {
-            $this->assertEquals(count($c->getCategories()), 1);
-        }
-    }
-
     public function testSaveReferencesReferencesMany()
     {
         $articleCategories = array(
@@ -365,6 +347,24 @@ class CoreDocumentTest extends TestCase
 
         foreach ($articleCategories as $category) {
             $this->assertFalse($category->isModified());
+        }
+    }
+    
+    public function testSaveReferencesReferencesManyInEmbedded()
+    {
+        $article = $this->mandango->create('Model\Article');
+        $category = $this->mandango->create('Model\Category')->setName('c1');
+        $comment = $this->mandango->create('Model\Comment')->setName('foo');
+        
+
+        $comment->addCategories($category);        
+        $article->addComments($comment);
+
+        $article->save();
+        
+        foreach($article->getComments() as $c)
+        {
+            $this->assertEquals(count($c->getCategories()), 1);
         }
     }
 
