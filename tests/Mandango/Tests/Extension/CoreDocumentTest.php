@@ -194,6 +194,23 @@ class CoreDocumentTest extends TestCase
         $this->assertSame($article, $article->removeCategories($category));
         $this->assertSame(array($category), $article->getCategories()->getRemove());
     }
+    
+    public function testReferencesManyRemove_RemoveNoneExistingDocumentDoesNothing()
+    {
+        $c1 = $this->mandango->create('Model\Category')->setName('c1')->save();
+        $c2 = $this->mandango->create('Model\Category')->setName('c2')->save();
+        $c3 = $this->mandango->create('Model\Category')->setName('c3')->save();
+        $c4 = $this->mandango->create('Model\Category')->setName('c4')->save();
+
+        $article = $this->mandango->create('Model\Article')->addCategories($c1)
+                ->addCategories($c2)->addCategories($c3)->save();
+        
+        $this->assertEquals(3, count($article->getCategories()));
+        
+        $article->removeCategories($c4)->save();
+        
+        $this->assertEquals(3, count($article->getCategories()));
+    }
 
     public function testUpdateReferenceFieldsReferencesOne()
     {
@@ -308,7 +325,7 @@ class CoreDocumentTest extends TestCase
         $this->assertFalse($author1->isModified());
         $this->assertFalse($author2->isModified());
     }
-
+    
     public function testSaveReferencesReferencesMany()
     {
         $articleCategories = array(
@@ -330,6 +347,24 @@ class CoreDocumentTest extends TestCase
 
         foreach ($articleCategories as $category) {
             $this->assertFalse($category->isModified());
+        }
+    }
+    
+    public function testSaveReferencesReferencesManyInEmbedded()
+    {
+        $article = $this->mandango->create('Model\Article');
+        $category = $this->mandango->create('Model\Category')->setName('c1');
+        $comment = $this->mandango->create('Model\Comment')->setName('foo');
+        
+
+        $comment->addCategories($category);        
+        $article->addComments($comment);
+
+        $article->save();
+        
+        foreach($article->getComments() as $c)
+        {
+            $this->assertEquals(count($c->getCategories()), 1);
         }
     }
 
