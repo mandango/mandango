@@ -53,4 +53,30 @@
 {% endif %}
 {% endif %}
 {% endfor %}
+{# embeddeds many #}
+{% for name, embedded in config_class.embeddedsMany %}
+{# not inherited #}
+{% if embedded.inherited is not defined or not embedded.inherited %}
+{# has references #}
+{% if config_classes[embedded.class]['_has_references'] %}
+
+    if (isset($this->data['embeddedsMany']['{{ name }}'])) {
+            $group = $this->data['embeddedsMany']['{{ name }}'];
+            $documents = array();
+            foreach ($group->getAdd() as $document) {
+                $documents[] = $document;
+            }
+            if ($group->isSavedInitialized()) {
+                foreach ($group->getSaved() as $document) {
+                    $documents[] = $document;
+                }
+            }
+            
+            foreach($documents as $document) {
+                $document->saveReferences();
+            }
+        }
+{% endif %}
+{% endif %}
+{% endfor %}
     }
