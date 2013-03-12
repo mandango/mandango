@@ -229,9 +229,12 @@ abstract class Repository
         $ids = $this->idsToMongo($ids);
 
         $documents = array();
+        $remaining = array();
         foreach ($ids as $id) {
             if ($this->identityMap->has($id)) {
                 $documents[(string) $id] = $this->identityMap->get($id);
+            } else {
+                $remaining[] = $id;
             }
         }
 
@@ -239,7 +242,10 @@ abstract class Repository
             return $documents;
         }
 
-        return $this->createQuery(array('_id' => array('$in' => $ids)))->all();
+        return array_merge(
+            $documents,
+            $this->createQuery(array('_id' => array('$in' => $remaining)))->all()
+        );
     }
 
     /**
