@@ -197,13 +197,12 @@ class Core extends Extension
 
     private function initIsEmbeddedProcess()
     {
-        if (isset($this->configClass['isEmbedded'])) {
-            if (!is_bool($this->configClass['isEmbedded'])) {
-                throw new \RuntimeException(sprintf('The "isEmbedded" of the class "%s" is not a boolean.', $this->class));
-            }
-        } else {
-            $this->configClass['isEmbedded'] = false;
-        }
+        $default = false;
+        $this->configClass['isEmbedded'] = $this->mapArrayKeyWithDefault(
+            $this->configClass, 'isEmbedded',
+            array($this, 'mapToBoolean'),
+            $default
+        );
     }
 
     private function initMandangoProcess()
@@ -215,11 +214,13 @@ class Core extends Extension
 
     private function initUseBatchInsertProcess()
     {
-        if (isset($this->configClass['useBatchInsert'])) {
-            $this->configClass['useBatchInsert'] = (Boolean) $this->configClass['useBatchInsert'];
-        } else {
-            $this->configClass['useBatchInsert'] = false;
-        }
+        $default = false;
+        $this->configClass['useBatchInsert'] = $this->mapArrayKeyWithDefault(
+            $this->configClass,
+            'useBatchInsert',
+            array($this, 'mapToBoolean'),
+            $default
+        );
     }
 
     private function initConnectionNameProcess()
@@ -315,13 +316,13 @@ class Core extends Extension
 
     private function initIsFileProcess()
     {
-        if (isset($this->configClass['isFile'])) {
-            if (!is_bool($this->configClass['isFile'])) {
-                throw new \RuntimeException(sprintf('The "isFile" of the class "%s" is not a boolean.', $this->class));
-            }
-        } else {
-            $this->configClass['isFile'] = false;
-        }
+        $default = false;
+        $this->configClass['isFile'] = $this->mapArrayKeyWithDefault(
+            $this->configClass,
+            'isFile',
+            array($this, 'mapToBoolean'),
+            $default
+        );
     }
 
     /*
@@ -1055,5 +1056,37 @@ EOF
         } else {
             throw new \RuntimeException(sprintf('The association "%s" of the class "%s" does not have class and it is not polymorphic.', $name, $this->class));
         }
+    }
+
+    private function mapArrayKeyWithDefault($array, $key, array $mapCallback, $default)
+    {
+        if (array_key_exists($key, $array)) {
+            return call_user_func($mapCallback, $array[$key]);
+        }
+
+        return $default;
+    }
+
+    private function mapToBoolean($value)
+    {
+        if ($this->isBooleanTrueValue($value)) {
+            return true;
+        }
+
+        if ($this->isBooleanFalseValue($value)) {
+            return false;
+        }
+
+        throw new \InvalidArgumentException('The value is not a boolean value.');
+    }
+
+    private function isBooleanTrueValue($value)
+    {
+        return in_array($value, array(true, 1, '1'), true);
+    }
+
+    private function isBooleanFalseValue($value)
+    {
+        return in_array($value, array(false, 0, '0'), true);
     }
 }

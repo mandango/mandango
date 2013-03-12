@@ -112,6 +112,26 @@ class CoreRepositoryTest extends TestCase
         $this->assertSame(4, $this->mandango->getRepository('Model\Article')->getCollection()->find(array('title' => new \MongoRegex('/^foo/')))->count());
     }
 
+    public function testSaveShouldConvertIdsToMongoWhenUpdating()
+    {
+        $article = $this->create('Model\Article')
+            ->setTitle('foo')
+            ->save();
+
+        $id = $article->getId();
+        $article
+            ->setId($id->__toString())
+            ->setTitle('bar')
+            ->save();
+
+        $collection = $this->getCollection('Model\Article');
+
+        $result = $collection->findOne(array('_id' => $id));
+        $expectedResult = array('_id' => $id, 'title' => 'bar');
+
+        $this->assertEquals($expectedResult, $result);
+    }
+
     public function testSaveUpdateMultipleDocument()
     {
         $articles = array();
@@ -244,6 +264,23 @@ class CoreRepositoryTest extends TestCase
             $this->assertNotNull($this->mandango->getRepository('Model\Article')->getCollection()->findOne(array('_id' => $articles[$key]->getId())));
             $this->assertTrue($this->mandango->getRepository('Model\Article')->getIdentityMap()->has($articles[$key]->getId()));
         }
+    }
+
+    public function testDeleteShouldConvertIdsToMongo()
+    {
+        $article = $this->create('Model\Article')
+            ->setTitle('foo')
+            ->save();
+
+        $id = $article->getId();
+        $article
+            ->setId($id->__toString())
+            ->delete();
+
+        $collection = $this->getCollection('Model\Article');
+        $result = $collection->findOne(array('_id' => $id));
+
+        $this->assertNull($result);
     }
 
     public function testDeleteMultipleDocuments()
