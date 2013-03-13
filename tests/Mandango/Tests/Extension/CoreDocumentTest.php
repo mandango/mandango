@@ -308,7 +308,7 @@ class CoreDocumentTest extends TestCase
         $this->assertFalse($author1->isModified());
         $this->assertFalse($author2->isModified());
     }
-    
+
     public function testSaveReferencesReferencesMany()
     {
         $articleCategories = array(
@@ -332,23 +332,40 @@ class CoreDocumentTest extends TestCase
             $this->assertFalse($category->isModified());
         }
     }
-    
-    public function testSaveReferencesReferencesManyInEmbedded()
+
+    public function testSaveReferencesShouldSaveReferencesInEmbeddedsOne()
     {
-        $article = $this->mandango->create('Model\Article');
-        $category = $this->mandango->create('Model\Category')->setName('c1');
-        $comment = $this->mandango->create('Model\Comment')->setName('foo');
-        
+        $article = $this->create('Model\Article');
+        $source = $this->create('Model\Source')->setName('foo');
+        $author = $this->create('Model\Author')->setName('foo');
+        $category = $this->create('Model\Category')->setName('foo');
 
-        $comment->addCategories($category);        
-        $article->addComments($comment);
+        $source->setAuthor($author);
+        $source->addCategories($category);
+        $article->setSource($source);
 
-        $article->save();
-        
-        foreach($article->getComments() as $c)
-        {
-            $this->assertEquals(count($c->getCategories()), 1);
-        }
+        $article->saveReferences();
+
+        $this->assertFalse($author->isNew());
+        $this->assertFalse($category->isNew());
+    }
+
+    public function testSaveReferencesShouldSaveReferencesInEmbeddedsMany()
+    {
+        $article = $this->create('Model\Article');
+        $comment1 = $this->create('Model\Comment')->setName('foo');
+        $comment2 = $this->create('Model\Comment')->setName('foo');
+        $author = $this->create('Model\Author')->setName('foo');
+        $category = $this->create('Model\Category')->setName('foo');
+
+        $comment1->setAuthor($author);
+        $comment2->addCategories($category);
+        $article->addComments(array($comment1, $comment2));
+
+        $article->saveReferences();
+
+        $this->assertFalse($author->isNew());
+        $this->assertFalse($category->isNew());
     }
 
 
