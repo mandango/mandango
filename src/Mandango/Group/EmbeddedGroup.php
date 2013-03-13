@@ -89,7 +89,8 @@ class EmbeddedGroup extends Group
      */
     protected function doInitializeSavedData()
     {
-        if ($data = $this->getSavedData()) {
+        $data = $this->getSavedData();
+        if ( $data !== null ) {
             return $data;
         }
 
