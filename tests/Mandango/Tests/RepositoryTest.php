@@ -39,6 +39,8 @@ class RepositoryMock extends Repository
     public function setCollectionName($collectionName)
     {
         $this->collectionNameMock = $collectionName;
+
+        return $this;
     }
 
     public function getCollectionName()
@@ -49,6 +51,8 @@ class RepositoryMock extends Repository
     public function setCollection($collection)
     {
         $this->collection = $collection;
+
+        return $this;
     }
 
     public function getCollection()
@@ -59,6 +63,8 @@ class RepositoryMock extends Repository
     public function setConnection(ConnectionInterface $connection)
     {
         $this->connection = $connection;
+
+        return $this;
     }
 
     public function getConnection()
@@ -308,36 +314,60 @@ class RepositoryTest extends TestCase
         $collectionName = 'myCollectionName';
 
         $field = 'fieldName';
-        $query = array();
+        $query = array('foo' => 'bar');
+
+        $expectedCommand = array(
+            'distinct' => $collectionName,
+            'key'      => $field,
+            'query'    => $query,
+        );
 
         $result = array(new \DateTime());
 
-        $mongoDB = $this->getMockBuilder('MongoDB')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $mongoDB
+        $mongoDb = $this->createMongoDbMock();
+        $mongoDb
             ->expects($this->once())
             ->method('command')
-            ->with(array(
-                'distinct' => $collectionName,
-                'key'      => $field,
-                'query'    => $query,
-            ))
-            ->will($this->returnValue($result))
-        ;
+            ->with($expectedCommand)
+            ->will($this->returnValue($result));
 
-        $connection = $this->getMock('Mandango\ConnectionInterface');
-        $connection
-            ->expects($this->any())
-            ->method('getMongoDB')
-            ->will($this->returnValue($mongoDB))
-        ;
+        $connection = $this->createConnectionMockWithMongoDb($mongoDb);
+        $repository = $this->createRepositoryMock()
+            ->setCollectionName($collectionName)
+            ->setConnection($connection);
 
-        $repository = new RepositoryMock($this->mandango);
-        $repository->setCollectionName($collectionName);
-        $repository->setConnection($connection);
         $this->assertSame($result, $repository->distinct($field, $query));
+    }
+
+    public function testDistinctWithOptions()
+    {
+        $collectionName = 'myCollectionName';
+
+        $field = 'fieldName';
+        $query = array('foo' => 'bar');
+        $options = array('ups' => 2);
+
+        $expectedCommand = array(
+            'distinct' => $collectionName,
+            'key'      => $field,
+            'query'    => $query,
+        );
+
+        $result = array(new \DateTime());
+
+        $mongoDb = $this->createMongoDbMock();
+        $mongoDb
+            ->expects($this->once())
+            ->method('command')
+            ->with($expectedCommand, $options)
+            ->will($this->returnValue($result));
+
+        $connection = $this->createConnectionMockWithMongoDb($mongoDb);
+        $repository = $this->createRepositoryMock()
+            ->setCollectionName($collectionName)
+            ->setConnection($connection);
+
+        $this->assertSame($result, $repository->distinct($field, $query, $options));
     }
 
     public function testMapReduce()
@@ -349,54 +379,93 @@ class RepositoryTest extends TestCase
         $out = array('replace' => 'replaceCollectionName');
         $query = array('foo' => 'bar');
 
-        $result = array('ok' => true, 'result' => $resultCollectionName = 'myResultCollectionName');
+        $expectedCommand = array(
+            'mapreduce' => $collectionName,
+            'map'       => $map,
+            'reduce'    => $reduce,
+            'out'       => $out,
+            'query'     => $query,
+        );
+
+        $resultCollectionName = 'myResultCollectionName';
+        $result = array('ok' => true, 'result' => $resultCollectionName);
 
         $cursor = new \DateTime();
 
-        $resultCollection = $this->getMockBuilder('MongoCollection')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $resultCollection = $this->createCollectionMock();
         $resultCollection
             ->expects($this->once())
             ->method('find')
-            ->will($this->returnValue($cursor))
-        ;
+            ->will($this->returnValue($cursor));
 
-        $mongoDB = $this->getMockBuilder('MongoDB')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $mongoDB
+        $mongoDb = $this->createMongoDbMock();
+        $mongoDb
             ->expects($this->once())
             ->method('command')
-            ->with(array(
-                'mapreduce' => $collectionName,
-                'map'       => $map,
-                'reduce'    => $reduce,
-                'out'       => $out,
-                'query'     => $query,
-            ))
-            ->will($this->returnValue($result))
-        ;
-        $mongoDB
+            ->with($expectedCommand)
+            ->will($this->returnValue($result));
+        $mongoDb
             ->expects($this->once())
             ->method('selectCollection')
             ->with($resultCollectionName)
-            ->will($this->returnValue($resultCollection))
-        ;
+            ->will($this->returnValue($resultCollection));
 
-        $connection = $this->getMock('Mandango\ConnectionInterface');
-        $connection
-            ->expects($this->any())
-            ->method('getMongoDB')
-            ->will($this->returnValue($mongoDB))
-        ;
+        $connection = $this->createConnectionMockWithMongoDb($mongoDb);
+        $repository = $this->createRepositoryMock()
+            ->setCollectionName($collectionName)
+            ->setConnection($connection);
 
-        $repository = new RepositoryMock($this->mandango);
-        $repository->setCollectionName($collectionName);
-        $repository->setConnection($connection);
         $this->assertSame($cursor, $repository->mapReduce($map, $reduce, $out, $query));
+    }
+
+    public function testMapReduceWithOptions()
+    {
+        $collectionName = 'myCollectionName';
+
+        $map = new \MongoCode('map');
+        $reduce = new \MongoCode('reduce');
+        $out = array('replace' => 'replaceCollectionName');
+        $query = array('foo' => 'bar');
+        $options = array('ups' => 2);
+
+        $expectedCommand = array(
+            'mapreduce' => $collectionName,
+            'map'       => $map,
+            'reduce'    => $reduce,
+            'out'       => $out,
+            'query'     => $query,
+        );
+
+        $resultCollectionName = 'myResultCollectionName';
+        $result = array('ok' => true, 'result' => $resultCollectionName);
+
+        $cursor = new \DateTime();
+
+        $resultCollection = $this->createCollectionMock();
+        $resultCollection
+            ->expects($this->once())
+            ->method('find')
+            ->will($this->returnValue($cursor));
+
+        $mongoDb = $this->createMongoDbMock();
+        $mongoDb
+            ->expects($this->once())
+            ->method('command')
+            ->with($expectedCommand, $options)
+            ->will($this->returnValue($result));
+        $mongoDb
+            ->expects($this->once())
+            ->method('selectCollection')
+            ->with($resultCollectionName)
+            ->will($this->returnValue($resultCollection));
+
+        $connection = $this->createConnectionMockWithMongoDb($mongoDb);
+        $repository = $this->createRepositoryMock()
+            ->setCollectionName($collectionName)
+            ->setConnection($connection);
+
+        $command = array();
+        $this->assertSame($cursor, $repository->mapReduce($map, $reduce, $out, $query, $command, $options));
     }
 
     public function testMapReduceInline()
@@ -408,35 +477,29 @@ class RepositoryTest extends TestCase
         $out = array('inline' => 1);
         $query = array();
 
-        $result = array('ok' => true, 'results' => $results = array(new \DateTime()));
+        $expectedCommand = array(
+            'mapreduce' => $collectionName,
+            'map'       => new \MongoCode($map),
+            'reduce'    => new \MongoCode($reduce),
+            'out'       => $out,
+            'query'     => $query,
+        );
 
-        $mongoDB = $this->getMockBuilder('MongoDB')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $mongoDB
+        $results = array(new \DateTime());
+        $result = array('ok' => true, 'results' => $results);
+
+        $mongoDb = $this->createMongoDbMock();
+        $mongoDb
             ->expects($this->once())
             ->method('command')
-            ->with(array(
-                'mapreduce' => $collectionName,
-                'map'       => new \MongoCode($map),
-                'reduce'    => new \MongoCode($reduce),
-                'out'       => $out,
-                'query'     => $query,
-            ))
-            ->will($this->returnValue($result))
-        ;
+            ->with($expectedCommand)
+            ->will($this->returnValue($result));
 
-        $connection = $this->getMock('Mandango\ConnectionInterface');
-        $connection
-            ->expects($this->any())
-            ->method('getMongoDB')
-            ->will($this->returnValue($mongoDB))
-        ;
+        $connection = $this->createConnectionMockWithMongoDb($mongoDb);
+        $repository = $this->createRepositoryMock()
+            ->setCollectionName($collectionName)
+            ->setConnection($connection);
 
-        $repository = new RepositoryMock($this->mandango);
-        $repository->setCollectionName($collectionName);
-        $repository->setConnection($connection);
         $this->assertSame($results, $repository->mapReduce($map, $reduce, $out, $query));
     }
 
@@ -449,26 +512,53 @@ class RepositoryTest extends TestCase
 
         $result = array('ok' => false, 'errmsg' => $errmsg = 'foobarbarfooups');
 
-        $mongoDB = $this->getMockBuilder('MongoDB')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $mongoDB
+        $mongoDb = $this->createMongoDbMock();
+        $mongoDb
             ->expects($this->once())
             ->method('command')
-            ->will($this->returnValue($result))
-        ;
+            ->will($this->returnValue($result));
 
         $connection = $this->getMock('Mandango\ConnectionInterface');
         $connection
             ->expects($this->any())
             ->method('getMongoDB')
-            ->will($this->returnValue($mongoDB))
-        ;
+            ->will($this->returnValue($mongoDb));
 
-        $repository = new RepositoryMock($this->mandango);
-        $repository->setCollectionName($collectionName);
-        $repository->setConnection($connection);
+        $connection = $this->createConnectionMockWithMongoDb($mongoDb);
+        $repository = $this->createRepositoryMock()
+            ->setCollectionName($collectionName)
+            ->setConnection($connection);
+
         $repository->mapReduce('foo', 'bar', array('inline' => 1));
+    }
+
+    private function createMongoDbMock()
+    {
+        return $this->getMockBuilder('MongoDB')
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    private function createCollectionMock()
+    {
+        return $this->getMockBuilder('MongoCollection')
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    private function createConnectionMockWithMongoDb($mongoDb)
+    {
+        $connection = $this->getMock('Mandango\ConnectionInterface');
+        $connection
+            ->expects($this->any())
+            ->method('getMongoDB')
+            ->will($this->returnValue($mongoDb));
+
+        return $connection;
+    }
+
+    private function createRepositoryMock()
+    {
+        return new RepositoryMock($this->mandango);
     }
 }
