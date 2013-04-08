@@ -11,7 +11,7 @@ env:
 services: mongodb
 
 before_script:
-  - pecl install mongo-${MONGO_VERSION}
+  - pecl install -f mongo-${MONGO_VERSION}
   - phpenv rehash
   - composer --dev install
 
