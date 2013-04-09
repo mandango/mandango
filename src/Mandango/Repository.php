@@ -334,15 +334,9 @@ abstract class Repository
      *
      * @api
      */
-    public function distinct($field, array $query = array(), $options = array())
+    public function distinct($field, array $query = array())
     {
-        $command = array(
-            'distinct' => $this->getCollectionName(),
-            'key'      => $field,
-            'query'    => $query,
-        );
-
-        return $this->command($command, $options);
+        return $this->getCollection()->distinct($field, $query);
     }
 
     /**

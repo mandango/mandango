@@ -311,63 +311,22 @@ class RepositoryTest extends TestCase
 
     public function testDistinct()
     {
-        $collectionName = 'myCollectionName';
-
         $field = 'fieldName';
         $query = array('foo' => 'bar');
 
-        $expectedCommand = array(
-            'distinct' => $collectionName,
-            'key'      => $field,
-            'query'    => $query,
-        );
+        $return = new \ArrayObject();
 
-        $result = array(new \DateTime());
-
-        $mongoDb = $this->createMongoDbMock();
-        $mongoDb
+        $collection = $this->createCollectionMock();
+        $collection
             ->expects($this->once())
-            ->method('command')
-            ->with($expectedCommand)
-            ->will($this->returnValue($result));
+            ->method('distinct')
+            ->with($field, $query)
+            ->will($this->returnValue($return));
 
-        $connection = $this->createConnectionMockWithMongoDb($mongoDb);
         $repository = $this->createRepositoryMock()
-            ->setCollectionName($collectionName)
-            ->setConnection($connection);
+            ->setCollection($collection);
 
-        $this->assertSame($result, $repository->distinct($field, $query));
-    }
-
-    public function testDistinctWithOptions()
-    {
-        $collectionName = 'myCollectionName';
-
-        $field = 'fieldName';
-        $query = array('foo' => 'bar');
-        $options = array('ups' => 2);
-
-        $expectedCommand = array(
-            'distinct' => $collectionName,
-            'key'      => $field,
-            'query'    => $query,
-        );
-
-        $result = array(new \DateTime());
-
-        $mongoDb = $this->createMongoDbMock();
-        $mongoDb
-            ->expects($this->once())
-            ->method('command')
-            ->with($expectedCommand, $options)
-            ->will($this->returnValue($result));
-
-        $connection = $this->createConnectionMockWithMongoDb($mongoDb);
-        $repository = $this->createRepositoryMock()
-            ->setCollectionName($collectionName)
-            ->setConnection($connection);
-
-        $this->assertSame($result, $repository->distinct($field, $query, $options));
+        $this->assertSame($return, $repository->distinct($field, $query));
     }
 
     public function testMapReduce()
