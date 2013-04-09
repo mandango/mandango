@@ -13,7 +13,7 @@ namespace Mandango\Tests\Cache;
 
 use Mandango\Tests\TestCase;
 
-abstract class Cache extends TestCase
+abstract class CacheTestCase extends TestCase
 {
     protected $cache;
 
@@ -21,6 +21,8 @@ abstract class Cache extends TestCase
     {
         $this->cache = $this->getCacheDriver();
     }
+
+    abstract protected function getCacheDriver();
 
     public function testHasShouldReturnTrueIfTheKeyExists()
     {
@@ -79,5 +81,10 @@ abstract class Cache extends TestCase
         $this->assertFalse($this->cache->has('ups'));
     }
 
-    abstract protected function getCacheDriver();
+    protected function createTempDir()
+    {
+        return sys_get_temp_dir().
+               '/mandango_filesystem_cache_tests'
+               .mt_rand(111111, 999999);
+    }
 }

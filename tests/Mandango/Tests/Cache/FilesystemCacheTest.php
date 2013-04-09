@@ -13,10 +13,10 @@ namespace Mandango\Tests\Cache;
 
 use Mandango\Cache\FilesystemCache;
 
-class FilesystemCacheTest extends Cache
+class FilesystemCacheTest extends CacheTestCase
 {
     protected function getCacheDriver()
     {
-        return new FilesystemCache(sys_get_temp_dir().'/mandango_filesystem_cache_tests'.mt_rand(111111, 999999));
+        return new FilesystemCache($this->createTempDir());
     }
 }

@@ -13,7 +13,7 @@ namespace Mandango\Tests\Cache;
 
 use Mandango\Cache\ArrayCache;
 
-class ArrayCacheTest extends Cache
+class ArrayCacheTest extends CacheTestCase
 {
     protected function getCacheDriver()
     {
