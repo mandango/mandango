@@ -57,6 +57,7 @@ class LazyCache implements CacheInterface
     public function set($key, $value)
     {
         $this->data[$key] = $value;
+        $this->delegate->set($key, $value);
     }
 
     /**

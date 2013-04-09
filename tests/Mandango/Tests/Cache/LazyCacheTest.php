@@ -86,6 +86,18 @@ class LazyCacheTest extends CacheTestCase
         $this->assertNull($this->lazyCache->get($key));
     }
 
+    public function testSetShouldCallDelegateSet()
+    {
+        $key = 'foo';
+        $value = 'bar';
+
+        $this->delegateMock->expects($this->once())
+                           ->method('set')
+                           ->with($key, $value);
+
+        $this->lazyCache->set($key, $value);
+    }
+
     public function testRemoveShouldCallDelegateRemove()
     {
         $key = 'foo';
