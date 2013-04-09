@@ -17,7 +17,7 @@
             if (!$this->isNew()) {
 {% endif %}
                 $this->get{{ name | ucfirst }}();
-                if ($value === $this->data['fields']['{{ name }}']) {
+                if ($this->isFieldEqualTo('{{ name }}', $value)) {
                     return $this;
                 }
             } else {
@@ -28,13 +28,13 @@
                 $this->data['fields']['{{ name }}'] = $value;
                 return $this;
             }
-        } elseif ($value === $this->data['fields']['{{ name }}']) {
+        } elseif ($this->isFieldEqualTo('{{ name }}', $value)) {
             return $this;
         }
 
         if (!isset($this->fieldsModified['{{ name }}']) && !array_key_exists('{{ name }}', $this->fieldsModified)) {
             $this->fieldsModified['{{ name }}'] = $this->data['fields']['{{ name }}'];
-        } elseif ($value === $this->fieldsModified['{{ name }}']) {
+        } elseif ($this->isFieldModifiedEqualTo('{{ name }}', $value)) {
             unset($this->fieldsModified['{{ name }}']);
         }
 
@@ -97,3 +97,22 @@
         return $this->data['fields']['{{ name }}'];
     }
 {% endfor %}
+
+    private function isFieldEqualTo($field, $otherValue)
+    {
+        $value = $this->data['fields'][$field];
+
+        return $this->isFieldValueEqualTo($value, $otherValue);
+    }
+
+    private function isFieldModifiedEqualTo($field, $otherValue)
+    {
+        $value = $this->fieldsModified[$field];
+
+        return $this->isFieldValueEqualTo($value, $otherValue);
+    }
+
+    protected function isFieldValueEqualTo($value, $otherValue)
+    {
+        return $value === $otherValue;
+    }
