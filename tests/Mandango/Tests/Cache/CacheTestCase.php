@@ -84,7 +84,7 @@ abstract class CacheTestCase extends TestCase
     protected function createTempDir()
     {
         return sys_get_temp_dir().
-               '/mandango_filesystem_cache_tests'
-               .mt_rand(111111, 999999);
+               '/mandango_filesystem_cache_tests'.
+               mt_rand(111111, 999999);
     }
 }
