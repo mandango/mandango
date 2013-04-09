@@ -72,24 +72,6 @@ class RepositoryMock extends Repository
         return $this->connection;
     }
 }
-    
-class FindByIdQueryMock extends Query {
-    private $query;
-    public function __construct($query) {
-        $this->query = $query;
-    }
-
-    public function all() {
-        return array('query' => $this->query);
-    }
-}
-
-class FindByIdRepositoryMock extends RepositoryMock {
-    public function createQuery(array $criteria = array())
-    {
-        return new FindByIdQueryMock($criteria);
-    }
-}
 
 class RepositoryTest extends TestCase
 {
@@ -242,36 +224,26 @@ class RepositoryTest extends TestCase
         $this->assertSame($articles1[$articles[4]->getId()->__toString()], $articles2[$articles[4]->getId()->__toString()]);
     }
 
-
-    public function testFindByIdCache()
+    public function testFindByIdShouldWorkWithMixedAlreadyQueriedAndNot()
     {
+        $articlesWithIds = $this->createArticles(5);
+        $articles = array_values($articlesWithIds);
 
-        $articles = array();
-        for ($i = 0; $i <= 10; $i++) {
-            $articles[] = $this->mandango->create('Model\Article')->setTitle('Article'.$i)->save();
-        }
-
-        $repository = new FindByIdRepositoryMock($this->mandango);
-        $identityMap = $repository->getIdentityMap();
-
-        $identityMap->set($articles[0]->getId(), $articles[0]);
-        $result = $repository->findById(array(
-            (string)$articles[0]->getId(),
-            (string)$articles[1]->getId()
+        $repository = $this->getRepository('Model\Article');
+        $repository->findById(array(
+            $articles[1]->getId(),
+            $articles[3]->getId(),
         ));
 
-        $this->assertFalse(in_array((string)$articles[0]->getId(), $result['query']['_id']['$in']));
-        $this->assertTrue(in_array((string)$articles[1]->getId(), $result['query']['_id']['$in']));
-
-        $identityMap->set($articles[0]->getId(), $articles[0]);
-        $identityMap->set($articles[1]->getId(), $articles[1]);
-
-        $result = $repository->findById(array(
-            (string)$articles[0]->getId(),
-            (string)$articles[1]->getId()
+        $results = $repository->findById(array(
+            $articles[0]->getId(),
+            $articles[1]->getId(),
+            $articles[2]->getId(),
+            $articles[3]->getId(),
+            $articles[4]->getId(),
         ));
 
-        $this->assertFalse(isset($result['query']));
+        $this->assertEquals($articlesWithIds, $results);
     }
 
     public function testCount()

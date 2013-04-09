@@ -226,26 +226,53 @@ abstract class Repository
      */
     public function findById(array $ids)
     {
-        $ids = $this->idsToMongo($ids);
+        $mongoIds = $this->idsToMongo($ids);
+        $cachedDocuments = $this->findCachedDocuments($mongoIds);
 
+        if ($this->areAllDocumentsCached($cachedDocuments, $mongoIds)) {
+            return $cachedDocuments;
+        }
+
+        $idsToQuery = $this->getIdsToQuery($cachedDocuments, $mongoIds);
+        $queriedDocuments = $this->queryDocumentsByIds($idsToQuery);
+
+        return array_merge($cachedDocuments, $queriedDocuments);
+    }
+
+    private function findCachedDocuments($mongoIds)
+    {
         $documents = array();
-        $remaining = array();
-        foreach ($ids as $id) {
+        foreach ($mongoIds as $id) {
             if ($this->identityMap->has($id)) {
                 $documents[(string) $id] = $this->identityMap->get($id);
-            } else {
-                $remaining[] = $id;
             }
         }
 
-        if (count($documents) == count($ids)) {
-            return $documents;
+        return $documents;
+    }
+
+    private function areAllDocumentsCached($cachedDocuments, $mongoIds)
+    {
+        return count($cachedDocuments) == count($mongoIds);
+    }
+
+    private function getIdsToQuery($cachedDocuments, $mongoIds)
+    {
+        $ids = array();
+        foreach ($mongoIds as $id) {
+            if (!isset($cachedDocuments[(string) $id])) {
+                $ids[] = $id;
+            }
         }
 
-        return array_merge(
-            $documents,
-            $this->createQuery(array('_id' => array('$in' => $remaining)))->all()
-        );
+        return $ids;
+    }
+
+    private function queryDocumentsByIds($ids)
+    {
+        $criteria = array('_id' => array('$in' => $ids));
+
+        return $this->createQuery($criteria)->all();
     }
 
     /**
