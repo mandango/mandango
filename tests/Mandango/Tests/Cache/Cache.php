@@ -22,37 +22,61 @@ abstract class Cache extends TestCase
         $this->cache = $this->getCacheDriver();
     }
 
-    public function testCache()
+    public function testHasShouldReturnTrueIfTheKeyExists()
     {
-        $key1 = 'foo';
-        $key2 = 'bar';
-        $value1 = 'ups';
-        $value2 = 'ngo';
+        $this->cache->set('foo', 'bar');
+        $this->assertTrue($this->cache->has('foo'));
+    }
 
-        $this->assertFalse($this->cache->has($key1));
-        $this->assertFalse($this->cache->has($key2));
+    public function testHasShouldReturnFalseIfTheKeyDoesNotExists()
+    {
+        $this->cache->set('foo', 'bar');
+        $this->assertFalse($this->cache->has('ups'));
+    }
 
-        $this->cache->set($key1, $value1);
-        $this->assertTrue($this->cache->has($key1));
-        $this->assertFalse($this->cache->has($key2));
-        $this->assertSame($value1, $this->cache->get($key1));
-        $this->assertNull($this->cache->get($key2));
+    public function testGetShouldReturnTheValueOfTheKey()
+    {
+        $this->cache->set('foo', 'bar');
+        $this->cache->set('ups', 'man');
 
-        $this->cache->set($key2, $value2);
-        $this->assertTrue($this->cache->has($key1));
-        $this->assertTrue($this->cache->has($key2));
-        $this->assertSame($value1, $this->cache->get($key1));
-        $this->assertSame($value2, $this->cache->get($key2));
+        $this->assertSame('bar', $this->cache->get('foo'));
+        $this->assertSame('man', $this->cache->get('ups'));
+    }
 
-        $this->cache->remove($key1);
-        $this->assertFalse($this->cache->has($key1));
-        $this->assertTrue($this->cache->has($key2));
-        $this->assertNull($this->cache->get($key1));
-        $this->assertSame($value2, $this->cache->get($key2));
+    public function testGetShouldReturnNullIfTheKeyDoesNotExist()
+    {
+        $this->cache->set('foo', 'bar');
 
+        $this->assertNull($this->cache->get('ups'));
+    }
+
+    public function testRemoveShouldRemoveAKey()
+    {
+        $this->cache->set('ups', 'man');
+        $this->cache->remove('ups');
+
+        $this->assertFalse($this->cache->has('ups'));
+        $this->assertNull($this->cache->get('ups'));
+    }
+
+    public function testRemoveShouldRemoveOnlyOneKey()
+    {
+        $this->cache->set('foo', 'bar');
+        $this->cache->set('ups', 'man');
+        $this->cache->remove('ups');
+
+        $this->assertTrue($this->cache->has('foo'));
+        $this->assertSame('bar', $this->cache->get('foo'));
+    }
+
+    public function testClearShouldRemoveAllKeys()
+    {
+        $this->cache->set('foo', 'bar');
+        $this->cache->set('ups', 'man');
         $this->cache->clear();
-        $this->assertFalse($this->cache->has($key1));
-        $this->assertFalse($this->cache->has($key2));
+
+        $this->assertFalse($this->cache->has('foo'));
+        $this->assertFalse($this->cache->has('ups'));
     }
 
     abstract protected function getCacheDriver();
