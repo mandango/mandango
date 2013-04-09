@@ -342,7 +342,7 @@ abstract class Repository
             'query'    => $query,
         );
 
-        return $this->getMongoDB()->command($command, $options);
+        return $this->command($command, $options);
     }
 
     /**
@@ -368,7 +368,7 @@ abstract class Repository
             'query'     => $query,
         ));
 
-        $result = $this->getMongoDB()->command($command, $options);
+        $result = $this->command($command, $options);
 
         if (!$result['ok']) {
             throw new \RuntimeException($result['errmsg']);
@@ -379,6 +379,11 @@ abstract class Repository
         }
 
         return $this->getMongoDB()->selectCollection($result['result'])->find();
+    }
+
+    private function command($command, $options = array())
+    {
+        return $this->getMongoDB()->command($command, $options);
     }
 
     private function getMongoDB()
