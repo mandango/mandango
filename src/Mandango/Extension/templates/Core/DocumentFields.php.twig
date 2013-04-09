@@ -114,5 +114,9 @@
 
     protected function isFieldValueEqualTo($value, $otherValue)
     {
+        if (is_object($value)) {
+            return $value == $otherValue;
+        }
+
         return $value === $otherValue;
     }
