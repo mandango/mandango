@@ -40,6 +40,7 @@ class Core extends Extension
         $this->addOptions(array(
             'default_output'    => null,
             'default_behaviors' => array(),
+            'default_nxreference' => 'exception',
         ));
     }
 
@@ -1040,6 +1041,10 @@ EOF
     {
         if (!is_array($association)) {
             throw new \RuntimeException(sprintf('The association "%s" of the class "%s" is not an array or string.', $name, $this->class));
+        }
+
+        if (!isset($association['nxreference'])) {
+            $association['nxreference'] = $this->getOption('default_nxreference');
         }
 
         if (!empty($association['class'])) {

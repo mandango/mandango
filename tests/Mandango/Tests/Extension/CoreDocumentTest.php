@@ -145,6 +145,51 @@ class CoreDocumentTest extends TestCase
     }
 
     /**
+     * Test if exception is thrown when getting not existing reference
+     * @expectedException \RuntimeException
+     */
+    public function testNxReferencesOneException()
+    {
+
+        $author1 = $this->mandango->create('Model\Author')->setName('foo')->save();
+        $article1 = $this->createArticle()->setAuthor($author1)->save()->getId();
+        $this->removeFromCollection($author1);
+
+        $articleRepo = $this->mandango->getRepository('Model\Article');
+        $authorRepo = $this->mandango->getRepository('Model\Author');
+        $articleRepo->getIdentityMap()->clear();
+        $authorRepo->getIdentityMap()->clear();
+
+        // expect exception...
+        $articleRepo->findOneById($article1)->getAuthor();
+    }
+
+    /**
+     * Test if exception is *NOT* thrown when getting not existing reference
+     */
+    public function testNxReferencesOneIgnore()
+    {
+        // basic & dbref field
+        $author1 = $this->mandango->create('Model\Author')->setName('foo')->save();
+        $article1 = $this->createArticle()
+            ->setAuthorNxIgnore($author1)
+            ->save()
+            ->getId();
+        $this->removeFromCollection($author1);
+
+        $articleRepo = $this->mandango->getRepository('Model\Article');
+        $authorRepo = $this->mandango->getRepository('Model\Author');
+        $articleRepo->getIdentityMap()->clear();
+        $authorRepo->getIdentityMap()->clear();
+
+        // reget
+        $article1 = $articleRepo->findOneById($article1);
+
+        // expect no exception...
+        $this->assertNull($article1->getAuthorNxIgnore());
+    }
+
+    /**
      * @expectedException \RuntimeException
      */
     public function testReferencesOneGetterQueryNotExist()
