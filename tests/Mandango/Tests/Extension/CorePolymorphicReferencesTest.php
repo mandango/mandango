@@ -95,7 +95,7 @@ class CorePolymorphicReferencesTest extends TestCase
     {
         $author = $this->mandango->create('Model\Author');
         $article = $this->mandango->create('Model\Article')->setLike($author);
-        $author->setId(new \MongoId('123'));
+        $author->setId(new \MongoId($this->generateObjectId()));
         $article->updateReferenceFields();
         $this->assertSame(array(
             '_mandangoDocumentClass' => 'Model\Author',
@@ -107,7 +107,7 @@ class CorePolymorphicReferencesTest extends TestCase
     {
         $author = $this->mandango->create('Model\Author');
         $article = $this->mandango->create('Model\Article')->setFriend($author);
-        $author->setId(new \MongoId('123'));
+        $author->setId(new \MongoId($this->generateObjectId()));
         $article->updateReferenceFields();
         $this->assertSame(array(
             'name' => 'au',
@@ -143,10 +143,10 @@ class CorePolymorphicReferencesTest extends TestCase
     {
         $article = $this->mandango->create('Model\Article');
         $related = $article->getRelated();
-        $author1 = $this->mandango->create('Model\Author')->setId(new \MongoId('1'));
-        $author2 = $this->mandango->create('Model\Author')->setId(new \MongoId('2'));
-        $category1 = $this->mandango->create('Model\Category')->setId(new \MongoId('3'));
-        $user1 = $this->mandango->create('Model\User')->setId(new \MongoId('4'));
+        $author1 = $this->mandango->create('Model\Author')->setId(new \MongoId($this->generateObjectId()));
+        $author2 = $this->mandango->create('Model\Author')->setId(new \MongoId($this->generateObjectId()));
+        $category1 = $this->mandango->create('Model\Category')->setId(new \MongoId($this->generateObjectId()));
+        $user1 = $this->mandango->create('Model\User')->setId(new \MongoId($this->generateObjectId()));
         $related->add(array($author1, $author2, $category1, $user1));
 
         $article->updateReferenceFields();
@@ -161,19 +161,19 @@ class CorePolymorphicReferencesTest extends TestCase
     public function testDocumentUpdateReferenceFieldsReferencesManyNotNew()
     {
         $article = $this->mandango->create('Model\Article')->setDocumentData(array(
-            '_id' => new \MongoId('123'),
+            '_id' => new \MongoId($this->generateObjectId()),
             'related' => $relatedRef = array(
-                array('_mandangoDocumentClass' => 'Model\Author', 'id' => new \MongoId('1')),
-                array('_mandangoDocumentClass' => 'Model\Author', 'id' => new \MongoId('2')),
-                array('_mandangoDocumentClass' => 'Model\Category', 'id' => new \MongoId('3')),
-                array('_mandangoDocumentClass' => 'Model\Category', 'id' => new \MongoId('4')),
+                array('_mandangoDocumentClass' => 'Model\Author', 'id' => new \MongoId($this->generateObjectId())),
+                array('_mandangoDocumentClass' => 'Model\Author', 'id' => new \MongoId($this->generateObjectId())),
+                array('_mandangoDocumentClass' => 'Model\Category', 'id' => new \MongoId($this->generateObjectId())),
+                array('_mandangoDocumentClass' => 'Model\Category', 'id' => new \MongoId($this->generateObjectId())),
             ),
         ));
         $related = $article->getRelated();
         $add = array();
-        $related->add($add[] = $this->mandango->create('Model\User')->setId(new \MongoId('1')));
-        $related->add($add[] = $this->mandango->create('Model\Author')->setId(new \MongoId('5')));
-        $related->add($add[] = $this->mandango->create('Model\Author')->setId(new \MongoId('6')));
+        $related->add($add[] = $this->mandango->create('Model\User')->setId(new \MongoId($this->generateObjectId())));
+        $related->add($add[] = $this->mandango->create('Model\Author')->setId(new \MongoId($this->generateObjectId())));
+        $related->add($add[] = $this->mandango->create('Model\Author')->setId(new \MongoId($this->generateObjectId())));
         $related->remove($this->mandango->create('Model\Author')->setId($relatedRef[1]['id']));
         $related->remove($this->mandango->create('Model\Category')->setId($relatedRef[3]['id']));
 
@@ -191,10 +191,10 @@ class CorePolymorphicReferencesTest extends TestCase
     {
         $article = $this->mandango->create('Model\Article');
         $elements = $article->getElements();
-        $element1 = $this->mandango->create('Model\FormElement')->setId(new \MongoId('1'));
-        $element2 = $this->mandango->create('Model\FormElement')->setId(new \MongoId('2'));
-        $textareaElement1 = $this->mandango->create('Model\TextareaFormElement')->setId(new \MongoId('3'));
-        $radioElement1 = $this->mandango->create('Model\RadioFormElement')->setId(new \MongoId('4'));
+        $element1 = $this->mandango->create('Model\FormElement')->setId(new \MongoId($this->generateObjectId()));
+        $element2 = $this->mandango->create('Model\FormElement')->setId(new \MongoId($this->generateObjectId()));
+        $textareaElement1 = $this->mandango->create('Model\TextareaFormElement')->setId(new \MongoId($this->generateObjectId()));
+        $radioElement1 = $this->mandango->create('Model\RadioFormElement')->setId(new \MongoId($this->generateObjectId()));
         $elements->add(array($element1, $element2, $textareaElement1, $radioElement1));
 
         $article->updateReferenceFields();
@@ -209,19 +209,19 @@ class CorePolymorphicReferencesTest extends TestCase
     public function testDocumentUpdateReferenceFieldsReferencesManyNotNewDiscriminatorMap()
     {
         $article = $this->mandango->create('Model\Article')->setDocumentData(array(
-            '_id' => new \MongoId('123'),
+            '_id' => new \MongoId($this->generateObjectId()),
             'elements' => $elementsRef = array(
-                array('type' => 'element', 'id' => new \MongoId('1')),
-                array('type' => 'element', 'id' => new \MongoId('2')),
-                array('type' => 'textarea', 'id' => new \MongoId('3')),
-                array('type' => 'textarea', 'id' => new \MongoId('4')),
+                array('type' => 'element', 'id' => new \MongoId($this->generateObjectId())),
+                array('type' => 'element', 'id' => new \MongoId($this->generateObjectId())),
+                array('type' => 'textarea', 'id' => new \MongoId($this->generateObjectId())),
+                array('type' => 'textarea', 'id' => new \MongoId($this->generateObjectId())),
             ),
         ));
         $elements = $article->getElements();
         $add = array();
-        $elements->add($add[] = $this->mandango->create('Model\RadioFormElement')->setId(new \MongoId('1')));
-        $elements->add($add[] = $this->mandango->create('Model\FormElement')->setId(new \MongoId('5')));
-        $elements->add($add[] = $this->mandango->create('Model\FormElement')->setId(new \MongoId('6')));
+        $elements->add($add[] = $this->mandango->create('Model\RadioFormElement')->setId(new \MongoId($this->generateObjectId())));
+        $elements->add($add[] = $this->mandango->create('Model\FormElement')->setId(new \MongoId($this->generateObjectId())));
+        $elements->add($add[] = $this->mandango->create('Model\FormElement')->setId(new \MongoId($this->generateObjectId())));
         $elements->remove($this->mandango->create('Model\FormElement')->setId($elementsRef[1]['id']));
         $elements->remove($this->mandango->create('Model\TextareaFormElement')->setId($elementsRef[3]['id']));
 

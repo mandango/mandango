@@ -164,4 +164,11 @@ class TestCase extends \PHPUnit_Framework_TestCase
             array(100),
         );
     }
+
+    protected function generateObjectId()
+    {
+        return implode('', array_map('dechex',
+            array_map(function() { return mt_rand(0, 15); }, range(1, 24))
+        ));
+    }
 }

@@ -104,7 +104,7 @@ class CoreFieldAliasTest extends TestCase
     {
         $article = $this->mandango->create('Model\Article');
         $article->setDocumentData(array(
-            '_id' => new \MongoId('123'),
+            '_id' => new \MongoId($this->generateObjectId()),
             'basatos' => '234',
         ));
 
@@ -138,7 +138,7 @@ class CoreFieldAliasTest extends TestCase
     {
         $article = $this->mandango->create('Model\Article');
         $article->setDocumentData(array(
-            '_id' => new \MongoId('123'),
+            '_id' => new \MongoId($this->generateObjectId()),
             'source' => array(
                 'desde' => '234',
             ),

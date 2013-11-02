@@ -17,7 +17,7 @@ class CoreRepositoryTest extends TestCase
 {
     public function testIdToMongo()
     {
-        $id = '123';
+        $id = $this->generateObjectId();
         $idToMongo = $this->mandango->getRepository('Model\Article')->idToMongo($id);
         $this->assertInstanceOf('MongoId', $idToMongo);
     }
