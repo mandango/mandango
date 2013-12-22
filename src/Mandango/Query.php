@@ -560,6 +560,29 @@ abstract class Query implements \Countable, \IteratorAggregate
         return $this->createCursor()->count();
     }
 
+    protected function mapFieldNames(array $fields = array())
+    {
+        if (empty($fields)) {
+            return array();
+        }
+
+        $mandango = $this->getRepository()->getMandango();
+        $metadata = $mandango->getMetadataFactory()->getClass($this->getRepository()->getDocumentClass());
+
+        $mapper = function ($name) use ($metadata) {
+            $parts = explode('.', $name);
+
+            foreach ($parts as &$part) {
+                $part = (isset($metadata['fields'][$part]['dbName']) ? $metadata['fields'][$part]['dbName'] : $part);
+            }
+
+            return implode('.', $parts);
+        };
+
+        $dbNames = array_map($mapper, array_keys($fields));
+        return array_combine($dbNames, $fields);
+    }
+
     /**
      * Create a cursor with the data of the query.
      *
@@ -567,10 +590,14 @@ abstract class Query implements \Countable, \IteratorAggregate
      */
     public function createCursor()
     {
-        $cursor = $this->repository->getCollection()->find($this->criteria, $this->fields);
+
+        $cursor = $this->repository->getCollection()->find(
+            $this->mapFieldNames($this->criteria),
+            $this->mapFieldNames($this->fields)
+        );
 
         if (null !== $this->sort) {
-            $cursor->sort($this->sort);
+            $cursor->sort($this->mapFieldNames($this->sort));
         }
 
         if (null !== $this->limit) {
