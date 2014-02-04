@@ -1937,4 +1937,38 @@ class CoreDocumentTest extends TestCase
         $source->clearEmbeddedsOneChanged();
         $this->assertFalse($source->isEmbeddedOneChanged('info'));
     }
+
+
+    public function testEmbeddedDocumentChangePropagatesToParentAfterSave()
+    {
+        $article = $this->mandango->create('Model\Article')->setDocumentData(array(
+            '_id' => new \MongoId('123'),
+            'comments' => array(
+                array(
+                    'name' => 'Default Name',
+                ),
+            ),
+        ));
+
+        // check the default name
+        foreach($article->getComments() as $modified_comment) { break; }
+        $this->assertEquals('Default Name', $modified_comment->getName());
+
+        // update the comment
+        foreach($article->getComments() as $comment_to_modify) { break; }
+        $comment_to_modify->setName('New Name');
+        $this->assertEquals('New Name', $comment_to_modify->getName());
+
+        // check that the embedded comment was updated in the article group BEFORE save
+        foreach($article->getComments() as $modified_comment) { break; }
+        $this->assertEquals('New Name', $modified_comment->getName());
+
+        // save
+        $article->save();
+
+        // check that the embedded comment was updated in the article AFTER save
+        foreach($article->getComments() as $modified_comment) { break; }
+        $this->assertEquals('New Name', $modified_comment->getName());
+    }
+
 }
