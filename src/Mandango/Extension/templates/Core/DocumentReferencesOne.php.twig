@@ -41,9 +41,12 @@
             if (!$id = $this->get{{ referenceOne.field|ucfirst }}()) {
                 return null;
             }
-            if (!$document = $this->getMandango()->getRepository('{{ referenceOne.class }}')->findOneById($id)) {
+			$document = $this->getMandango()->getRepository('{{ referenceOne.class }}')->findOneById($id);
+{% if 'exception' == referenceOne.nxreference %}
+            if (!$document) {
                 throw new \RuntimeException('The reference "{{ name }}" does not exist.');
             }
+{% endif %}
             $this->data['referencesOne']['{{ name }}'] = $document;
         }
 
@@ -105,9 +108,12 @@
 {% else %}
             $discriminatorValue = $ref['{{ referenceOne.discriminatorField }}'];
 {% endif %}
-            if (!$document = $this->getMandango()->getRepository($discriminatorValue)->findOneById($ref['id'])) {
+			$document = $this->getMandango()->getRepository($discriminatorValue)->findOneById($ref['id']);
+{% if 'exception' == referenceOne.nxreference %}
+            if (!$document) {
                 throw new \RuntimeException('The reference "{{ name }}" does not exist.');
             }
+{% endif %}
             $this->data['referencesOne']['{{ name }}'] = $document;
         }
 

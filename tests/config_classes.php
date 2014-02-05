@@ -23,6 +23,7 @@ return array(
         ),
         'referencesOne' => array(
             'author'      => array('class' => 'Model\Author', 'field' => 'authorId', 'onDelete' => 'cascade'),
+            'authorNxIgnore' => array('class' => 'Model\Author', 'nxreference' => 'ignore'),
             'information' => array('class' => 'Model\ArticleInformation', 'field' => 'informationId', 'onDelete' => 'unset'),
             'like'        => array('polymorphic' => true, 'field' => 'likeRef', 'onDelete' => 'cascade'),
             'likeUnset'   => array('polymorphic' => true, 'onDelete' => 'unset'),
