@@ -189,7 +189,7 @@ class Connection implements ConnectionInterface
                     $this->mongo->setLogDefault($this->logDefault);
                 }
             } else {
-                $this->mongo = new \Mongo($this->server, $this->options);
+                $this->mongo = new \MongoClient($this->server, $this->options);
             }
         }
 
