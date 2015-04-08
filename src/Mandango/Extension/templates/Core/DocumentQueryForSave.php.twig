@@ -149,6 +149,7 @@
                         $rap = $document->getRootAndPath();
                         $query['$unset'][$rap['path']] = 1;
                     }
+                    $query['$pull']['{{ name }}']=null;
                 }
 {% endif %}
 {% endfor %}

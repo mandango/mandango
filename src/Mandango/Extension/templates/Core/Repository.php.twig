@@ -185,7 +185,10 @@
                 $document->preUpdateEvent();
 {% endif %}
                 $query = $document->queryForSave();
-                $collection->update(array('_id' => $this->idToMongo($document->getId())), $query, $updateOptions);
+                foreach ($query as $action => $subQuery) {
+                    $subQuery=(array($action=>$subQuery));
+                    $collection->update(array('_id' => $this->idToMongo($document->getId())), $subQuery, $updateOptions);
+                }
                 $document->clearModified();
 {% if config_class._has_groups %}
                 $document->resetGroups();
