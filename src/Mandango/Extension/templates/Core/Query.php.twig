@@ -29,7 +29,7 @@
             }
             $f =& $fields;
             foreach (explode('.', $field) as $name) {
-                if (!isset($f[$name])) {
+                if (!isset($f[$name]) || !is_array($f[$name])) {
                     $f[$name] = array();
                 }
                 $f =& $f[$name];
