@@ -23,6 +23,7 @@ class Connection implements ConnectionInterface
     private $server;
     private $dbName;
     private $options;
+    private $driverOptions = [];
 
     private $loggerCallable;
     private $logDefault;
@@ -115,13 +116,14 @@ class Connection implements ConnectionInterface
      *
      * @api
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options, $driverOptions = [])
     {
         if (null !== $this->mongo) {
             throw new \LogicException('The mongo is initialized.');
         }
 
         $this->options = $options;
+        $this->driverOptions = $driverOptions;
     }
 
     /**
@@ -189,7 +191,7 @@ class Connection implements ConnectionInterface
                     $this->mongo->setLogDefault($this->logDefault);
                 }
             } else {
-                $this->mongo = new \Mongo($this->server, $this->options);
+                $this->mongo = new \MongoClient($this->server, $this->options, $this->driverOptions);
             }
         }
 
