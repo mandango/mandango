@@ -854,6 +854,9 @@ EOF
                      $hasReferences = true;
                  }
                  foreach (array_merge($configClass['embeddedsOne'], $configClass['embeddedsMany']) as $name => $embedded) {
+                     if ($embedded['class'] == $class) {
+                         continue;
+                     }
                      if (!isset($this->configClasses[$embedded['class']]['_has_references'])) {
                          $continue = true;
                          continue 2;
@@ -924,6 +927,9 @@ EOF
                     $hasGroups = true;
                 }
                 foreach (array_merge($configClass['embeddedsOne'], $configClass['embeddedsMany']) as $name => $embedded) {
+                    if ($embedded['class'] == $class) {
+                        continue;
+                    }
                     if (!isset($this->configClasses[$embedded['class']]['_has_groups'])) {
                         $continue = true;
                         continue 2;
@@ -948,6 +954,9 @@ EOF
 
                 $indexes = $configClass['indexes'];
                 foreach (array_merge($configClass['embeddedsOne'], $configClass['embeddedsMany']) as $name => $embedded) {
+                    if ($embedded['class'] == $class) {
+                        continue;
+                    }
                     if (!isset($this->configClasses[$embedded['class']]['_indexes'])) {
                         $continue = true;
                         continue 2;
